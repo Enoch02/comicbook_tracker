@@ -1,12 +1,94 @@
 package com.enoch2.comictracker.app
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import com.enoch2.comictracker.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+@Composable
+fun HomeTopAppBar(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+    val drawerState = scaffoldState.drawerState
+
+    TopAppBar(
+        navigationIcon = {
+            IconButton(content = {
+                Icon(Icons.Default.Menu,
+                    tint = Color.White,
+                    contentDescription = stringResource(R.string.menu))
+            },
+            onClick = {
+                scope.launch {
+                    if (drawerState.isClosed)
+                        drawerState.open()
+                    else drawerState.close()
+
+                    }
+                }
+            )
+        },
+        title = { Text(text = stringResource(id = R.string.app_name)) }
+    )
+}
 
 @Composable
 fun HomeScreen() {
-    Column () {
-        Text(text = "Testing workflow!")
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = { HomeTopAppBar(scaffoldState = scaffoldState, scope = scope) },
+        drawerContent = {
+            Column(modifier = Modifier
+                .weight(1f)
+                // TODO: Think of a color scheme
+                .background(colorResource(id = R.color.purple_700))) {
+                Text(
+                    modifier = Modifier.fillMaxSize(),
+                    text = "PlaceHolder",
+                    textAlign = TextAlign.Center,
+                    fontSize = 25.sp)
+            }
+            Divider(
+                color = Color.Black,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Column(modifier = Modifier.weight(3f)) {
+                Drawer()
+            }
+        },
+        drawerGesturesEnabled = true,
+        drawerBackgroundColor = Color.White,
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // TODO: Add homescreen content here or move into a separate function
+        }
+    }
+}
+
+@Composable
+fun Drawer() {
+    val dummyItems = listOf(1, 2, 3, 4, 5)
+
+    Column {
+        dummyItems.forEach {
+            Text(text = it.toString(),
+                modifier = Modifier.fillMaxWidth())
+        }
     }
 }

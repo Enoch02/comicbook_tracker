@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ComicBook Tracker</string>
+    <string name="menu">Menu</string>
 </resources>
