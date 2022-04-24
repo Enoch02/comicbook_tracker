@@ -13,6 +13,7 @@ import com.enoch2.comictracker.app.HomeScreen
 import com.enoch2.comictracker.router.Router
 import com.enoch2.comictracker.router.Screen
 import com.enoch2.comictracker.ui.theme.ComicBookTrackerTheme
+import com.enoch2.comictracker.util.doesDataExist
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
