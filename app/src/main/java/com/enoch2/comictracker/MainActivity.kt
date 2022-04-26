@@ -8,17 +8,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.enoch2.comictracker.app.AboutScreen
+import com.enoch2.comictracker.app.AddComicScreen
 import com.enoch2.comictracker.app.HomeScreen
 import com.enoch2.comictracker.router.Router
 import com.enoch2.comictracker.router.Screen
 import com.enoch2.comictracker.ui.theme.ComicBookTrackerTheme
-import com.enoch2.comictracker.util.doesDataExist
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val context = LocalContext.current
+
             ComicBookTrackerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -29,6 +32,7 @@ class MainActivity : ComponentActivity() {
                         when (screenState.value) {
                             is Screen.HomeScreen -> HomeScreen()
                             is Screen.AboutScreen -> AboutScreen()
+                            is Screen.AddComicScreen -> AddComicScreen()
                         }
                     }
                 }
