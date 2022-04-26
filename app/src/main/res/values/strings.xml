@@ -6,4 +6,8 @@
     <string name="on_hold">On Hold</string>
     <string name="completed">Completed</string>
     <string name="dropped">Dropped</string>
+    <string name="add_new_comic_title">Add New Comic</string>
+    <string name="comic_title_txt">"Title: "</string>
+    <string name="status_txt">"Status: "</string>
+    <string name="rating">"Rating: "</string>
 </resources>

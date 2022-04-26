@@ -7,6 +7,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -67,7 +68,11 @@ fun HomeScreen() {
                 Drawer()
             }
         },
-        drawerGesturesEnabled = true
+        drawerGesturesEnabled = true,
+        floatingActionButton = { FloatingActionButton(onClick = { navigateTo(Screen.AddComicScreen) }) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "add")
+            }
+        }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // TODO: Add homescreen content here or move into a separate function

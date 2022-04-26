@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 sealed class Screen {
     object HomeScreen: Screen()
     object AboutScreen: Screen()
+    object AddComicScreen: Screen()
 }
 
 object Router {
