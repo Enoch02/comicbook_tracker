@@ -1,6 +1,5 @@
 package com.enoch2.comictracker.app
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -10,10 +9,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.router.BackButtonHandler
@@ -46,7 +42,7 @@ private fun AddComicContent() {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.5f)
-            .padding(10.dp),
+            .padding(20.dp),
         shape = RoundedCornerShape(5.dp),
         elevation = 10.dp
     ) {
@@ -54,10 +50,15 @@ private fun AddComicContent() {
 
         Column(
             modifier = Modifier.padding(5.dp)) {
-            Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)) {
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.weight(1f).fillMaxSize()) {
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()) {
                     Text(stringResource(R.string.comic_title_txt))
                 }
                     OutlinedTextField(
@@ -66,54 +67,68 @@ private fun AddComicContent() {
                         modifier = Modifier.weight(2f)
                     )
                 }
-            }
 
-            Row(
-                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.weight(1f).fillMaxSize()) {
-                    Text(stringResource(R.string.status_txt))
-                }
+            Spacer(modifier = Modifier.fillMaxWidth().height(10.dp))
 
-                val items = listOf("reading", "completed", "on hold", "dropped", "plan to read")
-                var isExpanded by remember { mutableStateOf(false) }
-                var selectedStatus by remember { mutableStateOf("") }
-                Column(modifier = Modifier.weight(2f)) {
-                    OutlinedTextField(
-                        value = selectedStatus,
-                        onValueChange = { selectedStatus = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = false,
-                        trailingIcon = {
-                            IconButton(onClick = { isExpanded = !isExpanded }) {
-                                val icon = if (isExpanded)
-                                    Icons.Filled.KeyboardArrowUp
-                                else
-                                    Icons.Filled.KeyboardArrowDown
-                                Icon(icon, null)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()) {
+                        Text(stringResource(R.string.status_txt))
+                    }
+
+                    val items = listOf("reading", "completed", "on hold", "dropped", "plan to read")
+                    var isExpanded by remember { mutableStateOf(false) }
+                    var selectedStatus by remember { mutableStateOf("") }
+                    Column(modifier = Modifier.weight(2f)) {
+                        OutlinedTextField(
+                            value = selectedStatus,
+                            onValueChange = { selectedStatus = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = false,
+                            trailingIcon = {
+                                IconButton(onClick = { isExpanded = !isExpanded }) {
+                                    val icon = if (isExpanded)
+                                        Icons.Filled.KeyboardArrowUp
+                                    else
+                                        Icons.Filled.KeyboardArrowDown
+                                    Icon(icon, null)
+                                }
                             }
-                        }
-                    )
-                    DropdownMenu(
-                        expanded = isExpanded,
-                        onDismissRequest = { isExpanded = !isExpanded },
-                    ) {
-                        items.forEach { item ->
-                            DropdownMenuItem(onClick = {
-                                selectedStatus = item
-                                isExpanded = false
-                            }) {
-                                Text(item)
+                        )
+                        DropdownMenu(
+                            expanded = isExpanded,
+                            onDismissRequest = { isExpanded = !isExpanded },
+                        ) {
+                            items.forEach { item ->
+                                DropdownMenuItem(onClick = {
+                                    selectedStatus = item
+                                    isExpanded = false
+                                }) {
+                                    Text(item)
+                                }
                             }
                         }
                     }
                 }
-            }
 
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.rating))
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()) {
+                    Text(stringResource(R.string.rating)
+                    )
+                }
+
+                // TODO: rating input goes here
             }
-        }
+         }
     }
 }
