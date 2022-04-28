@@ -10,4 +10,7 @@
     <string name="comic_title_txt">"Title: "</string>
     <string name="status_txt">"Status: "</string>
     <string name="rating">"Rating: "</string>
+    <string name="designed_by_txt">App created by Adesanya</string>
+    <string name="github">View the source code on Github: </string>
+    <string name="github_link">https://github.com/Enoch02/comicbook_tracker</string>
 </resources>
