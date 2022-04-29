@@ -13,4 +13,5 @@
     <string name="designed_by_txt">App created by Adesanya</string>
     <string name="github">View the source code on Github: </string>
     <string name="github_link">https://github.com/Enoch02/comicbook_tracker</string>
+    <string name="save_btn">Save Comic</string>
 </resources>
