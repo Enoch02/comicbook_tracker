@@ -9,20 +9,17 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import com.enoch2.comictracker.R
+import com.enoch2.comictracker.Status
 import com.enoch2.comictracker.router.BackButtonHandler
 import com.enoch2.comictracker.router.Router
 import com.enoch2.comictracker.router.Screen
-
-enum class Status {
-    READING,
-    COMPLETED,
-    ON_HOLD,
-    DROPPED,
-    PLAN_TO_READ
-}
 
 @Composable
 fun AddComicScreen() {
@@ -41,16 +38,15 @@ private fun AddComicContent() {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.5f)
-            .padding(20.dp),
-        shape = RoundedCornerShape(5.dp),
-        elevation = 10.dp
+            .fillMaxHeight(/*0.5f*/)
+            .padding(15.dp),
+        //shape = RoundedCornerShape(5.dp),
+        //elevation = 10.dp
     ) {
         var comicTitle by remember { mutableStateOf("") }
 
         Column(
             modifier = Modifier.padding(5.dp)) {
-
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)) {
@@ -68,54 +64,62 @@ private fun AddComicContent() {
                     )
                 }
 
-            Spacer(modifier = Modifier.fillMaxWidth().height(10.dp))
+            Spacer(modifier = Modifier
+                .fillMaxWidth()
+                .height(10.dp))
 
-                Row(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)) {
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min)) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()) {
-                        Text(stringResource(R.string.status_txt))
-                    }
+                        .weight(1f)
+                        .fillMaxSize()) {
+                    Text(stringResource(R.string.status_txt))
+                }
 
-                    val items = listOf("reading", "completed", "on hold", "dropped", "plan to read")
-                    var isExpanded by remember { mutableStateOf(false) }
-                    var selectedStatus by remember { mutableStateOf("") }
-                    Column(modifier = Modifier.weight(2f)) {
-                        OutlinedTextField(
-                            value = selectedStatus,
-                            onValueChange = { selectedStatus = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            enabled = false,
-                            trailingIcon = {
-                                IconButton(onClick = { isExpanded = !isExpanded }) {
-                                    val icon = if (isExpanded)
-                                        Icons.Filled.KeyboardArrowUp
-                                    else
-                                        Icons.Filled.KeyboardArrowDown
-                                    Icon(icon, null)
-                                }
-                            }
+                val items = mapOf(
+                    "reading" to Status.READING,
+                    "completed" to Status.COMPLETED,
+                    "on hold" to Status.ON_HOLD,
+                    "dropped" to Status.DROPPED,
+                    "plan to read" to Status.PLAN_TO_READ
+                )
+                var isExpanded by remember { mutableStateOf(false) }
+                var selectedStatus by remember { mutableStateOf("") }
+                Column(modifier = Modifier.weight(2f)) {
+                   OutlinedTextField(
+                       value = selectedStatus,
+                       onValueChange = { selectedStatus = it },
+                       enabled = false,
+                       trailingIcon = {
+                           IconButton(onClick = { isExpanded = !isExpanded }) {
+                               val icon = if (isExpanded)
+                                   Icons.Filled.KeyboardArrowUp
+                               else
+                                   Icons.Filled.KeyboardArrowDown
+                               Icon(icon, null)
+                           }
+                       }
+                   )
+                DropdownMenu(
+                    expanded = isExpanded,
+                    onDismissRequest = { isExpanded = !isExpanded },
+                ) {
+                    items.forEach { item ->
+                        DropdownMenuItem(
+                            onClick = {
+                                selectedStatus = item.key
+                                isExpanded = false
+                            },
+                            content = { Text(item.key) }
                         )
-                        DropdownMenu(
-                            expanded = isExpanded,
-                            onDismissRequest = { isExpanded = !isExpanded },
-                        ) {
-                            items.forEach { item ->
-                                DropdownMenuItem(onClick = {
-                                    selectedStatus = item
-                                    isExpanded = false
-                                }) {
-                                    Text(item)
-                                }
-                            }
-                        }
                     }
                 }
+            }
+        }
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Box(
@@ -128,7 +132,19 @@ private fun AddComicContent() {
                 }
 
                 // TODO: rating input goes here
+
             }
-         }
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = {
+                        // TODO: Save input here
+                    },
+                    content = {
+                        Text(stringResource(R.string.save_btn))
+                    }
+                )
+            }
+        }
     }
 }
