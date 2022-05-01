@@ -1,5 +1,6 @@
 package com.enoch2.comictracker.app
 
+import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,22 +17,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.Status
 import com.enoch2.comictracker.router.BackButtonHandler
 import com.enoch2.comictracker.router.Router
 import com.enoch2.comictracker.router.Screen
+import com.enoch2.comictracker.util.saveData
 
 @Composable
 fun AddComicScreen() {
@@ -71,16 +72,10 @@ private fun AddComicContent() {
         }
     }
     var comicTitle by remember { mutableStateOf("") }
-    val items = mapOf(
-        "reading" to Status.READING,
-        "completed" to Status.COMPLETED,
-        "on hold" to Status.ON_HOLD,
-        "dropped" to Status.DROPPED,
-        "plan to read" to Status.PLAN_TO_READ
-    )
+    val items = listOf("reading" , "completed", "on hold", "dropped" , "plan to read")
     var isExpanded by remember { mutableStateOf(false) }
     var selectedStatus by remember { mutableStateOf("reading") }
-    var sliderPosition by remember { mutableStateOf(0f) }
+    var rating by remember { mutableStateOf(0f) }
     var issuesRead by remember { mutableStateOf("") }
     var totalIssues by remember { mutableStateOf("") }
 
@@ -113,6 +108,7 @@ private fun AddComicContent() {
                 modifier = Modifier.layoutId("text")
             )
             Box(modifier = Modifier.layoutId("input")) {
+                val disabledTextColor = if (isSystemInDarkTheme()) Color.White else Color.Black
                 OutlinedTextField(
                     value = selectedStatus,
                     onValueChange = { selectedStatus = it },
@@ -127,7 +123,7 @@ private fun AddComicContent() {
                             Icon(icon, null)
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(disabledTextColor = Color.Black)
+                    colors = TextFieldDefaults.textFieldColors(disabledTextColor = disabledTextColor)
                 )
                 DropdownMenu(
                     expanded = isExpanded,
@@ -136,10 +132,10 @@ private fun AddComicContent() {
                     items.forEach { item ->
                         DropdownMenuItem(
                             onClick = {
-                                selectedStatus = item.key
+                                selectedStatus = item
                                 isExpanded = false
                             },
-                            content = { Text(item.key) }
+                            content = { Text(item) }
                         )
                     }
                 }
@@ -161,8 +157,8 @@ private fun AddComicContent() {
                 }
             )
             Slider(
-                value = sliderPosition,
-                onValueChange = { sliderPosition = it },
+                value = rating,
+                onValueChange = { rating = it },
                 valueRange = 0f..10f,
                 modifier = Modifier.constrainAs(input) {
                     start.linkTo(lText.end)
@@ -172,7 +168,7 @@ private fun AddComicContent() {
                 }
             )
             Text(
-                "${sliderPosition.toInt()}/10",
+                "${rating.toInt()}/10",
                 textAlign = TextAlign.Center,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -237,9 +233,27 @@ private fun AddComicContent() {
             )
         }
         MyDivider()
+        val context = LocalContext.current
         Button(
             onClick = {
-                // TODO: save all input here
+                when {
+                    comicTitle == "" -> {
+                        Toast.makeText(context, "Add a comic title", Toast.LENGTH_SHORT).show()
+                    }
+                    issuesRead == "" -> { issuesRead = "0" }
+                    totalIssues == "" -> {
+                        Toast.makeText(context, "How many issues does $comicTitle have?",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        saveData(
+                            context, comicTitle, selectedStatus,
+                            rating.toInt(), issuesRead, totalIssues
+                        )
+                        Router.navigateTo(Screen.HomeScreen)
+                        Toast.makeText(context, "Comic Saved!", Toast.LENGTH_SHORT).show()
+                    }
+                }
             },
             content = { Text(text = stringResource(R.string.save_comic_data)) },
             modifier = Modifier
@@ -258,10 +272,4 @@ fun MyDivider() {
         thickness = 0.5.dp,
         modifier = Modifier.padding(10.dp)
     )
-}
-
-@Composable
-@Preview
-fun AddComicPreview() {
-    AddComicScreen()
 }

@@ -1,17 +1,12 @@
 package com.enoch2.comictracker
 
-enum class Status {
-    READING,
-    COMPLETED,
-    ON_HOLD,
-    DROPPED,
-    PLAN_TO_READ
-}
+import kotlinx.serialization.Serializable
 
-data class Comic (
+@Serializable
+data class Comic(
     val title: String,
-    val status: Status,
+    val status: String,
     val rating: Int,
-    val issuesRead: Int,
-    val totaIssues: Int
+    val issuesRead: String,
+    val totalIssues: String
     )

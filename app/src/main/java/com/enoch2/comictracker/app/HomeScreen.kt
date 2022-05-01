@@ -9,8 +9,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -20,11 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.enoch2.comictracker.R
+import com.enoch2.comictracker.router.Router
 import com.enoch2.comictracker.router.Router.navigateTo
 import com.enoch2.comictracker.router.Screen
 import com.enoch2.comictracker.ui.theme.BlueGray100
 import com.enoch2.comictracker.ui.theme.BlueGrayDark
 import com.enoch2.comictracker.ui.theme.Indigo500
+import com.enoch2.comictracker.util.loadData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -49,7 +51,15 @@ fun HomeTopAppBar(scaffoldState: ScaffoldState, scope: CoroutineScope) {
                 }
             )
         },
-        title = { Text(text = stringResource(id = R.string.app_name)) }
+        title = { Text(text = stringResource(id = R.string.app_name)) },
+        actions = {
+            IconButton(
+                onClick = {
+                    navigateTo(Screen.SettingScreen)
+                },
+                content = { Icon(Icons.Default.Settings, stringResource(R.string.settings)) }
+            )
+        }
     )
 }
 
@@ -62,7 +72,9 @@ fun HomeScreen() {
         scaffoldState = scaffoldState,
         topBar = { HomeTopAppBar(scaffoldState = scaffoldState, scope = scope) },
         drawerContent = {
-            Column(modifier = Modifier.weight(1f).background(BlueGrayDark)) {
+            Column(modifier = Modifier
+                .weight(1f)
+                .background(BlueGrayDark)) {
                 Box(modifier = Modifier
                     .fillMaxSize()
                     .padding(bottom = 20.dp))
@@ -78,7 +90,7 @@ fun HomeScreen() {
         }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // TODO: Add homescreen content here or move into a separate function
+            HomeScreenContent()
         }
     }
 }
@@ -130,4 +142,22 @@ private fun Drawer() {
             }
         }
     }
+}
+
+//TODO: Add loading screen that appears until data has been loaded
+@Composable
+fun HomeScreenContent() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        val context = LocalContext.current
+        val comics = loadData(context)
+
+        comics.forEach {
+            Text(it.title, modifier = Modifier.fillMaxWidth())
+        }
+    }
+}
+
+@Composable
+fun ComicInfoLayout() {
+
 }
