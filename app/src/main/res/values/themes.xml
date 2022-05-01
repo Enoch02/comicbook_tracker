@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.ComicBookTracker" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/purple_700</item>
+        <item name="android:statusBarColor">@color/blue_gray_dark</item>
+        <item name="android:navigationBarColor">@color/blue_gray_100</item>
     </style>
 </resources>

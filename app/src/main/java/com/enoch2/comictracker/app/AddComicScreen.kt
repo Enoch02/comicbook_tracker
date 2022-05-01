@@ -251,7 +251,7 @@ private fun AddComicContent() {
 
 @Composable
 fun MyDivider() {
-    val dividerColor = if (isSystemInDarkTheme()) Color.White else Color.Black
+    val dividerColor = if (isSystemInDarkTheme()) Color.Gray else Color.Black
 
     Divider(
         color = dividerColor,
