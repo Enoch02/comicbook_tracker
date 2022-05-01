@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.sp
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.router.Router.navigateTo
 import com.enoch2.comictracker.router.Screen
+import com.enoch2.comictracker.ui.theme.BlueGray100
+import com.enoch2.comictracker.ui.theme.BlueGrayDark
+import com.enoch2.comictracker.ui.theme.Indigo500
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -59,11 +62,10 @@ fun HomeScreen() {
         scaffoldState = scaffoldState,
         topBar = { HomeTopAppBar(scaffoldState = scaffoldState, scope = scope) },
         drawerContent = {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(1f).background(BlueGrayDark)) {
                 Box(modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 20.dp)
-                    .background(colorResource(R.color.purple_700)))
+                    .padding(bottom = 20.dp))
             }
             Column(modifier = Modifier.weight(3f)) {
                 Drawer()
@@ -90,7 +92,6 @@ private fun Drawer() {
 
     Column(modifier = Modifier.padding(10.dp)) {
         drawerItems.forEachIndexed { index, item ->
-            // TODO: change button colors
             TextButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
@@ -120,7 +121,7 @@ private fun Drawer() {
 
             if (index != 4) {
                 Divider(
-                    color = if (isSystemInDarkTheme()) Color.White else Color.Black,
+                    color = if (isSystemInDarkTheme()) Color.Gray else Color.Black,
                     thickness = 0.5.dp,
                     modifier = Modifier
                         .fillMaxWidth()

@@ -78,7 +78,7 @@ private fun Content() {
                         .fillMaxWidth()
                         .padding(20.dp),
                     thickness = 0.5.dp,
-                    color = if (isSystemInDarkTheme()) Color.White else Color.Black
+                    color = if (isSystemInDarkTheme()) Color.Gray else Color.Black
                 )
                 Text(
                     stringResource(R.string.designed_by_txt),
