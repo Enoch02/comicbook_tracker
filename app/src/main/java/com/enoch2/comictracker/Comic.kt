@@ -11,5 +11,7 @@ enum class Status {
 data class Comic (
     val title: String,
     val status: Status,
-    val rating: Int
+    val rating: Int,
+    val issuesRead: Int,
+    val totaIssues: Int
     )
