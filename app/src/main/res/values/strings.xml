@@ -14,4 +14,8 @@
     <string name="github">View the source code on Github: </string>
     <string name="github_link">https://github.com/Enoch02/comicbook_tracker</string>
     <string name="save_btn">Save Comic</string>
+    <string name="issues_read">Issues Read:</string>
+    <string name="total_issues">Total</string>
+    <string name="issues_read1">Issues</string>
+    <string name="save_comic_data">Save Comic Data</string>
 </resources>
