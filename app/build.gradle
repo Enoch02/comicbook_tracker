@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id "org.jetbrains.kotlin.plugin.serialization" version "1.6.21"
 }
 
 android {
@@ -10,8 +11,8 @@ android {
         applicationId "com.enoch2.comictracker"
         minSdk 23
         targetSdk 31
-        versionCode 13
-        versionName "0.6.6"
+        versionCode 14
+        versionName "0.7.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -54,6 +55,7 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.3.1'
     implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

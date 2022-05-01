@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.enoch2.comictracker.app.AboutScreen
 import com.enoch2.comictracker.app.AddComicScreen
 import com.enoch2.comictracker.app.HomeScreen
+import com.enoch2.comictracker.app.SettingScreen
 import com.enoch2.comictracker.router.Router
 import com.enoch2.comictracker.router.Screen
 import com.enoch2.comictracker.ui.theme.ComicBookTrackerTheme
@@ -20,8 +21,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val context = LocalContext.current
-
             ComicBookTrackerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -33,6 +32,7 @@ class MainActivity : ComponentActivity() {
                             is Screen.HomeScreen -> HomeScreen()
                             is Screen.AboutScreen -> AboutScreen()
                             is Screen.AddComicScreen -> AddComicScreen()
+                            is Screen.SettingScreen -> SettingScreen()
                         }
                     }
                 }
