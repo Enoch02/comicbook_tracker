@@ -1,31 +1,39 @@
 package com.enoch2.comictracker.app
 
+import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.router.Router
 import com.enoch2.comictracker.router.Router.navigateTo
 import com.enoch2.comictracker.router.Screen
-import com.enoch2.comictracker.ui.theme.BlueGray100
 import com.enoch2.comictracker.ui.theme.BlueGrayDark
-import com.enoch2.comictracker.ui.theme.Indigo500
 import com.enoch2.comictracker.util.loadData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -64,10 +72,11 @@ fun HomeTopAppBar(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 }
 
 @Composable
-fun HomeScreen() {
-    val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
-
+fun HomeScreen(
+    context: Context,
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope,
+    listState: LazyListState) {
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = { HomeTopAppBar(scaffoldState = scaffoldState, scope = scope) },
@@ -80,7 +89,7 @@ fun HomeScreen() {
                     .padding(bottom = 20.dp))
             }
             Column(modifier = Modifier.weight(3f)) {
-                Drawer()
+                Drawer(context)
             }
         },
         drawerGesturesEnabled = true,
@@ -90,14 +99,13 @@ fun HomeScreen() {
         }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            HomeScreenContent()
+            HomeScreenContent(context, listState)
         }
     }
 }
 
 @Composable
-private fun Drawer() {
-    val context = LocalContext.current
+private fun Drawer(context: Context) {
     val drawerItems = listOf(stringResource(R.string.reading),
         stringResource(R.string.completed), stringResource(R.string.on_hold),
         stringResource(R.string.dropped), stringResource(R.string.about))
@@ -133,7 +141,6 @@ private fun Drawer() {
 
             if (index != 4) {
                 Divider(
-                    color = if (isSystemInDarkTheme()) Color.Gray else Color.Black,
                     thickness = 0.5.dp,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -144,20 +151,88 @@ private fun Drawer() {
     }
 }
 
-//TODO: Add loading screen that appears until data has been loaded
 @Composable
-fun HomeScreenContent() {
-    Column(modifier = Modifier.fillMaxSize()) {
-        val context = LocalContext.current
-        val comics = loadData(context)
+fun HomeScreenContent(context: Context, listState: LazyListState) {
+    val comics = loadData(context)
 
-        comics.forEach {
-            Text(it.title, modifier = Modifier.fillMaxWidth())
+    //TODO: figure out how to send selected comic to its details screen
+    LazyColumn(state = listState) {
+        items(comics) { comic ->
+            Card(
+                elevation = 2.dp,
+                modifier = Modifier.padding(10.dp)
+            ) {
+                ComicInfoLayout(comicTitle = comic.title, issuesRead = comic.issuesRead ,
+                    totalIssues = comic.totalIssues , status = comic.status)
+            }
         }
     }
 }
 
 @Composable
-fun ComicInfoLayout() {
+fun ComicInfoLayout(comicTitle: String, issuesRead: String, totalIssues: String, status: String) {
+    val constraints = ConstraintSet {
+        val cover = createRefFor("cover")
+        val title = createRefFor("title")
+        val divider = createRefFor("divider")
+        val progress = createRefFor("issueInfo")
+        val statusC = createRefFor("status")
 
+        constrain(cover) {
+            top.linkTo(parent.top)
+            bottom.linkTo(parent.bottom)
+            start.linkTo(parent.start)
+        }
+        constrain(title) {
+            top.linkTo(parent.top, 5.dp)
+            start.linkTo(cover.end, 20.dp)
+            end.linkTo(parent.end, 20.dp)
+            width = Dimension.fillToConstraints
+        }
+        constrain(divider) {
+            top.linkTo(title.bottom, margin = 10.dp)
+            bottom.linkTo(progress.top)
+            start.linkTo(cover.end, 10.dp)
+            end.linkTo(parent.end, 10.dp)
+            width = Dimension.fillToConstraints
+        }
+        constrain(progress) {
+            top.linkTo(divider.bottom, 10.dp)
+            start.linkTo(cover.end, 20.dp)
+            end.linkTo(statusC.start)
+        }
+        constrain(statusC) {
+            top.linkTo(divider.bottom, 10.dp)
+            start.linkTo(progress.end)
+            end.linkTo(parent.end, 20.dp)
+        }
+    }
+
+    ConstraintLayout(constraints, modifier = Modifier
+        .fillMaxWidth()
+        .height(85.dp)) {
+        //TODO: replace with the coil version
+        Image(
+            painter = painterResource(R.drawable.placeholder_image),
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.layoutId("cover")
+        )
+        Text(
+            comicTitle,
+            fontSize = 20.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.layoutId("title")
+        )
+        Divider(modifier = Modifier.layoutId("divider"))
+        Text(
+            "Progress: $issuesRead / $totalIssues",
+            modifier = Modifier.layoutId("issueInfo")
+        )
+        Text(
+            "Status: $status",
+            modifier = Modifier.layoutId("status")
+        )
+    }
 }

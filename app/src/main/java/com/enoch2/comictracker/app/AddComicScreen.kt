@@ -33,6 +33,7 @@ import com.enoch2.comictracker.router.BackButtonHandler
 import com.enoch2.comictracker.router.Router
 import com.enoch2.comictracker.router.Screen
 import com.enoch2.comictracker.util.saveData
+import com.enoch2.comictracker.util.validateInput
 
 @Composable
 fun AddComicScreen() {
@@ -61,8 +62,8 @@ private fun AddComicContent() {
 
         constrain(text) {
             top.linkTo(parent.top)
-            start.linkTo(parent.start)
             bottom.linkTo(input.bottom)
+            start.linkTo(parent.start)
             width = Dimension.percent(0.3f)
         }
         constrain(input) {
@@ -92,10 +93,8 @@ private fun AddComicContent() {
                 value = comicTitle,
                 onValueChange = { comicTitle = it },
                 modifier = Modifier.layoutId("input"),
-                shape = RectangleShape,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    capitalization = KeyboardCapitalization.Words)
+                //shape = RectangleShape,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
             )
         }
         MyDivider()
@@ -112,7 +111,7 @@ private fun AddComicContent() {
                 OutlinedTextField(
                     value = selectedStatus,
                     onValueChange = { selectedStatus = it },
-                    shape = RectangleShape,
+                    //shape = RectangleShape,
                     enabled = false,
                     trailingIcon = {
                         IconButton(onClick = { isExpanded = !isExpanded }) {
@@ -205,13 +204,10 @@ private fun AddComicContent() {
                     start.linkTo(text.end)
                     width = Dimension.percent(0.30f)
                 },
-                shape = RectangleShape,
+                //shape = RectangleShape,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White,
-                    // TODO: Add other colors when i change the theme
-                )
+                colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White)
             )
             OutlinedTextField(
                 value = totalIssues,
@@ -224,7 +220,7 @@ private fun AddComicContent() {
                     end.linkTo(parent.end, margin = 10.dp)
                     width = Dimension.percent(0.30f)
                 },
-                shape = RectangleShape,
+                //shape = RectangleShape,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = TextFieldDefaults.textFieldColors(
@@ -236,24 +232,7 @@ private fun AddComicContent() {
         val context = LocalContext.current
         Button(
             onClick = {
-                when {
-                    comicTitle == "" -> {
-                        Toast.makeText(context, "Add a comic title", Toast.LENGTH_SHORT).show()
-                    }
-                    issuesRead == "" -> { issuesRead = "0" }
-                    totalIssues == "" -> {
-                        Toast.makeText(context, "How many issues does $comicTitle have?",
-                            Toast.LENGTH_SHORT).show()
-                    }
-                    else -> {
-                        saveData(
-                            context, comicTitle, selectedStatus,
-                            rating.toInt(), issuesRead, totalIssues
-                        )
-                        Router.navigateTo(Screen.HomeScreen)
-                        Toast.makeText(context, "Comic Saved!", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                validateInput(context, comicTitle, issuesRead, totalIssues, rating.toInt(), selectedStatus)
             },
             content = { Text(text = stringResource(R.string.save_comic_data)) },
             modifier = Modifier
@@ -265,11 +244,5 @@ private fun AddComicContent() {
 
 @Composable
 fun MyDivider() {
-    val dividerColor = if (isSystemInDarkTheme()) Color.Gray else Color.Black
-
-    Divider(
-        color = dividerColor,
-        thickness = 0.5.dp,
-        modifier = Modifier.padding(10.dp)
-    )
+    Divider(modifier = Modifier.padding(10.dp))
 }

@@ -6,6 +6,7 @@ package com.enoch2.comictracker.util
 import android.content.Context
 import android.util.Log
 import com.enoch2.comictracker.Comic
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.File

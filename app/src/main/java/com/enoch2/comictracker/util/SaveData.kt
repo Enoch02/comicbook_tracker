@@ -11,8 +11,12 @@ const val FILE_NAME = "data.json"
 
 // TODO: is this function necessary?
 fun saveData(
-    context: Context, title: String, status: String,
-    rating: Int, issuesRead: String, totalIssues: String
+    context: Context,
+    title: String,
+    status: String,
+    rating: Int,
+    issuesRead: String,
+    totalIssues: String
 ) {
     val file = File(context.filesDir, FILE_NAME)
     val json = Json.encodeToString(Comic(title, status, rating, issuesRead, totalIssues))
