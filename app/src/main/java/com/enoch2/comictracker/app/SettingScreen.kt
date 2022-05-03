@@ -87,46 +87,48 @@ private fun Content() {
                 modifier = Modifier.layoutId("desc")
             )
         }
-        MyDivider()
-        ConstraintLayout(constraints, modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)) {
-
-        }
-        MyDivider()
+        Divider()
         TextButton(
-            onClick = { showDialog = !showDialog },
-            content = { Text(stringResource(R.string.clear_data)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp)
+            onClick = { /*TODO*/ },
+            content = { Text(stringResource(R.string.import_data)) },
+            modifier = Modifier.fillMaxWidth()
         )
-        MyDivider()
+        Divider()
         TextButton(
             onClick = { /*TODO*/ },
             content = { Text(stringResource(R.string.export_data)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp)
+            modifier = Modifier.fillMaxWidth()
         )
-    }
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = !showDialog },
-            title = { Text(stringResource(R.string.clear_data)) },
-            text = { Text(stringResource(R.string.clear_data_dialog_body)) },
-            confirmButton = {
-                Button(
-                    onClick = { /*TODO*/ },
-                    content = { Text(stringResource(R.string.yes)) }
-                )
-            },
-            dismissButton = {
-                Button(
-                    onClick = { showDialog = !showDialog },
-                    content = { Text(stringResource(R.string.no)) }
-                )
-            }
+        Divider()
+        TextButton(
+            onClick = { showDialog = !showDialog },
+            content = { Text(stringResource(R.string.clear_data)) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Divider()
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = !showDialog },
+                title = { Text(stringResource(R.string.clear_data)) },
+                text = { Text(stringResource(R.string.clear_data_dialog_body)) },
+                confirmButton = {
+                    Button(
+                        onClick = { /*TODO*/ },
+                        content = { Text(stringResource(R.string.yes)) }
+                    )
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { showDialog = !showDialog },
+                        content = { Text(stringResource(R.string.no)) }
+                    )
+                }
+            )
+        }
+        TextButton(
+            onClick = {  },
+            content = { Text("Do something") },
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
