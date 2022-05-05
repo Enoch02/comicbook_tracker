@@ -1,4 +1,4 @@
-package com.enoch2.comictracker
+package com.enoch2.comictracker.data
 
 import kotlinx.serialization.Serializable
 

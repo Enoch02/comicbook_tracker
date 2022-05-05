@@ -1,4 +1,4 @@
-package com.enoch2.comictracker.app
+package com.enoch2.comictracker.screen
 
 import androidx.compose.runtime.Composable
 

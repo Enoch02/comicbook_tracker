@@ -1,8 +1,7 @@
-package com.enoch2.comictracker.util
+package com.enoch2.comictracker.data
 
 import android.content.Context
 import android.util.Log
-import com.enoch2.comictracker.Comic
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
