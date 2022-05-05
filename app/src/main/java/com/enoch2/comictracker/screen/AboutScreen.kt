@@ -1,4 +1,4 @@
-package com.enoch2.comictracker.app
+package com.enoch2.comictracker.screen
 
 import android.content.Intent
 import android.net.Uri
@@ -76,9 +76,8 @@ private fun Content() {
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
+                        .padding(top = 10.dp, bottom = 10.dp),
                     thickness = 0.5.dp,
-                    color = if (isSystemInDarkTheme()) Color.Gray else Color.Black
                 )
                 Text(
                     stringResource(R.string.designed_by_txt),
