@@ -151,7 +151,7 @@ private fun AddComicContent() {
                         start.linkTo(parent.start)
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
-                        width = Dimension.percent(0.2f)
+                        width = Dimension.percent(0.3f)
                     }
                 )
                 Slider(
@@ -162,7 +162,7 @@ private fun AddComicContent() {
                         start.linkTo(lText.end)
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
-                        width = Dimension.percent(0.6f)
+                        width = Dimension.percent(0.5f)
                     }
                 )
                 Text(
