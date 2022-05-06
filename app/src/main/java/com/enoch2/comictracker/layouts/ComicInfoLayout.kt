@@ -1,13 +1,17 @@
 package com.enoch2.comictracker.layouts
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Divider
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -16,15 +20,20 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.enoch2.comictracker.R
+import com.enoch2.comictracker.ui.theme.Typography
 
 @Composable
-fun ComicInfoLayout(comicTitle: String, issuesRead: String, totalIssues: String, status: String) {
+fun ComicInfoLayout(
+    comicTitle: String,
+    issuesRead: String,
+    totalIssues: String,
+    status: String
+) {
     val constraints = ConstraintSet {
         val cover = createRefFor("cover")
         val title = createRefFor("title")
         val divider = createRefFor("divider")
-        val progress = createRefFor("progress")
-        val statusC = createRefFor("status")
+        val info = createRefFor("info")
 
         constrain(cover) {
             top.linkTo(parent.top)
@@ -39,22 +48,17 @@ fun ComicInfoLayout(comicTitle: String, issuesRead: String, totalIssues: String,
         }
         constrain(divider) {
             top.linkTo(title.bottom, margin = 10.dp)
-            bottom.linkTo(progress.top)
+            bottom.linkTo(info.top)
             start.linkTo(cover.end, 10.dp)
             end.linkTo(parent.end, 10.dp)
             width = Dimension.fillToConstraints
         }
-        constrain(progress) {
+        constrain(info) {
             top.linkTo(divider.bottom, 10.dp)
-            start.linkTo(cover.end, 10.dp)
-            end.linkTo(statusC.start)
-            width = Dimension.percent(.45f)
-        }
-        constrain(statusC) {
-            top.linkTo(divider.bottom, 10.dp)
-            start.linkTo(progress.end)
-            end.linkTo(parent.end)
-            width = Dimension.percent(.45f)
+            start.linkTo(cover.end, 20.dp)
+            end.linkTo(parent.end, 20.dp)
+            bottom.linkTo(parent.bottom, 10.dp)
+            width = Dimension.fillToConstraints
         }
     }
 
@@ -68,6 +72,7 @@ fun ComicInfoLayout(comicTitle: String, issuesRead: String, totalIssues: String,
             contentScale = ContentScale.Fit,
             modifier = Modifier.layoutId("cover")
         )
+
         Text(
             comicTitle,
             fontSize = 20.sp,
@@ -75,21 +80,16 @@ fun ComicInfoLayout(comicTitle: String, issuesRead: String, totalIssues: String,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.layoutId("title")
         )
+
         Divider(modifier = Modifier.layoutId("divider"))
+
         Text(
-            "Progress: $issuesRead / $totalIssues",
+            "Progress: $issuesRead / $totalIssues   Status: $status",
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .layoutId("progress")
-        )
-        Text(
-            "Status: $status",
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .layoutId("status")
-                .padding(end = 10.dp)
+            style = Typography.body2,
+            // Prevents the font from being resized by the system
+            fontSize = with(LocalDensity.current) { Typography.body2.fontSize.value.dp.toSp() },
+            modifier = Modifier.layoutId("info")
         )
     }
 }

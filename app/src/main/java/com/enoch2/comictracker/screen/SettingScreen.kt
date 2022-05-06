@@ -1,5 +1,7 @@
 package com.enoch2.comictracker.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,8 +11,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -43,7 +47,6 @@ fun SettingScreen() {
             Surface(modifier = Modifier.fillMaxSize()) {
                 Content()
             }
-
         }
     )
 }
@@ -56,35 +59,43 @@ private fun Content() {
         val desc = createRefFor("desc")
 
         constrain(text) {
-            top.linkTo(parent.top)
-            width = Dimension.percent(0.8f)
+            start.linkTo(parent.start, 10.dp)
+            top.linkTo(parent.top, 10.dp)
+            width = Dimension.percent(0.9f)
         }
         constrain(checkBox) {
-            top.linkTo(parent.top)
-            end.linkTo(parent.end)
-            width = Dimension.percent(0.2f)
+            top.linkTo(parent.top, 10.dp)
+            end.linkTo(parent.end, 10.dp)
+            width = Dimension.percent(0.1f)
         }
         constrain(desc) {
             top.linkTo(text.bottom)
-            start.linkTo(parent.start, margin = 5.dp)
+            bottom.linkTo(parent.bottom, 10.dp)
+            start.linkTo(parent.start, 15.dp)
         }
     }
+    // TODO: Will load this from shared prefs
     var alwaysDark by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     // TODO: Save settings to shared prefs
-    Column(modifier = Modifier.padding(10.dp)) {
-        ConstraintLayout(constraints, modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)) {
+    Column {
+        ConstraintLayout(
+            constraints,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    alwaysDark = !alwaysDark
+                }
+        ) {
             Text(
                 stringResource(R.string.always_dark),
                 fontSize = 20.sp,
-                modifier = Modifier.layoutId("text"),
+                modifier = Modifier.layoutId("text")
             )
             Checkbox(
                 checked = alwaysDark,
                 onCheckedChange = { alwaysDark = it },
-                modifier = Modifier.layoutId("checkBox"),
+                modifier = Modifier.layoutId("checkBox")
             )
             Text(
                 stringResource(R.string.always_dark_desc),
@@ -94,24 +105,28 @@ private fun Content() {
             )
         }
         Divider()
+
         TextButton(
             onClick = { /*TODO*/ },
             content = { Text(stringResource(R.string.import_data)) },
             modifier = Modifier.fillMaxWidth()
         )
         Divider()
+
         TextButton(
             onClick = { /*TODO*/ },
             content = { Text(stringResource(R.string.export_data)) },
             modifier = Modifier.fillMaxWidth()
         )
         Divider()
+
         TextButton(
             onClick = { showDialog = !showDialog },
             content = { Text(stringResource(R.string.clear_data)) },
             modifier = Modifier.fillMaxWidth()
         )
         Divider()
+
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = !showDialog },
@@ -131,10 +146,17 @@ private fun Content() {
                 }
             )
         }
+
         TextButton(
             onClick = {  },
             content = { Text("Do something") },
             modifier = Modifier.fillMaxWidth()
         )
     }
+}
+
+@Preview()
+@Composable
+fun SettingScreenPreview() {
+    SettingScreen()
 }
