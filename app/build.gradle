@@ -11,8 +11,8 @@ android {
         applicationId "com.enoch2.comictracker"
         minSdk 23
         targetSdk 31
-        versionCode 17
-        versionName "0.7.3"
+        versionCode 18
+        versionName "0.7.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

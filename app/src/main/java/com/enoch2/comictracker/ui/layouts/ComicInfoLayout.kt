@@ -1,11 +1,10 @@
-package com.enoch2.comictracker.layouts
+package com.enoch2.comictracker.ui.layouts
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Divider
-import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -86,7 +85,6 @@ fun ComicInfoLayout(
         Text(
             "Progress: $issuesRead / $totalIssues   Status: $status",
             maxLines = 1,
-            style = Typography.body2,
             // Prevents the font from being resized by the system
             fontSize = with(LocalDensity.current) { Typography.body2.fontSize.value.dp.toSp() },
             modifier = Modifier.layoutId("info")
