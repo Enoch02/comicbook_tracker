@@ -1,4 +1,4 @@
-package com.enoch2.comictracker.screen
+package com.enoch2.comictracker.ui.screen
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -13,17 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.validateInput
+import com.enoch2.comictracker.data.Comic
 import com.enoch2.comictracker.router.BackButtonHandler
 import com.enoch2.comictracker.router.Router
 import com.enoch2.comictracker.router.Screen
@@ -166,9 +166,10 @@ private fun AddComicContent() {
                     }
                 )
                 Text(
-                    "${rating.toInt()}/10",
+                    "${rating.toInt()} / 10",
                     textAlign = TextAlign.Center,
-                    fontSize = 25.sp,
+                    maxLines = 1,
+                    fontSize = with(LocalDensity.current) { 15.dp.toSp() },
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier.constrainAs(rText) {
                         start.linkTo(input.end)
@@ -227,7 +228,7 @@ private fun AddComicContent() {
             val context = LocalContext.current
             Button(
                 onClick = {
-                    validateInput(
+                    Comic.validateInput(
                         context,
                         comicTitle,
                         issuesRead,

@@ -1,7 +1,6 @@
 package com.enoch2.comictracker.ui.theme
 
 import androidx.compose.material.Typography
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
