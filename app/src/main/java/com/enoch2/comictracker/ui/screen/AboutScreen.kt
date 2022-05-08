@@ -21,87 +21,77 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.enoch2.comictracker.BuildConfig
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.router.BackButtonHandler
-import com.enoch2.comictracker.router.Router
-import com.enoch2.comictracker.router.Screen
+import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
 
 const val VERSION_NAME = BuildConfig.VERSION_NAME
 
 @Composable
-fun AboutScreen() {
-    BackButtonHandler {
-        Router.navigateTo(Screen.HomeScreen)
-    }
+fun AboutScreen(navController: NavController) {
     Scaffold(
         topBar = {
-            TopAppBar(title = {
-                Text(stringResource(R.string.about))
-                },
-                navigationIcon = {
-                    IconButton(onClick = { Router.navigateTo(Screen.HomeScreen) }) {
-                        Icon(Icons.Default.ArrowBack, "back")
-                    }
-                }
+            ComicTrackerTopBar(
+                title = stringResource(R.string.about),
+                navIcon = Icons.Default.ArrowBack,
+                contentDescription = stringResource(R.string.back),
+                onClick = { navController.popBackStack() }
             )
         },
-        content = { Content() }
-    )
-}
+        content = {
+            val context = LocalContext.current
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Enoch02"))
 
-@Composable
-private fun Content() {
-    val context = LocalContext.current
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Enoch02"))
-
-        Box(
-            contentAlignment = Alignment.Center,
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Image(
-                    painterResource(R.drawable.ic_launcher_foreground),
-                    contentDescription = "app icon",
-                    alignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Text(
-                    "version $VERSION_NAME",
-                    textAlign = TextAlign.Center,
-                    fontSize = 15.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp, bottom = 10.dp),
-                    thickness = 0.5.dp,
-                )
-                Text(
-                    stringResource(R.string.designed_by_txt),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 15.dp)
-                )
-                Text(
-                    stringResource(R.string.github),
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(textDecoration = TextDecoration.Underline),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                SelectionContainer {
+            Box(
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Image(
+                        painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = "app icon",
+                        alignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                     Text(
-                        stringResource(R.string.github_link),
+                        "version $VERSION_NAME",
                         textAlign = TextAlign.Center,
-                        color = Color.Blue,
+                        fontSize = 15.sp,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { context.startActivity(intent) }
-                )
+                    )
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, bottom = 10.dp),
+                        thickness = 0.5.dp,
+                    )
+                    Text(
+                        stringResource(R.string.designed_by_txt),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 15.dp)
+                    )
+                    Text(
+                        stringResource(R.string.github),
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(textDecoration = TextDecoration.Underline),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    SelectionContainer {
+                        Text(
+                            stringResource(R.string.github_link),
+                            textAlign = TextAlign.Center,
+                            color = Color.Blue,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { context.startActivity(intent) }
+                        )
+                    }
+                }
             }
         }
-    }
+    )
 }

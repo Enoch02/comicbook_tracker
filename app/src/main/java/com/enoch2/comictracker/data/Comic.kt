@@ -1,9 +1,12 @@
 package com.enoch2.comictracker.data
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
-import com.enoch2.comictracker.router.Router
-import com.enoch2.comictracker.router.Screen
+import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -21,6 +24,7 @@ data class Comic(
     val totalIssues: String) {
 
     companion object {
+        private val comics = mutableListOf<Comic>()
 
         private fun saveComic(
             context: Context,
@@ -41,23 +45,26 @@ data class Comic(
                 file.appendText(json)
                 file.appendText("\r")
             }
+            Log.w("file_io", "file saved")
         }
 
-        fun loadComics(context: Context): MutableList<Comic> {
+        fun loadComics(context: Context, scope: CoroutineScope): List<Comic> {
             val file = File(context.filesDir, FILE_NAME)
-            val comics = mutableListOf<Comic>()
-
-            if (file.exists()) {
-                file.forEachLine {
-                    val obj = Json.decodeFromString<Comic>(it)
-                    comics.add(obj)
+            scope.launch {
+                if (file.exists()) {
+                    file.forEachLine {
+                        val obj = Json.decodeFromString<Comic>(it)
+                        comics.add(obj)
+                    }
                 }
             }
-            return comics
+            Log.w("file_io", "file loaded")
+            return comics.toList()
         }
 
         /*Save input if valid*/
         fun validateInput(
+            navController: NavController,
             context: Context,
             comicTitle: String,
             issuesRead: String,
@@ -74,7 +81,7 @@ data class Comic(
                             context, comicTitle, selectedStatus,
                             rating, "0", "0"
                         )
-                        Router.navigateTo(Screen.HomeScreen)
+                        navController.popBackStack()
                         Toast.makeText(context, "Comic Saved!", Toast.LENGTH_SHORT).show()
                     }
                     issuesRead.toInt() > totalIssues.toInt() -> {
@@ -89,7 +96,7 @@ data class Comic(
                             context, comicTitle, selectedStatus,
                             rating, issuesRead, totalIssues
                         )
-                        Router.navigateTo(Screen.HomeScreen)
+                        navController.popBackStack()
                         Toast.makeText(context, "Comic Saved!", Toast.LENGTH_SHORT).show()
                     }
                 }

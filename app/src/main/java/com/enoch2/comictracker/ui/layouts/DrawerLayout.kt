@@ -8,12 +8,12 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.router.Router
-import com.enoch2.comictracker.router.Screen
+import com.enoch2.comictracker.navigation.Screen
 
 @Composable
-fun DrawerLayout(context: Context) {
+fun DrawerLayout(navController: NavController, context: Context) {
     val drawerItems = listOf(
         stringResource(R.string.reading),
         stringResource(R.string.completed), stringResource(R.string.on_hold),
@@ -42,7 +42,9 @@ fun DrawerLayout(context: Context) {
 
                     }
                     4 -> {
-                        Router.navigateTo(Screen.AboutScreen)
+                        navController.navigate(Screen.AboutScreen.route) {
+                            popUpTo(Screen.MainScreen.route)
+                        }
                     }
                 }
             }
