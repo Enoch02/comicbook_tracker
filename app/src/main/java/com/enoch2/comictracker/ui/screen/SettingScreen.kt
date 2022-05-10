@@ -135,9 +135,9 @@ fun SettingScreen(navController: NavController, context: Context) {
                     TextButton(
                         onClick = {
                             val file = File(context.filesDir, FILE_NAME)
-                            for (i in 0..100) {
+                            for (i in 0..500) {
                                 file.appendText(
-                                    "{\"title\":\"dummy\",\"status\":\"reading\",\"rating\":8,\"issuesRead\":\"1\",\"totalIssues\":\"188\"}"
+                                    "{\"title\":\"$i\",\"status\":\"reading\",\"rating\":8,\"issues_read\":\"1\",\"total_issues\":\"188\"}"
                                 )
                                 file.appendText("\r")
                             }

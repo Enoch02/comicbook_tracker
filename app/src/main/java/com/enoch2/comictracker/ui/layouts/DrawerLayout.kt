@@ -42,9 +42,7 @@ fun DrawerLayout(navController: NavController, context: Context) {
 
                     }
                     4 -> {
-                        navController.navigate(Screen.AboutScreen.route) {
-                            popUpTo(Screen.MainScreen.route)
-                        }
+                        navController.navigate(Screen.AboutScreen.route)
                     }
                 }
             }

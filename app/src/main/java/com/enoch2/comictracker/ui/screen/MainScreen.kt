@@ -3,20 +3,19 @@ package com.enoch2.comictracker.ui.screen
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +33,7 @@ import com.enoch2.comictracker.ui.theme.BlueGrayDark
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+//TODO: update dependencies
 @Composable
 fun MainTopAppBar(navController: NavController, scaffoldState: ScaffoldState, scope: CoroutineScope) {
     val drawerState = scaffoldState.drawerState
@@ -121,20 +121,25 @@ fun MainScreen(
         var comics by rememberSaveable { mutableStateOf(listOf<Comic>()) }
         comics = Comic.loadComics(context, scope)
 
-        LazyColumn(state = listState) {
-            items(comics) { comic ->
-                Card(
-                    elevation = 2.dp,
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp)
-                        .clickable {
-                            navController.navigate(Screen.ComicDetailScreen.withArgs(comic.title))
-                        }
-                ) {
-                    ComicInfoLayout(comicTitle = comic.title, issuesRead = comic.issuesRead ,
-                        totalIssues = comic.totalIssues, status = comic.status)
+        LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
+            items(
+                count = comics.size,
+                itemContent = { index ->
+                    val comic = comics[index]
+
+                    Card(
+                        elevation = 2.dp,
+                        modifier = Modifier
+                            .padding(bottom = 5.dp)
+                            .clickable {
+                                navController.navigate(Screen.ComicDetailScreen.withArgs(comic.title))
+                            }
+                    ) {
+                        ComicInfoLayout(comicTitle = comic.title, issuesRead = comic.issuesRead ,
+                            totalIssues = comic.totalIssues, status = comic.status)
+                    }
                 }
-            }
+            )
         }
     }
 }

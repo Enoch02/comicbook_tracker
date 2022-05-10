@@ -56,12 +56,6 @@ fun AddComicScreen(navController: NavController) {
                 }
             }
             var comicTitle by remember { mutableStateOf("") }
-            val items = listOf("reading" , "completed", "on hold", "dropped" , "plan to read")
-            var isExpanded by remember { mutableStateOf(false) }
-            var selectedStatus by remember { mutableStateOf("reading") }
-            var rating by remember { mutableStateOf(0f) }
-            var issuesRead by remember { mutableStateOf("") }
-            var totalIssues by remember { mutableStateOf("") }
 
             Surface(modifier = Modifier.fillMaxSize()) {
                 Column {
@@ -83,6 +77,11 @@ fun AddComicScreen(navController: NavController) {
                         )
                     }
                     Divider()
+
+                    val items = listOf("reading" , "completed", "on hold", "dropped" , "plan to read")
+                    var isExpanded by remember { mutableStateOf(false) }
+                    var selectedStatus by remember { mutableStateOf("reading") }
+
                     ConstraintLayout(
                         constraints, modifier = Modifier
                             .fillMaxWidth()
@@ -128,6 +127,9 @@ fun AddComicScreen(navController: NavController) {
                         }
                     }
                     Divider()
+
+                    var rating by remember { mutableStateOf(0f) }
+
                     ConstraintLayout(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -170,6 +172,10 @@ fun AddComicScreen(navController: NavController) {
                         )
                     }
                     Divider()
+
+                    var issuesRead by remember { mutableStateOf("") }
+                    var totalIssues by remember { mutableStateOf("") }
+
                     ConstraintLayout(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -215,15 +221,21 @@ fun AddComicScreen(navController: NavController) {
                         )
                     }
                     Divider()
+
                     val context = LocalContext.current
                     Button(
                         onClick = {
+                            if (issuesRead == "")
+                                issuesRead = "0"
+                            if (totalIssues == "")
+                                totalIssues = "0"
+
                             Comic.validateInput(
                                 navController,
                                 context,
                                 comicTitle,
-                                issuesRead,
-                                totalIssues,
+                                issuesRead.toInt(),
+                                totalIssues.toInt(),
                                 rating.toInt(),
                                 selectedStatus
                             )
