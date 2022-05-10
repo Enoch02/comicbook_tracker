@@ -11,11 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.data.Comic
+import com.enoch2.comictracker.data.ComicDao
 import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.ui.layouts.ComicInfoLayout
 import com.enoch2.comictracker.ui.layouts.DrawerLayout
@@ -74,12 +71,13 @@ fun MainTopAppBar(navController: NavController, scaffoldState: ScaffoldState, sc
 }
 
 @Composable
-fun MainScreen(
+fun HomeScreen(
     navController: NavController,
     context: Context,
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
-    listState: LazyListState
+    listState: LazyListState,
+    comicDao: ComicDao
 ) {
     Scaffold(
         scaffoldState = scaffoldState,
@@ -118,8 +116,11 @@ fun MainScreen(
             }
         }
     ) {
-        var comics by rememberSaveable { mutableStateOf(listOf<Comic>()) }
-        comics = Comic.loadComics(context, scope)
+        var comics by remember { mutableStateOf(listOf<Comic>()) }
+
+        LaunchedEffect(true) {
+            comics = comicDao.getAll()
+        }
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
             items(

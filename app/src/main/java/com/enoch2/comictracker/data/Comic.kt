@@ -1,19 +1,10 @@
 package com.enoch2.comictracker.data
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
-import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.File
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+/*
 const val FILE_NAME = "data.json"
 
 @Serializable
@@ -66,7 +57,9 @@ data class Comic(
             return comics.toList()
         }
 
-        /*Save input if valid*/
+        */
+/*Save input if valid*//*
+
         fun validateInput(
             navController: NavController,
             context: Context,
@@ -111,3 +104,13 @@ data class Comic(
         }
     }
 }
+*/
+
+@Entity
+data class Comic(
+    @PrimaryKey val title: String,
+    val status: String,
+    val rating: Int,
+    @ColumnInfo(name = "issues_read")val issuesRead: Int,
+    @ColumnInfo(name = "total_issues")val totalIssues: Int
+)

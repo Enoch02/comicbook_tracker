@@ -3,6 +3,7 @@ package com.enoch2.comictracker.ui.layouts
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -20,9 +21,11 @@ fun DrawerLayout(navController: NavController, context: Context) {
         stringResource(R.string.dropped), stringResource(R.string.about)
     )
 
+    Text("Filters")
     drawerItems.forEachIndexed { index, item ->
         TextButton(
             modifier = Modifier.fillMaxWidth(),
+            content = { Text(item) },
             onClick = {
                 when (index) {
                     0 -> {
@@ -46,6 +49,9 @@ fun DrawerLayout(navController: NavController, context: Context) {
                     }
                 }
             }
-        ){ Text(item) }
+        )
+        if (index == 3) {
+            Divider()
+        }
     }
 }

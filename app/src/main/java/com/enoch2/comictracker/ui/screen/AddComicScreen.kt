@@ -1,5 +1,7 @@
 package com.enoch2.comictracker.ui.screen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,9 +26,17 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.data.Comic
+import com.enoch2.comictracker.data.ComicDao
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun AddComicScreen(navController: NavController) {
+fun AddComicScreen(
+    navController: NavController,
+    context: Context,
+    scope: CoroutineScope,
+    comicDao: ComicDao
+) {
     Scaffold (
         topBar = {
             TopAppBar(
@@ -222,7 +231,6 @@ fun AddComicScreen(navController: NavController) {
                     }
                     Divider()
 
-                    val context = LocalContext.current
                     Button(
                         onClick = {
                             if (issuesRead == "")
@@ -230,15 +238,22 @@ fun AddComicScreen(navController: NavController) {
                             if (totalIssues == "")
                                 totalIssues = "0"
 
-                            Comic.validateInput(
-                                navController,
-                                context,
-                                comicTitle,
-                                issuesRead.toInt(),
-                                totalIssues.toInt(),
-                                rating.toInt(),
-                                selectedStatus
-                            )
+                            if (comicTitle != "") {
+                                scope.launch {
+                                    comicDao.insertAll(
+                                        Comic(
+                                            comicTitle,
+                                            selectedStatus,
+                                            rating.toInt(),
+                                            issuesRead.toInt(),
+                                            totalIssues.toInt()
+                                        )
+                                    )
+                                }
+                                navController.popBackStack()
+                            } else {
+                                Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
+                            }
                         },
                         content = { Text(text = stringResource(R.string.save_comic_data)) },
                         modifier = Modifier
