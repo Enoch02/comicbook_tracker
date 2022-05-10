@@ -1,18 +1,10 @@
 package com.enoch2.comictracker.data
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
-import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.File
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+/*
 const val FILE_NAME = "data.json"
 
 @Serializable
@@ -20,10 +12,13 @@ data class Comic(
     val title: String,
     val status: String,
     val rating: Int,
-    val issuesRead: String,
-    val totalIssues: String) {
+    @SerialName("issues_read")
+    val issuesRead: Int,
+    @SerialName("total_issues")
+    val totalIssues: Int) {
 
     companion object {
+        private val format = Json { ignoreUnknownKeys = true }
         private val comics = mutableListOf<Comic>()
 
         private fun saveComic(
@@ -31,8 +26,8 @@ data class Comic(
             title: String,
             status: String,
             rating: Int,
-            issuesRead: String,
-            totalIssues: String
+            issuesRead: Int,
+            totalIssues: Int
         ) {
             val file = File(context.filesDir, FILE_NAME)
             val json = Json.encodeToString(Comic(title, status, rating, issuesRead, totalIssues))
@@ -53,7 +48,7 @@ data class Comic(
             scope.launch {
                 if (file.exists()) {
                     file.forEachLine {
-                        val obj = Json.decodeFromString<Comic>(it)
+                        val obj = format.decodeFromString<Comic>(it)
                         comics.add(obj)
                     }
                 }
@@ -62,24 +57,27 @@ data class Comic(
             return comics.toList()
         }
 
-        /*Save input if valid*/
+        */
+/*Save input if valid*//*
+
         fun validateInput(
             navController: NavController,
             context: Context,
             comicTitle: String,
-            issuesRead: String,
-            totalIssues: String,
+            issuesRead: Int,
+            totalIssues: Int,
             rating: Int,
-            selectedStatus: String, ) {
+            selectedStatus: String) {
+
             try {
                 when {
                     comicTitle == "" -> {
                         Toast.makeText(context, "Add a comic title", Toast.LENGTH_SHORT).show()
                     }
-                    issuesRead == "" && totalIssues == "" -> {
+                    issuesRead == 0 && totalIssues == 0 -> {
                         saveComic(
                             context, comicTitle, selectedStatus,
-                            rating, "0", "0"
+                            rating, 0, 0
                         )
                         navController.popBackStack()
                         Toast.makeText(context, "Comic Saved!", Toast.LENGTH_SHORT).show()
@@ -106,3 +104,13 @@ data class Comic(
         }
     }
 }
+*/
+
+@Entity
+data class Comic(
+    @PrimaryKey val title: String,
+    val status: String,
+    val rating: Int,
+    @ColumnInfo(name = "issues_read")val issuesRead: Int,
+    @ColumnInfo(name = "total_issues")val totalIssues: Int
+)

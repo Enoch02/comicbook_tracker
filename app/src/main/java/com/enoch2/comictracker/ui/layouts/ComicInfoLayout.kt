@@ -24,8 +24,8 @@ import com.enoch2.comictracker.ui.theme.Typography
 @Composable
 fun ComicInfoLayout(
     comicTitle: String,
-    issuesRead: String,
-    totalIssues: String,
+    issuesRead: Int,
+    totalIssues: Int,
     status: String
 ) {
     val constraints = ConstraintSet {

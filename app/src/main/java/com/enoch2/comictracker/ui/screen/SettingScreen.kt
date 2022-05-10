@@ -19,13 +19,14 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.FILE_NAME
+import com.enoch2.comictracker.data.ComicDao
 import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.BlueGray400
-import java.io.File
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun SettingScreen(navController: NavController, context: Context) {
+fun SettingScreen(navController: NavController, scope: CoroutineScope, comicDao: ComicDao) {
     Scaffold(
         topBar = {
             ComicTrackerTopBar(
@@ -59,7 +60,6 @@ fun SettingScreen(navController: NavController, context: Context) {
                         start.linkTo(parent.start, 15.dp)
                     }
                 }
-                // TODO: Will load this from shared prefs
                 var alwaysDark by remember { mutableStateOf(false) }
                 var showDialog by remember { mutableStateOf(false) }
                 // TODO: Save settings to shared prefs
@@ -110,41 +110,34 @@ fun SettingScreen(navController: NavController, context: Context) {
                         content = { Text(stringResource(R.string.clear_data)) },
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Divider()
 
                     if (showDialog) {
                         AlertDialog(
                             onDismissRequest = { showDialog = !showDialog },
                             title = { Text(stringResource(R.string.clear_data)) },
-                            text = { Text(stringResource(R.string.clear_data_dialog_body)) },
+                            text = { Text(
+                                stringResource(R.string.clear_data_dialog_body),
+                                fontSize = 15.sp
+                            ) },
                             confirmButton = {
-                                Button(
-                                    onClick = { /*TODO*/ },
+                                TextButton(
+                                    onClick = {
+                                        scope.launch {
+                                            comicDao.deleteAll()
+                                        }
+                                        showDialog = !showDialog
+                                    },
                                     content = { Text(stringResource(R.string.yes)) }
                                 )
                             },
                             dismissButton = {
-                                Button(
+                                TextButton(
                                     onClick = { showDialog = !showDialog },
                                     content = { Text(stringResource(R.string.no)) }
                                 )
                             }
                         )
                     }
-
-                    TextButton(
-                        onClick = {
-                            val file = File(context.filesDir, FILE_NAME)
-                            for (i in 0..100) {
-                                file.appendText(
-                                    "{\"title\":\"dummy\",\"status\":\"reading\",\"rating\":8,\"issuesRead\":\"1\",\"totalIssues\":\"188\"}"
-                                )
-                                file.appendText("\r")
-                            }
-                        },
-                        content = { Text("Do something") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
                 }
             }
         }
