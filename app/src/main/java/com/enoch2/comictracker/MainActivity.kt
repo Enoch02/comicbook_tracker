@@ -1,6 +1,5 @@
 package com.enoch2.comictracker
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -52,7 +51,12 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.AddComicScreen.route) {
-                            AddComicScreen(navController, context, scope, comicDao)
+                            AddComicScreen(
+                                navController,
+                                context,
+                                scope,
+                                comicDao
+                            )
                         }
 
                         composable(
@@ -65,8 +69,9 @@ class MainActivity : ComponentActivity() {
                             )
                         ) { entry ->
                             ComicDetailScreen(
-                                navController = navController,
-                                comicTitle = entry.arguments?.getString("comicTitle")
+                                navController,
+                                entry.arguments?.getString("comicTitle"),
+                                comicDao
                             )
                         }
 
@@ -86,7 +91,11 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.SettingScreen.route) {
-                            SettingScreen(navController, scope, comicDao)
+                            SettingScreen(
+                                navController,
+                                scope,
+                                comicDao
+                            )
                         }
                     }
                 }

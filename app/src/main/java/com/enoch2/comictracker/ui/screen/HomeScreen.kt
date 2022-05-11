@@ -127,7 +127,6 @@ fun HomeScreen(
                 count = comics.size,
                 itemContent = { index ->
                     val comic = comics[index]
-
                     Card(
                         elevation = 2.dp,
                         modifier = Modifier

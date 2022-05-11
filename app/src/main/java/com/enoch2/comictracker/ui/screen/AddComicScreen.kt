@@ -106,7 +106,6 @@ fun AddComicScreen(
                             OutlinedTextField(
                                 value = selectedStatus,
                                 onValueChange = { selectedStatus = it },
-                                //shape = RectangleShape,
                                 enabled = false,
                                 trailingIcon = {
                                     IconButton(onClick = { isExpanded = !isExpanded }) {
