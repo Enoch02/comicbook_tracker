@@ -130,7 +130,7 @@ fun HomeScreen(
                     Card(
                         elevation = 2.dp,
                         modifier = Modifier
-                            .padding(bottom = 5.dp)
+                            .padding(bottom = 10.dp)
                             .clickable {
                                 navController.navigate(Screen.ComicDetailScreen.withArgs(comic.title))
                             }
