@@ -22,10 +22,12 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.data.Comic
 import com.enoch2.comictracker.data.ComicDao
+import com.enoch2.comictracker.model.ComicTrackerViewModel
 import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -34,7 +36,7 @@ import kotlinx.coroutines.launch
 fun ComicDetailScreen(
     navController: NavController,
     comicTitle: String?,
-    comicDao: ComicDao,
+    comicTrackerViewModel: ComicTrackerViewModel = viewModel()
 ) {
     Scaffold(
         topBar = {
@@ -51,17 +53,7 @@ fun ComicDetailScreen(
             )
         },
         content = {
-            var comic by remember { mutableStateOf(Comic(
-                "",
-                "",
-                0,
-                0,
-                0
-            )) }
-
-            LaunchedEffect(true) {
-                comic = comicDao.findByTitle(comicTitle.toString())
-            }
+            val comic = comicTrackerViewModel.findComic(comicTitle.toString())
 
             val constraints = ConstraintSet {
                 val cover = createRefFor("cover")
@@ -139,7 +131,6 @@ fun ComicDetailScreen(
                         modifier = Modifier.layoutId("issues_info")
                     )
                     Divider(modifier = Modifier.layoutId("divider"))
-                    // Align it properly
                     Text(
                         "Add description here",
                         modifier = Modifier.layoutId("description"),

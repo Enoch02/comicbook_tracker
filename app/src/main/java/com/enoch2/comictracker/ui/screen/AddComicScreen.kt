@@ -23,19 +23,22 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.data.Comic
 import com.enoch2.comictracker.data.ComicDao
+import com.enoch2.comictracker.model.ComicTrackerViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+//TODO: make function stateless and use it for the edit screen
 @Composable
 fun AddComicScreen(
     navController: NavController,
     context: Context,
     scope: CoroutineScope,
-    comicDao: ComicDao
+    comicTrackerViewModel: ComicTrackerViewModel = viewModel()
 ) {
     Scaffold (
         topBar = {
@@ -239,7 +242,7 @@ fun AddComicScreen(
 
                             if (comicTitle != "") {
                                 scope.launch {
-                                    comicDao.insertAll(
+                                    comicTrackerViewModel.addComic(
                                         Comic(
                                             comicTitle,
                                             selectedStatus,
@@ -257,7 +260,7 @@ fun AddComicScreen(
                         content = { Text(text = stringResource(R.string.save_comic_data)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp,top = 10.dp, bottom = 20.dp)
+                            .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 20.dp)
                     )
                 }
             }

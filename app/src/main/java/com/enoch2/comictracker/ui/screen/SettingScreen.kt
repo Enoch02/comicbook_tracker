@@ -1,6 +1,5 @@
 package com.enoch2.comictracker.ui.screen
 
-import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,16 +16,18 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.ComicDao
+import com.enoch2.comictracker.model.ComicTrackerViewModel
 import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.BlueGray400
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
-fun SettingScreen(navController: NavController, scope: CoroutineScope, comicDao: ComicDao) {
+fun SettingScreen(
+    navController: NavController,
+    comicTrackerViewModel: ComicTrackerViewModel = viewModel()
+) {
     Scaffold(
         topBar = {
             ComicTrackerTopBar(
@@ -122,9 +123,7 @@ fun SettingScreen(navController: NavController, scope: CoroutineScope, comicDao:
                             confirmButton = {
                                 TextButton(
                                     onClick = {
-                                        scope.launch {
-                                            comicDao.deleteAll()
-                                        }
+                                        comicTrackerViewModel.deleteAllComic()
                                         showDialog = !showDialog
                                     },
                                     content = { Text(stringResource(R.string.yes)) }

@@ -11,7 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,10 +19,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.data.ComicDao
+import com.enoch2.comictracker.model.ComicTrackerViewModel
 import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.ui.layouts.ComicInfoLayout
 import com.enoch2.comictracker.ui.layouts.DrawerLayout
@@ -77,7 +77,7 @@ fun HomeScreen(
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
     listState: LazyListState,
-    comicDao: ComicDao
+    comicTrackerViewModel: ComicTrackerViewModel = viewModel()
 ) {
     Scaffold(
         scaffoldState = scaffoldState,
@@ -110,33 +110,33 @@ fun HomeScreen(
             ) {
             Icon(
                 Icons.Default.Add,
-                contentDescription = "add",
+                "add",
                 tint = Color.White
             )
             }
         }
     ) {
-        var comics by remember { mutableStateOf(listOf<Comic>()) }
-
-        LaunchedEffect(true) {
-            comics = comicDao.getAll()
-        }
-
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
             items(
-                count = comics.size,
+                count = comicTrackerViewModel.comics.size,
                 itemContent = { index ->
-                    val comic = comics[index]
+                    val comic = comicTrackerViewModel.comics[index]
                     Card(
                         elevation = 2.dp,
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .clickable {
-                                navController.navigate(Screen.ComicDetailScreen.withArgs(comic.title))
-                            }
+                        modifier = Modifier.padding(bottom = 10.dp)
                     ) {
-                        ComicInfoLayout(comicTitle = comic.title, issuesRead = comic.issuesRead ,
-                            totalIssues = comic.totalIssues, status = comic.status)
+                        ComicInfoLayout(
+                            comicTitle = comic.title,
+                            issuesRead = comic.issuesRead,
+                            totalIssues = comic.totalIssues,
+                            status = comic.status,
+                            Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Max)
+                                .clickable {
+                                    navController.navigate(Screen.ComicDetailScreen.withArgs(comic.title))
+                                }
+                        )
                     }
                 }
             )
