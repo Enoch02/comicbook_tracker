@@ -1,8 +1,10 @@
 package com.enoch2.comictracker
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
@@ -11,11 +13,15 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.enoch2.comictracker.model.ComicTrackerViewModel
+import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.ui.screen.*
 import com.enoch2.comictracker.ui.theme.ComicBookTrackerTheme
@@ -36,12 +42,6 @@ class MainActivity : ComponentActivity() {
                     val scaffoldState = rememberScaffoldState()
                     val scope = rememberCoroutineScope()
                     val listState = rememberLazyListState()
-                    /*val db = Room.databaseBuilder(
-                        context.applicationContext,
-                        ComicDatabase::class.java,
-                        "comics"
-                    ).build()
-                    val comicDao = db.getComicDao()*/
 
                     NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
                         composable(Screen.AboutScreen.route) {
@@ -67,7 +67,8 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             ComicDetailScreen(
                                 navController,
-                                entry.arguments?.getString("comicTitle")
+                                entry.arguments?.getString("comicTitle"),
+                                context
                             )
                         }
 
@@ -86,7 +87,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.SettingScreen.route) {
-                            SettingScreen(navController)
+                            SettingScreen(
+                                navController,
+                                context
+                            )
                         }
                     }
                 }

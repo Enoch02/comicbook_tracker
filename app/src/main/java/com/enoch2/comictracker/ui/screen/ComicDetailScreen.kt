@@ -1,16 +1,13 @@
 package com.enoch2.comictracker.ui.screen
 
+import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
@@ -26,17 +23,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.data.ComicDao
 import com.enoch2.comictracker.model.ComicTrackerViewModel
+import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun ComicDetailScreen(
     navController: NavController,
     comicTitle: String?,
-    comicTrackerViewModel: ComicTrackerViewModel = viewModel()
+    context: Context
 ) {
     Scaffold(
         topBar = {
@@ -53,7 +48,14 @@ fun ComicDetailScreen(
             )
         },
         content = {
-            val comic = comicTrackerViewModel.findComic(comicTitle.toString())
+            val viewModel: ComicTrackerViewModel = viewModel(
+                factory = ComicTrackerViewModelFactory(context.applicationContext)
+            )
+           var comic by remember { mutableStateOf(Comic("", "", 0, 0, 0)) }
+
+            LaunchedEffect(true) {
+                comic = viewModel.findComic(comicTitle.toString())
+            }
 
             val constraints = ConstraintSet {
                 val cover = createRefFor("cover")
@@ -115,6 +117,7 @@ fun ComicDetailScreen(
                         modifier = Modifier.layoutId("cover")
                     )
                     Button(
+
                         onClick = { /*TODO*/ },
                         modifier = Modifier.layoutId("status"),
                         content = { Text(comic.status) }

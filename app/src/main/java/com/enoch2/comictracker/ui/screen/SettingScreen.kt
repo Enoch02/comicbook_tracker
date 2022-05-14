@@ -1,5 +1,6 @@
 package com.enoch2.comictracker.ui.screen
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,13 +21,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.model.ComicTrackerViewModel
+import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.BlueGray400
 
 @Composable
 fun SettingScreen(
     navController: NavController,
-    comicTrackerViewModel: ComicTrackerViewModel = viewModel()
+    context: Context
 ) {
     Scaffold(
         topBar = {
@@ -112,6 +114,10 @@ fun SettingScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    val viewModel: ComicTrackerViewModel = viewModel(
+                        factory = ComicTrackerViewModelFactory(context.applicationContext)
+                    )
+
                     if (showDialog) {
                         AlertDialog(
                             onDismissRequest = { showDialog = !showDialog },
@@ -123,7 +129,7 @@ fun SettingScreen(
                             confirmButton = {
                                 TextButton(
                                     onClick = {
-                                        comicTrackerViewModel.deleteAllComic()
+                                        viewModel.deleteAllComic()
                                         showDialog = !showDialog
                                     },
                                     content = { Text(stringResource(R.string.yes)) }

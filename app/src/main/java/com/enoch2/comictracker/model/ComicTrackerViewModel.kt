@@ -1,35 +1,35 @@
 package com.enoch2.comictracker.model
 
-import android.app.Application
+import android.content.Context
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.enoch2.comictracker.data.Comic
 import com.enoch2.comictracker.data.ComicDatabase
 import com.enoch2.comictracker.data.ComicRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class ComicTrackerViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: ComicRepository
-    private lateinit var allComic: List<Comic>
-    val comics = allComic.toMutableStateList()
-    init {
-        val comicDao = ComicDatabase.getDataBase(application).getComicDao()
-        repository = ComicRepository(comicDao)
-        viewModelScope.launch {
-            allComic = repository.getAllComic()
+class ComicTrackerViewModel(context: Context) : ViewModel() {
+    private val comicDao = ComicDatabase.getDataBase(context.applicationContext).getComicDao()
+    private val repository = ComicRepository(comicDao)
+
+    suspend fun getAllComic(): List<Comic> {
+        val result = viewModelScope.async {
+            repository.getAllComic()
         }
+        return result.await()
     }
 
-    fun findComic(comicTitle: String): Comic {
-        lateinit var temp: Comic
-
-        viewModelScope.launch(Dispatchers.IO) {
-            temp = repository.findComic(comicTitle)
+    suspend fun findComic(comicTitle: String): Comic {
+        val result = viewModelScope.async(Dispatchers.IO) {
+            repository.findComic(comicTitle)
         }
-        return temp
+        return result.await()
     }
 
     fun addComic(comic: Comic) {

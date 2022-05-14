@@ -1,6 +1,7 @@
 package com.enoch2.comictracker.navigation
 
 sealed class Screen(val route: String) {
+    //TODO: change to HomeScreen
     object MainScreen : Screen("main_screen")
     object AboutScreen : Screen("about_screen")
     object AddComicScreen : Screen("add_comic_screen")

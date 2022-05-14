@@ -27,8 +27,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.data.ComicDao
 import com.enoch2.comictracker.model.ComicTrackerViewModel
+import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -37,8 +37,7 @@ import kotlinx.coroutines.launch
 fun AddComicScreen(
     navController: NavController,
     context: Context,
-    scope: CoroutineScope,
-    comicTrackerViewModel: ComicTrackerViewModel = viewModel()
+    scope: CoroutineScope
 ) {
     Scaffold (
         topBar = {
@@ -233,6 +232,10 @@ fun AddComicScreen(
                     }
                     Divider()
 
+                    val viewModel: ComicTrackerViewModel = viewModel(
+                        factory = ComicTrackerViewModelFactory(context.applicationContext)
+                    )
+
                     Button(
                         onClick = {
                             if (issuesRead == "")
@@ -242,7 +245,7 @@ fun AddComicScreen(
 
                             if (comicTitle != "") {
                                 scope.launch {
-                                    comicTrackerViewModel.addComic(
+                                    viewModel.addComic(
                                         Comic(
                                             comicTitle,
                                             selectedStatus,
