@@ -23,19 +23,21 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.data.ComicDao
+import com.enoch2.comictracker.model.ComicTrackerViewModel
+import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+//TODO: make function stateless and use it for the edit screen
 @Composable
 fun AddComicScreen(
     navController: NavController,
     context: Context,
-    scope: CoroutineScope,
-    comicDao: ComicDao
+    scope: CoroutineScope
 ) {
     Scaffold (
         topBar = {
@@ -106,7 +108,6 @@ fun AddComicScreen(
                             OutlinedTextField(
                                 value = selectedStatus,
                                 onValueChange = { selectedStatus = it },
-                                //shape = RectangleShape,
                                 enabled = false,
                                 trailingIcon = {
                                     IconButton(onClick = { isExpanded = !isExpanded }) {
@@ -231,6 +232,10 @@ fun AddComicScreen(
                     }
                     Divider()
 
+                    val viewModel: ComicTrackerViewModel = viewModel(
+                        factory = ComicTrackerViewModelFactory(context.applicationContext)
+                    )
+
                     Button(
                         onClick = {
                             if (issuesRead == "")
@@ -240,7 +245,7 @@ fun AddComicScreen(
 
                             if (comicTitle != "") {
                                 scope.launch {
-                                    comicDao.insertAll(
+                                    viewModel.addComic(
                                         Comic(
                                             comicTitle,
                                             selectedStatus,
@@ -258,7 +263,7 @@ fun AddComicScreen(
                         content = { Text(text = stringResource(R.string.save_comic_data)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp,top = 10.dp, bottom = 20.dp)
+                            .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 20.dp)
                     )
                 }
             }

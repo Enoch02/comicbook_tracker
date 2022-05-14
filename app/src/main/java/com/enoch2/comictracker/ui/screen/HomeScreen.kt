@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,10 +20,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.data.ComicDao
+import com.enoch2.comictracker.model.ComicTrackerViewModel
+import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.ui.layouts.ComicInfoLayout
 import com.enoch2.comictracker.ui.layouts.DrawerLayout
@@ -32,7 +35,7 @@ import kotlinx.coroutines.launch
 
 //TODO: update dependencies
 @Composable
-fun MainTopAppBar(navController: NavController, scaffoldState: ScaffoldState, scope: CoroutineScope) {
+private fun TopAppBar(navController: NavController, scaffoldState: ScaffoldState, scope: CoroutineScope) {
     val drawerState = scaffoldState.drawerState
     val tint = Color.White
 
@@ -43,11 +46,11 @@ fun MainTopAppBar(navController: NavController, scaffoldState: ScaffoldState, sc
                     tint = tint,
                     contentDescription = stringResource(R.string.menu))
             },
-            onClick = {
-                scope.launch {
-                    if (drawerState.isClosed)
-                        drawerState.open()
-                    else drawerState.close()
+                onClick = {
+                    scope.launch {
+                        if (drawerState.isClosed)
+                            drawerState.open()
+                        else drawerState.close()
 
                     }
                 }
@@ -76,12 +79,11 @@ fun HomeScreen(
     context: Context,
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
-    listState: LazyListState,
-    comicDao: ComicDao
+    listState: LazyListState
 ) {
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { MainTopAppBar(navController, scaffoldState, scope) },
+        topBar = { TopAppBar(navController, scaffoldState, scope) },
         drawerContent = {
             Box(
                 contentAlignment = Alignment.TopStart,
@@ -110,16 +112,19 @@ fun HomeScreen(
             ) {
             Icon(
                 Icons.Default.Add,
-                contentDescription = "add",
+                "add",
                 tint = Color.White
             )
             }
         }
     ) {
+        val viewModel: ComicTrackerViewModel = viewModel(
+            factory = ComicTrackerViewModelFactory(context.applicationContext)
+        )
         var comics by remember { mutableStateOf(listOf<Comic>()) }
 
         LaunchedEffect(true) {
-            comics = comicDao.getAll()
+            comics = viewModel.getAllComic().toMutableStateList()
         }
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
@@ -127,17 +132,22 @@ fun HomeScreen(
                 count = comics.size,
                 itemContent = { index ->
                     val comic = comics[index]
-
                     Card(
                         elevation = 2.dp,
-                        modifier = Modifier
-                            .padding(bottom = 5.dp)
-                            .clickable {
-                                navController.navigate(Screen.ComicDetailScreen.withArgs(comic.title))
-                            }
+                        modifier = Modifier.padding(bottom = 10.dp)
                     ) {
-                        ComicInfoLayout(comicTitle = comic.title, issuesRead = comic.issuesRead ,
-                            totalIssues = comic.totalIssues, status = comic.status)
+                        ComicInfoLayout(
+                            comicTitle = comic.title,
+                            issuesRead = comic.issuesRead,
+                            totalIssues = comic.totalIssues,
+                            status = comic.status,
+                            Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Max)
+                                .clickable {
+                                    navController.navigate(Screen.ComicDetailScreen.withArgs(comic.title))
+                                }
+                        )
                     }
                 }
             )

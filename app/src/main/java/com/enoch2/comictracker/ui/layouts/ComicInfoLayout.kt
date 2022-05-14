@@ -1,9 +1,7 @@
 package com.enoch2.comictracker.ui.layouts
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -26,7 +24,8 @@ fun ComicInfoLayout(
     comicTitle: String,
     issuesRead: Int,
     totalIssues: Int,
-    status: String
+    status: String,
+    modifier: Modifier = Modifier
 ) {
     val constraints = ConstraintSet {
         val cover = createRefFor("cover")
@@ -61,9 +60,10 @@ fun ComicInfoLayout(
         }
     }
 
-    ConstraintLayout(constraints, modifier = Modifier
-        .fillMaxWidth()
-        .height(IntrinsicSize.Max)) {
+    ConstraintLayout(
+        constraints,
+        modifier
+    ) {
         //TODO: replace with the coil version
         Image(
             painter = painterResource(R.drawable.placeholder_image),

@@ -1,5 +1,6 @@
 package com.enoch2.comictracker.ui.common_composables
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -12,7 +13,8 @@ fun ComicTrackerTopBar(
     title: String,
     navIcon: ImageVector,
     contentDescription: String,
-    onClick: () -> Unit = { }
+    onClick: () -> Unit = { },
+    actions: @Composable RowScope.()-> Unit= {}
 ) {
     TopAppBar(
         title = { Text(title) },
@@ -20,6 +22,7 @@ fun ComicTrackerTopBar(
             IconButton(onClick = onClick) {
                 Icon(navIcon, contentDescription)
             }
-        }
+        },
+        actions = actions
     )
 }

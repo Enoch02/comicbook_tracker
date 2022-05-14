@@ -8,7 +8,7 @@ interface ComicDao {
     suspend fun getAll(): List<Comic>
 
     @Query("SELECT * FROM comic WHERE title LIKE :comicTitle LIMIT 1")
-    fun findByTitle(comicTitle: String): Comic
+    suspend fun findByTitle(comicTitle: String): Comic
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(vararg comics: Comic)
