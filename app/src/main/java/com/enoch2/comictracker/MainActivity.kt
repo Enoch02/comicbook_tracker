@@ -1,10 +1,8 @@
 package com.enoch2.comictracker
 
-import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
@@ -13,15 +11,11 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStore
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import com.enoch2.comictracker.model.ComicTrackerViewModel
-import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.ui.screen.*
 import com.enoch2.comictracker.ui.theme.ComicBookTrackerTheme
@@ -43,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     val scope = rememberCoroutineScope()
                     val listState = rememberLazyListState()
 
-                    NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
+                    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
                         composable(Screen.AboutScreen.route) {
                             AboutScreen(navController)
                         }
@@ -72,11 +66,28 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+                        composable(
+                            route = Screen.EditComicScreen.route + "/{comicTitle}",
+                            arguments = listOf(
+                                navArgument("comicTitle") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                }
+                            )
+                        ) { entry ->
+                            EditComicScreen(
+                                navController,
+                                entry.arguments?.getString("comicTitle"),
+                                context,
+                                scope
+                            )
+                        }
+
                         composable(Screen.FilterScreen.route) {
                             FilterScreen()
                         }
 
-                        composable(Screen.MainScreen.route) {
+                        composable(Screen.HomeScreen.route) {
                             HomeScreen(
                                 navController,
                                 context,

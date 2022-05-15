@@ -33,7 +33,6 @@ import com.enoch2.comictracker.ui.theme.BlueGrayDark
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-//TODO: update dependencies
 @Composable
 private fun TopAppBar(navController: NavController, scaffoldState: ScaffoldState, scope: CoroutineScope) {
     val drawerState = scaffoldState.drawerState
@@ -122,9 +121,8 @@ fun HomeScreen(
             factory = ComicTrackerViewModelFactory(context.applicationContext)
         )
         var comics by remember { mutableStateOf(listOf<Comic>()) }
-
         LaunchedEffect(true) {
-            comics = viewModel.getAllComic().toMutableStateList()
+            comics = viewModel.getAllComic()
         }
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {

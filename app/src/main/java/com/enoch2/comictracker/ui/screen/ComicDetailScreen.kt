@@ -25,6 +25,7 @@ import com.enoch2.comictracker.R
 import com.enoch2.comictracker.data.Comic
 import com.enoch2.comictracker.model.ComicTrackerViewModel
 import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
+import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
 
 @Composable
@@ -41,7 +42,7 @@ fun ComicDetailScreen(
                 contentDescription = stringResource(R.string.back),
                 onClick = { navController.popBackStack() },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navController.navigate(Screen.EditComicScreen.withArgs(comicTitle)) }) {
                         Icon(Icons.Default.Edit, "edit", tint = Color.White)
                     }
                 }

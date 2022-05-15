@@ -1,13 +1,10 @@
-package com.enoch2.comictracker.ui.screen
+package com.enoch2.comictracker.ui.layouts
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
@@ -23,32 +20,34 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.model.ComicTrackerViewModel
-import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
-fun AddComicScreen(
-    navController: NavController,
-    context: Context,
-    scope: CoroutineScope
+fun ComicInputLayout(
+    title: String,
+    navIcon: @Composable (() -> Unit),
+    comicTitle: String,
+    onComicTitleChange: (String) -> Unit,
+    selectedStatus: String,
+    onSelectedStatusChange: (String) -> Unit,
+    onDropdownItemClicked: (String) -> Unit,
+    rating: Float,
+    onRatingSliderChanged: (Float) -> Unit,
+    issuesRead: String,
+    onIssuesReadChange: (String) -> Unit,
+    totalIssues: String,
+    onTotalIssuesChange: (String) -> Unit,
+    onSaveBtnClicked: () -> Unit
 ) {
     Scaffold (
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.add_new_comic_title)) },
+                title = { Text(title) },
                 navigationIcon = {
-                    IconButton(
-                        onClick = { navController.popBackStack() },
-                        content = { Icon(Icons.Default.ArrowBack, "back") })
+                    navIcon()
                 }
             )
-            },
+        },
         content = {
             val constraints = ConstraintSet {
                 val text = createRefFor("text")
@@ -66,7 +65,6 @@ fun AddComicScreen(
                     width = Dimension.percent(0.7f)
                 }
             }
-            var comicTitle by remember { mutableStateOf("") }
 
             Surface(modifier = Modifier.fillMaxSize()) {
                 Column {
@@ -82,7 +80,8 @@ fun AddComicScreen(
                         )
                         OutlinedTextField(
                             value = comicTitle,
-                            onValueChange = { comicTitle = it },
+                            onValueChange = { onComicTitleChange(comicTitle) },
+                            readOnly = false,
                             modifier = Modifier.layoutId("input"),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                         )
@@ -91,7 +90,6 @@ fun AddComicScreen(
 
                     val items = listOf("reading" , "completed", "on hold", "dropped" , "plan to read")
                     var isExpanded by remember { mutableStateOf(false) }
-                    var selectedStatus by remember { mutableStateOf("reading") }
 
                     ConstraintLayout(
                         constraints, modifier = Modifier
@@ -107,7 +105,7 @@ fun AddComicScreen(
                             val disabledTextColor = if (isSystemInDarkTheme()) Color.White else Color.Black
                             OutlinedTextField(
                                 value = selectedStatus,
-                                onValueChange = { selectedStatus = it },
+                                onValueChange = { onSelectedStatusChange(selectedStatus) },
                                 enabled = false,
                                 trailingIcon = {
                                     IconButton(onClick = { isExpanded = !isExpanded }) {
@@ -127,8 +125,8 @@ fun AddComicScreen(
                                 items.forEach { item ->
                                     DropdownMenuItem(
                                         onClick = {
-                                            selectedStatus = item
-                                            isExpanded = false
+                                            onDropdownItemClicked(item)
+                                            isExpanded = !isExpanded
                                         },
                                         content = { Text(item) }
                                     )
@@ -137,8 +135,6 @@ fun AddComicScreen(
                         }
                     }
                     Divider()
-
-                    var rating by remember { mutableStateOf(0f) }
 
                     ConstraintLayout(
                         modifier = Modifier
@@ -157,8 +153,8 @@ fun AddComicScreen(
                             }
                         )
                         Slider(
-                            value = rating,
-                            onValueChange = { rating = it },
+                            value = rating.toFloat(),
+                            onValueChange = { onRatingSliderChanged(rating.toFloat()) },
                             valueRange = 0f..10f,
                             modifier = Modifier.constrainAs(input) {
                                 start.linkTo(lText.end)
@@ -183,9 +179,6 @@ fun AddComicScreen(
                     }
                     Divider()
 
-                    var issuesRead by remember { mutableStateOf("") }
-                    var totalIssues by remember { mutableStateOf("") }
-
                     ConstraintLayout(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -204,7 +197,7 @@ fun AddComicScreen(
                         )
                         OutlinedTextField(
                             value = issuesRead,
-                            onValueChange = { issuesRead = it },
+                            onValueChange = { onIssuesReadChange(issuesRead) },
                             label = { Text(stringResource(R.string.issues_read1)) },
                             modifier = Modifier.constrainAs(issuesReadInput) {
                                 top.linkTo(parent.top)
@@ -217,7 +210,7 @@ fun AddComicScreen(
                         )
                         OutlinedTextField(
                             value = totalIssues,
-                            onValueChange = { totalIssues = it },
+                            onValueChange = { onTotalIssuesChange(totalIssues) },
                             label = { Text(stringResource(R.string.total_issues)) },
                             modifier = Modifier.constrainAs(totalIssuesInput) {
                                 top.linkTo(parent.top)
@@ -232,34 +225,8 @@ fun AddComicScreen(
                     }
                     Divider()
 
-                    val viewModel: ComicTrackerViewModel = viewModel(
-                        factory = ComicTrackerViewModelFactory(context.applicationContext)
-                    )
-
                     Button(
-                        onClick = {
-                            if (issuesRead == "")
-                                issuesRead = "0"
-                            if (totalIssues == "")
-                                totalIssues = "0"
-
-                            if (comicTitle != "") {
-                                scope.launch {
-                                    viewModel.addComic(
-                                        Comic(
-                                            comicTitle,
-                                            selectedStatus,
-                                            rating.toInt(),
-                                            issuesRead.toInt(),
-                                            totalIssues.toInt()
-                                        )
-                                    )
-                                }
-                                navController.popBackStack()
-                            } else {
-                                Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
-                            }
-                        },
+                        onClick = { onSaveBtnClicked() },
                         content = { Text(text = stringResource(R.string.save_comic_data)) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -270,4 +237,3 @@ fun AddComicScreen(
         }
     )
 }
-
