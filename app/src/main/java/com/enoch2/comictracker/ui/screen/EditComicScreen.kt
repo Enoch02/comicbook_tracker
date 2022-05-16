@@ -1,61 +1,46 @@
 package com.enoch2.comictracker.ui.screen
 
-import android.content.Context
-import android.widget.Toast
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.model.ComicTrackerViewModel
-import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.layouts.ComicInputLayout
-import kotlinx.coroutines.CoroutineScope
+import com.enoch2.comictracker.util.ComicInputMode
 
 @Composable
 fun EditComicScreen(
     navController: NavController,
     comicTitle: String?,
-    context: Context,
-    scope: CoroutineScope
+    status: String?,
+    rating: Float?,
+    issuesRead: String?,
+    totalIssues: String?
 ) {
-    var mComicTitle by remember { mutableStateOf("") }
-    var selectedStatus by remember { mutableStateOf("") }
-    var rating by remember { mutableStateOf(0.0f) }
-    var issuesRead by remember { mutableStateOf("0") }
-    var totalIssues by remember { mutableStateOf("0") }
-
-    val viewModel: ComicTrackerViewModel = viewModel(
-        factory = ComicTrackerViewModelFactory(context.applicationContext)
-    )
-    var comic by remember { mutableStateOf(Comic("", "", 0, 0, 0)) }
-    LaunchedEffect(true) {
-        comic = viewModel.findComic(comicTitle!!)
-    }
-
-    ComicInputLayout(
-        title = "Edit Comic",
-        navIcon = {
-            IconButton(
-                onClick = { navController.popBackStack() },
-                content = { Icon(Icons.Default.ArrowBack, "back") })
+    Scaffold (
+        topBar = {
+            TopAppBar(
+                title = { Text("Edit Comic") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navController.popBackStack() },
+                        content = { Icon(Icons.Default.ArrowBack, "back") })
+                }
+            )
         },
-        comicTitle = comic.title,
-        onComicTitleChange = { value -> mComicTitle = value },
-        selectedStatus = comic.status,
-        onSelectedStatusChange = { selectedStatus = it } ,
-        onDropdownItemClicked = { selectedStatus = it },
-        rating = comic.rating.toFloat(),
-        onRatingSliderChanged = { rating = it },
-        issuesRead = comic.issuesRead.toString(),
-        onIssuesReadChange = { issuesRead = it },
-        totalIssues = comic.totalIssues.toString(),
-        onTotalIssuesChange = { totalIssues = it },
-        onSaveBtnClicked = {
-            Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
+        content = {
+            Surface(modifier = Modifier.fillMaxSize()) {
+                ComicInputLayout(
+                    comicTitle = comicTitle.toString(),
+                    selectedStatus = status.toString(),
+                    rating = rating!!,
+                    issuesRead = issuesRead.toString(),
+                    totalIssues = totalIssues.toString(),
+                    mode = ComicInputMode.EDIT
+                )
+            }
         }
     )
 }

@@ -34,7 +34,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-private fun TopAppBar(navController: NavController, scaffoldState: ScaffoldState, scope: CoroutineScope) {
+private fun TopAppBar(
+    navController: NavController,
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope
+) {
     val drawerState = scaffoldState.drawerState
     val tint = Color.White
 

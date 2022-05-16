@@ -27,6 +27,8 @@ import com.enoch2.comictracker.model.ComicTrackerViewModel
 import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.yield
 
 @Composable
 fun ComicDetailScreen(
@@ -34,6 +36,15 @@ fun ComicDetailScreen(
     comicTitle: String?,
     context: Context
 ) {
+    val viewModel: ComicTrackerViewModel = viewModel(
+        factory = ComicTrackerViewModelFactory(context.applicationContext)
+    )
+    var comic by remember { mutableStateOf(Comic("", "", 0, 0, 0)) }
+
+    LaunchedEffect(true) {
+        comic = viewModel.findComic(comicTitle.toString())
+    }
+
     Scaffold(
         topBar = {
             ComicTrackerTopBar(
@@ -42,22 +53,22 @@ fun ComicDetailScreen(
                 contentDescription = stringResource(R.string.back),
                 onClick = { navController.popBackStack() },
                 actions = {
-                    IconButton(onClick = { navController.navigate(Screen.EditComicScreen.withArgs(comicTitle)) }) {
+                    IconButton(onClick = {
+                        navController.navigate(Screen.EditComicScreen.withArgs(
+                            comic.title,
+                            comic.status,
+                            comic.rating.toString(),
+                            comic.issuesRead.toString(),
+                            comic.totalIssues.toString()
+                        ))
+                        }
+                    ) {
                         Icon(Icons.Default.Edit, "edit", tint = Color.White)
                     }
                 }
             )
         },
         content = {
-            val viewModel: ComicTrackerViewModel = viewModel(
-                factory = ComicTrackerViewModelFactory(context.applicationContext)
-            )
-           var comic by remember { mutableStateOf(Comic("", "", 0, 0, 0)) }
-
-            LaunchedEffect(true) {
-                comic = viewModel.findComic(comicTitle.toString())
-            }
-
             val constraints = ConstraintSet {
                 val cover = createRefFor("cover")
                 val status = createRefFor("status")

@@ -67,9 +67,25 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = Screen.EditComicScreen.route + "/{comicTitle}",
+                            route = Screen.EditComicScreen.route +
+                                    "/{comicTitle}/{status}/{rating}/{issuesRead}/{totalIssues}",
                             arguments = listOf(
                                 navArgument("comicTitle") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                },
+                                navArgument("status") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                },
+                                navArgument("rating") {
+                                    type = NavType.FloatType
+                                },
+                                navArgument("issuesRead") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                },
+                                navArgument("totalIssues") {
                                     type = NavType.StringType
                                     nullable = true
                                 }
@@ -78,8 +94,10 @@ class MainActivity : ComponentActivity() {
                             EditComicScreen(
                                 navController,
                                 entry.arguments?.getString("comicTitle"),
-                                context,
-                                scope
+                                entry.arguments?.getString("status"),
+                                entry.arguments?.getFloat("rating"),
+                                entry.arguments?.getString("issuesRead"),
+                                entry.arguments?.getString("totalIssues")
                             )
                         }
 

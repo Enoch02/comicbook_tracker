@@ -6,10 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.enoch2.comictracker.data.Comic
 import com.enoch2.comictracker.data.ComicDatabase
 import com.enoch2.comictracker.data.ComicRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class ComicTrackerViewModel(context: Context) : ViewModel() {
     //TODO: Find a way to update the list only when new data is added
