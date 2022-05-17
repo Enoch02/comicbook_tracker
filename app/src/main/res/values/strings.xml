@@ -30,4 +30,5 @@
     <string name="my_comics">My comics</string>
     <string name="back">back</string>
     <string name="comic_detail">Comic Detail</string>
+    <string name="filters">Filters</string>
 </resources>

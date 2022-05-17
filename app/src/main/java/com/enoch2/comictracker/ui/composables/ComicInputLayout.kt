@@ -1,4 +1,4 @@
-package com.enoch2.comictracker.ui.layouts
+package com.enoch2.comictracker.ui.composables
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -23,6 +23,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.util.ComicInputMode
 
+//TODO: add onClick parameter
 @Composable
 fun ComicInputLayout(
     comicTitle: String,

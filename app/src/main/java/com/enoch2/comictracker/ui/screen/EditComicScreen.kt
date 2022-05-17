@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.enoch2.comictracker.ui.layouts.ComicInputLayout
+import com.enoch2.comictracker.ui.composables.ComicInputLayout
 import com.enoch2.comictracker.util.ComicInputMode
 
 @Composable

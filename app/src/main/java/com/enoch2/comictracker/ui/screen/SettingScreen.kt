@@ -22,7 +22,7 @@ import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.model.ComicTrackerViewModel
 import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
-import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
+import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.BlueGray400
 
 @Composable

@@ -270,4 +270,3 @@ fun AddComicScreen(
         }
     )
 }
-

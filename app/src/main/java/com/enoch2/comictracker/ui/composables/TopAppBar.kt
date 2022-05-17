@@ -1,4 +1,4 @@
-package com.enoch2.comictracker.ui.common_composables
+package com.enoch2.comictracker.ui.composables
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon

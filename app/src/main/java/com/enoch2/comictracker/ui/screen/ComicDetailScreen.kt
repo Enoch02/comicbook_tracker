@@ -26,9 +26,7 @@ import com.enoch2.comictracker.data.Comic
 import com.enoch2.comictracker.model.ComicTrackerViewModel
 import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.navigation.Screen
-import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.yield
+import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 
 @Composable
 fun ComicDetailScreen(

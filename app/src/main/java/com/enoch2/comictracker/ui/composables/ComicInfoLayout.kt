@@ -1,4 +1,4 @@
-package com.enoch2.comictracker.ui.layouts
+package com.enoch2.comictracker.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
