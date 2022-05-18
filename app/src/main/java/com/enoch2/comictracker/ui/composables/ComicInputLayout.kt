@@ -31,7 +31,8 @@ fun ComicInputLayout(
     rating: Float,
     issuesRead: String,
     totalIssues: String,
-    mode: ComicInputMode
+    mode: ComicInputMode,
+    onSaveBtnClick: () -> Unit
 ) {
     val constraints = ConstraintSet {
         val text = createRefFor("text")
@@ -219,16 +220,16 @@ fun ComicInputLayout(
         Divider()
 
         Button(
-            onClick = {
+            onClick = onSaveBtnClick, /*{
                 when (mode) {
                     ComicInputMode.ADD -> {
-                        /* TODO */
+                        *//* TODO *//*
                     }
                     ComicInputMode.EDIT -> {
-                        /* TODO */
+                        *//* TODO *//*
                     }
                 }
-            },
+            }, */
             content = { Text(text = stringResource(R.string.save_comic_data)) },
             modifier = Modifier
                 .fillMaxWidth()

@@ -32,6 +32,7 @@ import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+//TODO: use ComicInputLayout instead
 @Composable
 fun AddComicScreen(
     navController: NavController,

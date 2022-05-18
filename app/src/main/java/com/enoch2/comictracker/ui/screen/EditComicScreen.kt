@@ -1,13 +1,17 @@
 package com.enoch2.comictracker.ui.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import com.enoch2.comictracker.R
 import com.enoch2.comictracker.ui.composables.ComicInputLayout
+import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.util.ComicInputMode
 
 @Composable
@@ -21,13 +25,11 @@ fun EditComicScreen(
 ) {
     Scaffold (
         topBar = {
-            TopAppBar(
-                title = { Text("Edit Comic") },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navController.popBackStack() },
-                        content = { Icon(Icons.Default.ArrowBack, "back") })
-                }
+            ComicTrackerTopBar(
+                title = stringResource(R.string.edit_comic),
+                navIcon = Icons.Default.ArrowBack,
+                contentDescription = stringResource(R.string.back),
+                onClick = { navController.popBackStack() }
             )
         },
         content = {
@@ -38,7 +40,10 @@ fun EditComicScreen(
                     rating = rating!!,
                     issuesRead = issuesRead.toString(),
                     totalIssues = totalIssues.toString(),
-                    mode = ComicInputMode.EDIT
+                    mode = ComicInputMode.EDIT,
+                    onSaveBtnClick = {
+
+                    }
                 )
             }
         }

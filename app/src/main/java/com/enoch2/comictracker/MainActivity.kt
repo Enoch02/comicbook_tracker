@@ -62,7 +62,8 @@ class MainActivity : ComponentActivity() {
                             ComicDetailScreen(
                                 navController,
                                 entry.arguments?.getString("comicTitle"),
-                                context
+                                context,
+                                scope
                             )
                         }
 

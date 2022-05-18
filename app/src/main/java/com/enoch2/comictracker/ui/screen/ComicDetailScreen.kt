@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -27,12 +28,15 @@ import com.enoch2.comictracker.model.ComicTrackerViewModel
 import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun ComicDetailScreen(
     navController: NavController,
     comicTitle: String?,
-    context: Context
+    context: Context,
+    scope: CoroutineScope
 ) {
     val viewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
@@ -51,18 +55,26 @@ fun ComicDetailScreen(
                 contentDescription = stringResource(R.string.back),
                 onClick = { navController.popBackStack() },
                 actions = {
-                    IconButton(onClick = {
+                    IconButton(
+                        content = { Icon(Icons.Default.Edit, "edit", tint = Color.White) },
+                        onClick = {
                         navController.navigate(Screen.EditComicScreen.withArgs(
                             comic.title,
                             comic.status,
                             comic.rating.toString(),
                             comic.issuesRead.toString(),
-                            comic.totalIssues.toString()
-                        ))
+                            comic.totalIssues.toString()))
                         }
-                    ) {
-                        Icon(Icons.Default.Edit, "edit", tint = Color.White)
-                    }
+                    )
+                    IconButton(
+                        content = { Icon(Icons.Default.Delete, "delete", tint = Color.White) },
+                        onClick = {
+                            viewModel.deleteComic(comic)
+                            scope.launch {
+                                navController.popBackStack()
+                            }
+                        }
+                    )
                 }
             )
         },
