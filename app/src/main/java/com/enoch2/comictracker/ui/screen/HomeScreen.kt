@@ -28,6 +28,7 @@ import com.enoch2.comictracker.ui.composables.DrawerLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+// TODO: add sort and search functionality
 @Composable
 private fun TopAppBar(
     navController: NavController,

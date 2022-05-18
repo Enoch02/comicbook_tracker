@@ -1,5 +1,6 @@
 package com.enoch2.comictracker.ui.composables
 
+import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,19 +21,27 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.enoch2.comictracker.R
+import com.enoch2.comictracker.data.Comic
+import com.enoch2.comictracker.model.ComicTrackerViewModel
+import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
+import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.util.ComicInputMode
+import kotlinx.coroutines.CoroutineScope
 
-//TODO: add onClick parameter
 @Composable
 fun ComicInputLayout(
+    navController: NavController,
+    context: Context,
+    scope: CoroutineScope,
     comicTitle: String,
     selectedStatus: String,
     rating: Float,
     issuesRead: String,
     totalIssues: String,
-    mode: ComicInputMode,
-    onSaveBtnClick: () -> Unit
+    mode: ComicInputMode
 ) {
     val constraints = ConstraintSet {
         val text = createRefFor("text")
@@ -50,6 +59,26 @@ fun ComicInputLayout(
             width = Dimension.percent(0.7f)
         }
     }
+    val viewModel: ComicTrackerViewModel = viewModel(
+        factory = ComicTrackerViewModelFactory(context.applicationContext)
+    )
+    var mComicTitle by remember { mutableStateOf(comicTitle) }
+    var isExpanded by remember { mutableStateOf(false) }
+    var mSelectedStatus by remember { mutableStateOf(selectedStatus) }
+    var mRating by remember { mutableStateOf(rating) }
+    var mIssuesRead by remember { mutableStateOf(issuesRead) }
+    var mTotalIssues by remember { mutableStateOf(totalIssues) }
+
+    if (mode == ComicInputMode.EDIT) {
+        val oldComic = Comic(
+            mComicTitle,
+            mSelectedStatus,
+            mRating.toInt(),
+            mIssuesRead.toInt(),
+            mTotalIssues.toInt()
+        )
+        viewModel.deleteComic(oldComic)
+    }
 
     Column {
         ConstraintLayout(
@@ -63,10 +92,8 @@ fun ComicInputLayout(
                 modifier = Modifier.layoutId("text")
             )
 
-            var mComicTitle by remember { mutableStateOf(comicTitle) }
             OutlinedTextField(
                 value = mComicTitle,
-                label = { Text(comicTitle) },
                 onValueChange = { mComicTitle = it },
                 modifier = Modifier.layoutId("input"),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
@@ -75,7 +102,6 @@ fun ComicInputLayout(
         Divider()
 
         val items = listOf("reading" , "completed", "on hold", "dropped" , "plan to read")
-        var isExpanded by remember { mutableStateOf(false) }
 
         ConstraintLayout(
             constraints, modifier = Modifier
@@ -88,7 +114,6 @@ fun ComicInputLayout(
                 modifier = Modifier.layoutId("text")
             )
 
-            var mSelectedStatus by remember { mutableStateOf(selectedStatus) }
             Box(modifier = Modifier.layoutId("input")) {
                 val disabledTextColor = if (isSystemInDarkTheme()) Color.White else Color.Black
                 OutlinedTextField(
@@ -141,7 +166,6 @@ fun ComicInputLayout(
                 }
             )
 
-            var mRating by remember { mutableStateOf(rating) }
             Slider(
                 value = mRating,
                 onValueChange = { mRating = it },
@@ -186,7 +210,6 @@ fun ComicInputLayout(
                 }
             )
 
-            var mIssuesRead by remember { mutableStateOf(issuesRead) }
             OutlinedTextField(
                 value = mIssuesRead,
                 onValueChange = { mIssuesRead = it },
@@ -201,7 +224,6 @@ fun ComicInputLayout(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
-            var mTotalIssues by remember { mutableStateOf(totalIssues) }
             OutlinedTextField(
                 value = mTotalIssues,
                 onValueChange = { mTotalIssues = it },
@@ -220,16 +242,27 @@ fun ComicInputLayout(
         Divider()
 
         Button(
-            onClick = onSaveBtnClick, /*{
+            onClick = {
                 when (mode) {
                     ComicInputMode.ADD -> {
-                        *//* TODO *//*
+                        /* TODO */
                     }
                     ComicInputMode.EDIT -> {
-                        *//* TODO *//*
+                        val comic = Comic(
+                            mComicTitle,
+                            mSelectedStatus,
+                            mRating.toInt(),
+                            mIssuesRead.toInt(),
+                            mTotalIssues.toInt()
+                        )
+                        viewModel.addComic(comic)
+                        navController.navigate(Screen.HomeScreen.route) {
+                            popUpTo(Screen.HomeScreen.route)
+                            launchSingleTop = true
+                        }
                     }
                 }
-            }, */
+            },
             content = { Text(text = stringResource(R.string.save_comic_data)) },
             modifier = Modifier
                 .fillMaxWidth()

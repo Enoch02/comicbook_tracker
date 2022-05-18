@@ -35,8 +35,7 @@ import kotlinx.coroutines.launch
 fun ComicDetailScreen(
     navController: NavController,
     comicTitle: String?,
-    context: Context,
-    scope: CoroutineScope
+    context: Context
 ) {
     val viewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
@@ -70,9 +69,7 @@ fun ComicDetailScreen(
                         content = { Icon(Icons.Default.Delete, "delete", tint = Color.White) },
                         onClick = {
                             viewModel.deleteComic(comic)
-                            scope.launch {
-                                navController.popBackStack()
-                            }
+                            navController.popBackStack()
                         }
                     )
                 }

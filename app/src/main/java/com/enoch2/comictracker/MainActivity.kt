@@ -62,8 +62,7 @@ class MainActivity : ComponentActivity() {
                             ComicDetailScreen(
                                 navController,
                                 entry.arguments?.getString("comicTitle"),
-                                context,
-                                scope
+                                context
                             )
                         }
 
@@ -94,6 +93,8 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             EditComicScreen(
                                 navController,
+                                context,
+                                scope,
                                 entry.arguments?.getString("comicTitle"),
                                 entry.arguments?.getString("status"),
                                 entry.arguments?.getFloat("rating"),

@@ -20,8 +20,4 @@ class ComicRepository(private val comicDao: ComicDao) {
     suspend fun deleteAllComic() {
         comicDao.deleteAll()
     }
-
-    suspend fun updateComic(comic: Comic) {
-        comicDao.update(comic)
-    }
 }

@@ -10,7 +10,7 @@ interface ComicDao {
     @Query("SELECT * FROM comic WHERE title LIKE :comicTitle LIMIT 1")
     suspend fun findByTitle(comicTitle: String): Comic
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg comics: Comic)
 
     @Delete
@@ -18,7 +18,4 @@ interface ComicDao {
 
     @Query("DELETE from comic")
     suspend fun deleteAll()
-
-    @Update
-    suspend fun update(comic: Comic)
 }
