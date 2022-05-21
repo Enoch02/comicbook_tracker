@@ -2,7 +2,10 @@ package com.enoch2.comictracker.ui.composables
 
 import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -24,10 +27,10 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.model.ComicTrackerViewModel
-import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
-import com.enoch2.comictracker.navigation.Screen
+import com.enoch2.comictracker.Screen
+import com.enoch2.comictracker.domain.model.Comic
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.util.ComicInputMode
 import kotlinx.coroutines.CoroutineScope
 
@@ -35,13 +38,12 @@ import kotlinx.coroutines.CoroutineScope
 fun ComicInputLayout(
     navController: NavController,
     context: Context,
-    scope: CoroutineScope,
     comicTitle: String,
     selectedStatus: String,
     rating: Float,
     issuesRead: String,
     totalIssues: String,
-    mode: ComicInputMode
+    id: Int? = null
 ) {
     val constraints = ConstraintSet {
         val text = createRefFor("text")
@@ -68,17 +70,6 @@ fun ComicInputLayout(
     var mRating by remember { mutableStateOf(rating) }
     var mIssuesRead by remember { mutableStateOf(issuesRead) }
     var mTotalIssues by remember { mutableStateOf(totalIssues) }
-
-    if (mode == ComicInputMode.EDIT) {
-        val oldComic = Comic(
-            mComicTitle,
-            mSelectedStatus,
-            mRating.toInt(),
-            mIssuesRead.toInt(),
-            mTotalIssues.toInt()
-        )
-        viewModel.deleteComic(oldComic)
-    }
 
     Column {
         ConstraintLayout(
@@ -243,24 +234,17 @@ fun ComicInputLayout(
 
         Button(
             onClick = {
-                when (mode) {
-                    ComicInputMode.ADD -> {
-                        /* TODO */
-                    }
-                    ComicInputMode.EDIT -> {
-                        val comic = Comic(
-                            mComicTitle,
-                            mSelectedStatus,
-                            mRating.toInt(),
-                            mIssuesRead.toInt(),
-                            mTotalIssues.toInt()
-                        )
-                        viewModel.addComic(comic)
-                        navController.navigate(Screen.HomeScreen.route) {
-                            popUpTo(Screen.HomeScreen.route)
-                            launchSingleTop = true
-                        }
-                    }
+                viewModel.addComic(
+                    mComicTitle,
+                    mSelectedStatus,
+                    mRating.toInt(),
+                    mIssuesRead,
+                    mTotalIssues,
+                    id!!
+                )
+                navController.navigate(Screen.HomeScreen.route) {
+                    popUpTo(Screen.HomeScreen.route)
+                    launchSingleTop = true
                 }
             },
             content = { Text(text = stringResource(R.string.save_comic_data)) },

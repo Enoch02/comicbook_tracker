@@ -16,7 +16,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import com.enoch2.comictracker.navigation.Screen
 import com.enoch2.comictracker.ui.screen.*
 import com.enoch2.comictracker.ui.theme.ComicBookTrackerTheme
 
@@ -68,7 +67,7 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             route = Screen.EditComicScreen.route +
-                                    "/{comicTitle}/{status}/{rating}/{issuesRead}/{totalIssues}",
+                                    "/{comicTitle}/{status}/{rating}/{issuesRead}/{totalIssues}/{id}",
                             arguments = listOf(
                                 navArgument("comicTitle") {
                                     type = NavType.StringType
@@ -88,18 +87,22 @@ class MainActivity : ComponentActivity() {
                                 navArgument("totalIssues") {
                                     type = NavType.StringType
                                     nullable = true
+                                },
+                                navArgument("id") {
+                                    type = NavType.StringType
+                                    nullable = true
                                 }
                             )
                         ) { entry ->
                             EditComicScreen(
                                 navController,
                                 context,
-                                scope,
                                 entry.arguments?.getString("comicTitle"),
                                 entry.arguments?.getString("status"),
                                 entry.arguments?.getFloat("rating"),
                                 entry.arguments?.getString("issuesRead"),
-                                entry.arguments?.getString("totalIssues")
+                                entry.arguments?.getString("totalIssues"),
+                                entry.arguments?.getString("id")
                             )
                         }
 
@@ -125,6 +128,25 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+sealed class Screen(val route: String) {
+    object HomeScreen : Screen("home_screen")
+    object AboutScreen : Screen("about_screen")
+    object AddComicScreen : Screen("add_comic_screen")
+    object FilterScreen : Screen("filter_screen")
+    object SettingScreen : Screen("setting_screen")
+    object ComicDetailScreen: Screen("comic_detail_screen")
+    object EditComicScreen: Screen("edit_comic_screen")
+
+    fun withArgs(vararg args: String): String {
+        return buildString {
+            append(route)
+            args.forEach { arg ->
+                append("/$arg")
             }
         }
     }

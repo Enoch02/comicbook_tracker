@@ -1,17 +1,19 @@
-package com.enoch2.comictracker.data
+package com.enoch2.comictracker.data.source
 
 import androidx.room.*
+import com.enoch2.comictracker.domain.model.Comic
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ComicDao {
     @Query("SELECT * FROM comic")
-    suspend fun getAll(): List<Comic>
+    fun getAll(): Flow<List<Comic>>
 
     @Query("SELECT * FROM comic WHERE title LIKE :comicTitle LIMIT 1")
-    suspend fun findByTitle(comicTitle: String): Comic
+    suspend fun getByTitle(comicTitle: String): Comic
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg comics: Comic)
+    suspend fun insert(comics: Comic)
 
     @Delete
     suspend fun delete(comic: Comic)

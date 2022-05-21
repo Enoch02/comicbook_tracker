@@ -26,13 +26,12 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.model.ComicTrackerViewModel
-import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 //TODO: use ComicInputLayout instead
+//TODO: ask user if they want to replace existing comic
 @Composable
 fun AddComicScreen(
     navController: NavController,
@@ -239,25 +238,14 @@ fun AddComicScreen(
 
                     Button(
                         onClick = {
-                            if (issuesRead == "")
-                                issuesRead = "0"
-                            if (totalIssues == "")
-                                totalIssues = "0"
-
-                            if (comicTitle != "") {
-                                scope.launch {
-                                    viewModel.addComic(
-                                        Comic(
-                                            comicTitle,
-                                            selectedStatus,
-                                            rating.toInt(),
-                                            issuesRead.toInt(),
-                                            totalIssues.toInt()
-                                        )
-                                    )
-                                }
-                                navController.popBackStack()
-                            } else {
+                            if (viewModel.addComic(
+                                    comicTitle,
+                                    selectedStatus,
+                                    rating.toInt(),
+                                    issuesRead,
+                                    totalIssues
+                            )) { navController.popBackStack() }
+                            else {
                                 Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
                             }
                         },

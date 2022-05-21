@@ -1,4 +1,4 @@
-package com.enoch2.comictracker.model
+package com.enoch2.comictracker.domain.model
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

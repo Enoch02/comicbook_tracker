@@ -23,13 +23,11 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.model.ComicTrackerViewModel
-import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
-import com.enoch2.comictracker.navigation.Screen
+import com.enoch2.comictracker.Screen
+import com.enoch2.comictracker.domain.model.Comic
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun ComicDetailScreen(
@@ -43,7 +41,7 @@ fun ComicDetailScreen(
     var comic by remember { mutableStateOf(Comic("", "", 0, 0, 0)) }
 
     LaunchedEffect(true) {
-        comic = viewModel.findComic(comicTitle.toString())
+        comic = viewModel.getComic(comicTitle.toString())
     }
 
     Scaffold(
@@ -57,12 +55,14 @@ fun ComicDetailScreen(
                     IconButton(
                         content = { Icon(Icons.Default.Edit, "edit", tint = Color.White) },
                         onClick = {
-                        navController.navigate(Screen.EditComicScreen.withArgs(
+                        navController.navigate(
+                            Screen.EditComicScreen.withArgs(
                             comic.title,
                             comic.status,
                             comic.rating.toString(),
                             comic.issuesRead.toString(),
-                            comic.totalIssues.toString()))
+                            comic.totalIssues.toString(),
+                            comic.id.toString()))
                         }
                     )
                     IconButton(

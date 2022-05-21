@@ -18,10 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.model.ComicTrackerViewModel
-import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
-import com.enoch2.comictracker.navigation.Screen
+import com.enoch2.comictracker.Screen
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicInfoLayout
 import com.enoch2.comictracker.ui.composables.DrawerHeader
 import com.enoch2.comictracker.ui.composables.DrawerLayout
@@ -104,16 +103,13 @@ fun HomeScreen(
         val viewModel: ComicTrackerViewModel = viewModel(
             factory = ComicTrackerViewModelFactory(context.applicationContext)
         )
-        var comics by remember { mutableStateOf(listOf<Comic>()) }
-        LaunchedEffect(true) {
-            comics = viewModel.getAllComic()
-        }
+        val comics = viewModel.comics.collectAsState(initial = emptyList())
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
             items(
-                count = comics.size,
+                count = comics.value.size,
                 itemContent = { index ->
-                    val comic = comics[index]
+                    val comic = comics.value[index]
                     Card(
                         elevation = 2.dp,
                         modifier = Modifier.padding(bottom = 10.dp)

@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.navigation.Screen
+import com.enoch2.comictracker.Screen
 
 @Composable
 fun DrawerLayout(navController: NavController, context: Context) {

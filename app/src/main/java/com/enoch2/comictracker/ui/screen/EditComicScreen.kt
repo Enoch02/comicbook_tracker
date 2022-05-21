@@ -9,11 +9,8 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.model.ComicTrackerViewModel
-import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicInputLayout
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.util.ComicInputMode
@@ -23,12 +20,12 @@ import kotlinx.coroutines.CoroutineScope
 fun EditComicScreen(
     navController: NavController,
     context: Context,
-    scope: CoroutineScope,
     comicTitle: String?,
     status: String?,
     rating: Float?,
     issuesRead: String?,
-    totalIssues: String?
+    totalIssues: String?,
+    id: String?
 ) {
     Scaffold (
         topBar = {
@@ -44,13 +41,12 @@ fun EditComicScreen(
                 ComicInputLayout(
                     navController,
                     context,
-                    scope,
                     comicTitle = comicTitle.toString(),
                     selectedStatus = status.toString(),
                     rating = rating!!,
                     issuesRead = issuesRead.toString(),
                     totalIssues = totalIssues.toString(),
-                    mode = ComicInputMode.EDIT
+                    id = id!!.toInt()
                 )
             }
         }
