@@ -50,9 +50,9 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = Screen.ComicDetailScreen.route + "/{comicTitle}",
+                            route = Screen.ComicDetailScreen.route + "/{id}",
                             arguments = listOf(
-                                navArgument("comicTitle") {
+                                navArgument("id") {
                                     type = NavType.StringType
                                     nullable = true
                                 }
@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
                         ) { entry ->
                             ComicDetailScreen(
                                 navController,
-                                entry.arguments?.getString("comicTitle"),
+                                entry.arguments?.getString("id"),
                                 context
                             )
                         }
@@ -107,6 +107,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.FilterScreen.route) {
+                            // TODO: Use Home screen for filter results instead
                             FilterScreen()
                         }
 

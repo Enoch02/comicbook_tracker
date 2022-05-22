@@ -1,6 +1,7 @@
 package com.enoch2.comictracker.ui.composables
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,11 +29,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.Screen
-import com.enoch2.comictracker.domain.model.Comic
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
-import com.enoch2.comictracker.util.ComicInputMode
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun ComicInputLayout(
@@ -234,17 +232,17 @@ fun ComicInputLayout(
 
         Button(
             onClick = {
-                viewModel.addComic(
+                if (viewModel.addComic(
                     mComicTitle,
                     mSelectedStatus,
                     mRating.toInt(),
                     mIssuesRead,
                     mTotalIssues,
-                    id!!
-                )
-                navController.navigate(Screen.HomeScreen.route) {
-                    popUpTo(Screen.HomeScreen.route)
-                    launchSingleTop = true
+                    id!!)
+                ) {
+                    navController.popBackStack()
+                } else {
+                    Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
                 }
             },
             content = { Text(text = stringResource(R.string.save_comic_data)) },

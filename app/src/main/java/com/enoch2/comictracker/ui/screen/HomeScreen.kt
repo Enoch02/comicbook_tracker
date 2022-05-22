@@ -27,7 +27,8 @@ import com.enoch2.comictracker.ui.composables.DrawerLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-// TODO: add sort and search functionality
+// TODO: add sort, filter and search functionality
+// TODO: default filter is reading
 @Composable
 private fun TopAppBar(
     navController: NavController,
@@ -123,7 +124,7 @@ fun HomeScreen(
                                 .fillMaxWidth()
                                 .height(IntrinsicSize.Max)
                                 .clickable {
-                                    navController.navigate(Screen.ComicDetailScreen.withArgs(comic.title))
+                                    navController.navigate(Screen.ComicDetailScreen.withArgs(comic.id.toString()))
                                 }
                         )
                     }

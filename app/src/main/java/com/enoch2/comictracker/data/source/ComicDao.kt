@@ -9,8 +9,8 @@ interface ComicDao {
     @Query("SELECT * FROM comic")
     fun getAll(): Flow<List<Comic>>
 
-    @Query("SELECT * FROM comic WHERE title LIKE :comicTitle LIMIT 1")
-    suspend fun getByTitle(comicTitle: String): Comic
+    @Query("SELECT * FROM comic WHERE id LIKE :comicId")
+    fun getComic(comicId: Int): Flow<Comic>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(comics: Comic)

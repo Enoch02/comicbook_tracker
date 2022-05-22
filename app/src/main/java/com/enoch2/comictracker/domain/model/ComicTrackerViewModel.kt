@@ -7,6 +7,8 @@ import com.enoch2.comictracker.data.repository.ComicRepositoryImpl
 import com.enoch2.comictracker.data.source.ComicDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ComicTrackerViewModel(context: Context) : ViewModel() {
@@ -15,11 +17,8 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
     private var _comics = repository.comics
     val comics = _comics
 
-    suspend fun getComic(comicTitle: String): Comic {
-        val result = viewModelScope.async {
-            repository.getComic(comicTitle)
-        }
-        return result.await()
+    fun getComic(comicId: Int): Flow<Comic> {
+        return repository.getComic(comicId)
     }
 
     fun addComic(

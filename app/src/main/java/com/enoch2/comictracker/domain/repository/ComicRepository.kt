@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface ComicRepository {
     val comics: Flow<List<Comic>>
 
-    suspend fun getComic(comicTitle: String): Comic
+    fun getComic(comicId: Int): Flow<Comic>
 
     suspend fun insertComic(comic: Comic)
 

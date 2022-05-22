@@ -2,15 +2,19 @@ package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,22 +36,20 @@ import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 @Composable
 fun ComicDetailScreen(
     navController: NavController,
-    comicTitle: String?,
-    context: Context
+    id: String?,
+    context: Context,
 ) {
     val viewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
-    var comic by remember { mutableStateOf(Comic("", "", 0, 0, 0)) }
-
-    LaunchedEffect(true) {
-        comic = viewModel.getComic(comicTitle.toString())
-    }
+    val comic by  viewModel.getComic(id!!.toInt()).collectAsState(initial = Comic(
+        "", "", 0, 0, 0)
+    )
 
     Scaffold(
         topBar = {
             ComicTrackerTopBar(
-                title = comicTitle!!,
+                title = "Comic Detail",
                 navIcon = Icons.Default.ArrowBack,
                 contentDescription = stringResource(R.string.back),
                 onClick = { navController.popBackStack() },
@@ -68,8 +70,9 @@ fun ComicDetailScreen(
                     IconButton(
                         content = { Icon(Icons.Default.Delete, "delete", tint = Color.White) },
                         onClick = {
-                            viewModel.deleteComic(comic)
+                            //TODO: Causes a crash but works..
                             navController.popBackStack()
+                            viewModel.deleteComic(comic)
                         }
                     )
                 }
@@ -77,6 +80,7 @@ fun ComicDetailScreen(
         },
         content = {
             val constraints = ConstraintSet {
+                val title = createRefFor("title")
                 val cover = createRefFor("cover")
                 val status = createRefFor("status")
                 val rating = createRefFor("rating")
@@ -84,12 +88,24 @@ fun ComicDetailScreen(
                 val divider = createRefFor("divider")
                 val descriptionBox = createRefFor("description")
 
-                constrain(cover) {
-                    top.linkTo(parent.top, 10.dp)
+                constrain(title) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(cover.top, 10.dp)
                     start.linkTo(parent.start, 10.dp)
+                    end.linkTo(parent.end, 10.dp)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
+                }
+                constrain(cover) {
+                    top.linkTo(title.bottom)
+                    bottom.linkTo(divider.top)
+                    start.linkTo(parent.start, 10.dp)
+                    end.linkTo(status.start)
+                    height = Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
                 }
                 constrain(status) {
-                    top.linkTo(parent.top, 10.dp)
+                    top.linkTo(title.bottom, 10.dp)
                     bottom.linkTo(rating.top, 5.dp)
                     start.linkTo(cover.end, 10.dp)
                     end.linkTo(parent.end, 10.dp)
@@ -128,11 +144,25 @@ fun ComicDetailScreen(
                 }
             }
 
-            Surface(modifier = Modifier.fillMaxSize()) {
+            Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.75f)) {
                 ConstraintLayout(constraints) {
+                    Column(
+                        modifier = Modifier.layoutId("title"),
+                        content = {
+                            Text(
+                                comic.title,
+                                fontSize = 20.sp,
+                                softWrap = true,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp)
+                            )
+                            Divider()
+                        }
+                    )
                     Image(
                         painterResource(R.drawable.placeholder_image),
-                        comicTitle,
+                        "cover",
+                        alignment = Alignment.TopStart,
+                        contentScale = ContentScale.Fit,
                         modifier = Modifier.layoutId("cover")
                     )
                     Button(
