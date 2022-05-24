@@ -3,7 +3,7 @@ package com.enoch2.comictracker.data.repository
 import com.enoch2.comictracker.data.source.ComicDao
 import com.enoch2.comictracker.domain.model.Comic
 import com.enoch2.comictracker.domain.repository.ComicRepository
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 
 class ComicRepositoryImpl(private val dao: ComicDao): ComicRepository {
     override val comics = dao.getAll()

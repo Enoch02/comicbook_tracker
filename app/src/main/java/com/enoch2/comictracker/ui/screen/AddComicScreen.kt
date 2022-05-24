@@ -62,6 +62,8 @@ fun AddComicScreen(
                 }
                 constrain(input) {
                     top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(text.end)
                     end.linkTo(parent.end)
                     width = Dimension.percent(0.7f)
                 }

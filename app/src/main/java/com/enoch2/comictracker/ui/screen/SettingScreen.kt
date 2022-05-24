@@ -20,6 +20,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
+import com.enoch2.comictracker.Screen
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
@@ -99,18 +100,23 @@ fun SettingScreen(
                         content = { Text(stringResource(R.string.import_data)) },
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Divider()
 
                     TextButton(
                         onClick = { /*TODO*/ },
                         content = { Text(stringResource(R.string.export_data)) },
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Divider()
 
                     TextButton(
                         onClick = { showDialog = !showDialog },
                         content = { Text(stringResource(R.string.clear_data)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Divider()
+
+                    TextButton(
+                        onClick = { navController.navigate(Screen.AboutScreen.route) },
+                        content = { Text(stringResource(R.string.about)) },
                         modifier = Modifier.fillMaxWidth()
                     )
 

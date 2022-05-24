@@ -32,4 +32,6 @@
     <string name="comic_detail">Comic Detail</string>
     <string name="filters">Filters</string>
     <string name="edit_comic">Edit Comic</string>
+    <string name="sort">Sort by</string>
+    <string name="plan_to_read">Plan to Read</string>
 </resources>

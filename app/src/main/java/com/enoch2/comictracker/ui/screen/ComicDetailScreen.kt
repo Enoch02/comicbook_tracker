@@ -19,6 +19,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -42,9 +43,8 @@ fun ComicDetailScreen(
     val viewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
-    val comic by  viewModel.getComic(id!!.toInt()).collectAsState(initial = Comic(
-        "", "", 0, 0, 0)
-    )
+
+    val comic by  viewModel.getComic(id!!.toInt()).collectAsState(initial = Comic())
 
     Scaffold(
         topBar = {
@@ -91,8 +91,8 @@ fun ComicDetailScreen(
                 constrain(title) {
                     top.linkTo(parent.top)
                     bottom.linkTo(cover.top, 10.dp)
-                    start.linkTo(parent.start, 10.dp)
-                    end.linkTo(parent.end, 10.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                     height = Dimension.wrapContent
                 }
@@ -153,7 +153,8 @@ fun ComicDetailScreen(
                                 comic.title,
                                 fontSize = 20.sp,
                                 softWrap = true,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp)
+                                overflow = TextOverflow.Clip,
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
                             )
                             Divider()
                         }

@@ -7,9 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +35,7 @@ private fun TopAppBar(
 ) {
     val drawerState = scaffoldState.drawerState
     val tint = Color.White
+    var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
         navigationIcon = {
@@ -59,13 +58,31 @@ private fun TopAppBar(
         actions = {
             IconButton(
                 onClick = {
-                    navController.navigate(Screen.SettingScreen.route)
+                     showMenu = !showMenu
                 },
-                content = { Icon(
-                    Icons.Default.Settings,
-                    stringResource(R.string.settings),
-                    tint = tint
-                ) }
+                content = {
+                    Icon(
+                        Icons.Default.MoreVert,
+                        stringResource(R.string.settings),
+                        tint = tint
+                    )
+
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = !showMenu }
+                    ) {
+                        DropdownMenuItem(
+                            onClick = {
+                                //TODO:
+                            },
+                            content = { Text(stringResource(R.string.sort)) }
+                        )
+                        DropdownMenuItem(
+                            onClick = { navController.navigate(Screen.SettingScreen.route) },
+                            content = { Text(stringResource(R.string.settings)) }
+                        )
+                    }
+                }
             )
         },
         elevation = 1.dp
@@ -86,7 +103,7 @@ fun HomeScreen(
         drawerContent = {
             DrawerHeader()
             Divider()
-            DrawerLayout(navController, context)
+            DrawerLayout(context)
         },
         drawerGesturesEnabled = true,
         floatingActionButton = {
@@ -104,13 +121,13 @@ fun HomeScreen(
         val viewModel: ComicTrackerViewModel = viewModel(
             factory = ComicTrackerViewModelFactory(context.applicationContext)
         )
-        val comics = viewModel.comics.collectAsState(initial = emptyList())
+        val comics = viewModel.comics.collectAsState(initial = emptyList()).value
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
             items(
-                count = comics.value.size,
+                count = comics.size,
                 itemContent = { index ->
-                    val comic = comics.value[index]
+                    val comic = comics[index]
                     Card(
                         elevation = 2.dp,
                         modifier = Modifier.padding(bottom = 10.dp)
