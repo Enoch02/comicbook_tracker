@@ -9,6 +9,9 @@ interface ComicDao {
     @Query("SELECT * FROM comic")
     fun getAll(): Flow<List<Comic>>
 
+    @Query("SELECT * FROM comic")
+    fun getAllTest(): List<Comic>
+
     @Query("SELECT * FROM comic ORDER BY " +
             "CASE WHEN :order = 0 THEN title END ASC," +
             "CASE WHEN :order = 1 THEN title END DESC")
@@ -28,7 +31,7 @@ interface ComicDao {
     fun getComic(comicId: Int): Flow<Comic>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(comics: Comic)
+    suspend fun insert(comic: Comic)
 
     @Delete
     suspend fun delete(comic: Comic)
