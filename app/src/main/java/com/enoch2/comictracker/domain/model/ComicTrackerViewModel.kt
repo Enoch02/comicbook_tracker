@@ -1,11 +1,13 @@
 package com.enoch2.comictracker.domain.model
 
 import android.content.Context
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.enoch2.comictracker.data.repository.ComicRepositoryImpl
 import com.enoch2.comictracker.data.source.ComicDatabase
+import com.enoch2.comictracker.util.Filters
+import com.enoch2.comictracker.util.Filters.*
+import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -13,9 +15,44 @@ import kotlinx.coroutines.launch
 class ComicTrackerViewModel(context: Context) : ViewModel() {
     private val comicDao = ComicDatabase.getDataBase(context.applicationContext).getComicDao()
     private val repository = ComicRepositoryImpl(comicDao)
-    private var _filter = mutableStateOf("reading")
-    private var _comics = repository.comics.map { comic -> comic.filter { it.status == _filter.value  } }
-    var comics = _comics
+
+    fun getComics(filter: Filters, orderType: OrderType): Flow<List<Comic>> {
+        return when (orderType) {
+            OrderType.ASCENDING -> {
+                when (filter) {
+                    ALL -> {
+                        return repository.getAllOrdered(0)  // 0 -> ascending
+                    }
+                    READING -> {
+                        return repository.getAllReadingOrdered(0)
+                    }
+                    COMPLETED -> TODO()
+                    ON_HOLD -> {
+                        repository.getAllOnHoldOrdered(0)
+                    }
+                    DROPPED -> TODO()
+                    PLAN_TO_READ -> TODO()
+                }
+            }
+            OrderType.DESCENDING -> {
+                when (filter) {
+                    ALL -> {
+                        return repository.getAllOrdered(1)
+                    }
+                    READING -> {
+                        return repository.getAllReadingOrdered(1)
+                    }
+                    COMPLETED -> TODO()
+                    ON_HOLD -> {
+                        repository.getAllOnHoldOrdered(1)
+                    }
+                    DROPPED -> TODO()
+                    PLAN_TO_READ -> TODO()
+                }
+            }
+            else -> repository.getAll()
+        }
+    }
 
     fun getComic(comicId: Int): Flow<Comic> {
         return repository.getComic(comicId)
@@ -83,7 +120,7 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun changeFilter(newFilter: String) {
-        _filter.value = newFilter
+    fun changeArrangement(newArrangement:  Pair<Filters, OrderType>) {
+
     }
 }

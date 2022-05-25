@@ -11,12 +11,18 @@ abstract class ComicDatabase : RoomDatabase() {
     abstract fun getComicDao() : ComicDao
 
     companion object {
+        private var instance: ComicDatabase? = null
+
+        @Synchronized
         fun getDataBase(context: Context): ComicDatabase {
-            return Room.databaseBuilder(
-                context.applicationContext,
-                ComicDatabase::class.java,
-                "comics"
-            ).build()
+            if (instance == null) {
+                instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    ComicDatabase::class.java,
+                    "comics"
+                ).build()
+            }
+            return instance!!
         }
     }
 }

@@ -3,10 +3,24 @@ package com.enoch2.comictracker.data.repository
 import com.enoch2.comictracker.data.source.ComicDao
 import com.enoch2.comictracker.domain.model.Comic
 import com.enoch2.comictracker.domain.repository.ComicRepository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
 
 class ComicRepositoryImpl(private val dao: ComicDao): ComicRepository {
-    override val comics = dao.getAll()
+
+    fun getAll(): Flow<List<Comic>> {
+        return dao.getAll()
+    }
+    fun getAllOrdered(order: Int): Flow<List<Comic>> {
+        return dao.getAllOrdered(order)
+    }
+
+    fun getAllReadingOrdered(order: Int): Flow<List<Comic>> {
+        return dao.getAllReadingOrdered(order)
+    }
+
+    fun getAllOnHoldOrdered(order: Int): Flow<List<Comic>> {
+        return dao.getAllOnHoldOrdered(order)
+    }
 
     override fun getComic(comicId: Int): Flow<Comic> {
         return dao.getComic(comicId)
@@ -23,5 +37,4 @@ class ComicRepositoryImpl(private val dao: ComicDao): ComicRepository {
     override suspend fun deleteAllComic() {
         dao.deleteAll()
     }
-
 }

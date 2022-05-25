@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
 interface ComicRepository {
-    val comics: Flow<List<Comic>>
 
     fun getComic(comicId: Int): Flow<Comic>
 

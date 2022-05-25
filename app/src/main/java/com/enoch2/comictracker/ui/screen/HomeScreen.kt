@@ -21,21 +21,22 @@ import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicInfoLayout
 import com.enoch2.comictracker.ui.composables.DrawerHeader
-import com.enoch2.comictracker.ui.composables.DrawerLayout
+import com.enoch2.comictracker.ui.composables.FilterLabel
+import com.enoch2.comictracker.util.Filters
+import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-// TODO: add sort, filter and search functionality
-// TODO: default filter is reading
+// TODO: search functionality
 @Composable
 private fun TopAppBar(
     navController: NavController,
     scaffoldState: ScaffoldState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    onOrderMenuItemClick: () -> Unit
 ) {
     val drawerState = scaffoldState.drawerState
     val tint = Color.White
-    var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
         navigationIcon = {
@@ -56,6 +57,8 @@ private fun TopAppBar(
         },
         title = { Text(stringResource(R.string.my_comics)) },
         actions = {
+            var showMenu by remember { mutableStateOf(false) }
+            var showInnerMenu by remember { mutableStateOf(false) }
             IconButton(
                 onClick = {
                      showMenu = !showMenu
@@ -66,20 +69,35 @@ private fun TopAppBar(
                         stringResource(R.string.settings),
                         tint = tint
                     )
-
                     DropdownMenu(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = !showMenu }
                     ) {
                         DropdownMenuItem(
                             onClick = {
-                                //TODO:
+                                showInnerMenu = !showInnerMenu
+                                showMenu = !showMenu
                             },
                             content = { Text(stringResource(R.string.sort)) }
                         )
+                        Divider()
                         DropdownMenuItem(
                             onClick = { navController.navigate(Screen.SettingScreen.route) },
                             content = { Text(stringResource(R.string.settings)) }
+                        )
+                    }
+                    // for changing sort order
+                    DropdownMenu(
+                        expanded = showInnerMenu,
+                        onDismissRequest = {
+                            showInnerMenu = !showInnerMenu
+                            showMenu = !showMenu
+                        }
+                    ) {
+                        //TODO: str resource
+                        DropdownMenuItem(
+                            onClick = onOrderMenuItemClick,
+                            content = { Text("Descending") }
                         )
                     }
                 }
@@ -97,13 +115,60 @@ fun HomeScreen(
     scope: CoroutineScope,
     listState: LazyListState
 ) {
+    val drawerState = scaffoldState.drawerState
+    var filter by remember { mutableStateOf(Filters.ALL) }
+    var order by remember { mutableStateOf(OrderType.ASCENDING) }
+
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopAppBar(navController, scaffoldState, scope) },
+        topBar = { TopAppBar(
+            navController,
+            scaffoldState,
+            scope,
+            onOrderMenuItemClick = { order = OrderType.DESCENDING }
+        ) },
         drawerContent = {
             DrawerHeader()
             Divider()
-            DrawerLayout(context)
+            val drawerItems = listOf(
+                stringResource(R.string.reading), stringResource(R.string.completed),
+                stringResource(R.string.on_hold), stringResource(R.string.dropped)
+            )
+
+            FilterLabel()
+            drawerItems.forEachIndexed { index, item ->
+                TextButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = { Text(item) },
+                    onClick = {
+                        when (index) {
+                            0 -> {
+                                //TODO: automatically close drawer
+                                filter = Filters.READING
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                            1 -> {
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                            2 -> {
+                                filter = Filters.ON_HOLD
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                            3 -> {
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                        }
+                    }
+                )
+            }
         },
         drawerGesturesEnabled = true,
         floatingActionButton = {
@@ -121,7 +186,8 @@ fun HomeScreen(
         val viewModel: ComicTrackerViewModel = viewModel(
             factory = ComicTrackerViewModelFactory(context.applicationContext)
         )
-        val comics = viewModel.comics.collectAsState(initial = emptyList()).value
+        //val comics = viewModel.comics.collectAsState(initial = emptyList()).value
+        val comics = viewModel.getComics(filter, order).collectAsState(initial = emptyList()).value
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
             items(
