@@ -7,7 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,78 +35,10 @@ private fun TopAppBar(
     navController: NavController,
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
-    onOrderMenuItemClick: () -> Unit
+    ascendComics: () -> Unit,
+    descendComics: () -> Unit
 ) {
-    val drawerState = scaffoldState.drawerState
-    val tint = Color.White
 
-    TopAppBar(
-        navigationIcon = {
-            IconButton(content = {
-                Icon(Icons.Default.Menu,
-                    tint = tint,
-                    contentDescription = stringResource(R.string.menu))
-            },
-                onClick = {
-                    scope.launch {
-                        if (drawerState.isClosed)
-                            drawerState.open()
-                        else drawerState.close()
-
-                    }
-                }
-            )
-        },
-        title = { Text(stringResource(R.string.my_comics)) },
-        actions = {
-            var showMenu by remember { mutableStateOf(false) }
-            var showInnerMenu by remember { mutableStateOf(false) }
-            IconButton(
-                onClick = {
-                     showMenu = !showMenu
-                },
-                content = {
-                    Icon(
-                        Icons.Default.MoreVert,
-                        stringResource(R.string.settings),
-                        tint = tint
-                    )
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = !showMenu }
-                    ) {
-                        DropdownMenuItem(
-                            onClick = {
-                                showInnerMenu = !showInnerMenu
-                                showMenu = !showMenu
-                            },
-                            content = { Text(stringResource(R.string.sort)) }
-                        )
-                        Divider()
-                        DropdownMenuItem(
-                            onClick = { navController.navigate(Screen.SettingScreen.route) },
-                            content = { Text(stringResource(R.string.settings)) }
-                        )
-                    }
-                    // for changing sort order
-                    DropdownMenu(
-                        expanded = showInnerMenu,
-                        onDismissRequest = {
-                            showInnerMenu = !showInnerMenu
-                            showMenu = !showMenu
-                        }
-                    ) {
-                        //TODO: str resource
-                        DropdownMenuItem(
-                            onClick = onOrderMenuItemClick,
-                            content = { Text("Descending") }
-                        )
-                    }
-                }
-            )
-        },
-        elevation = 1.dp
-    )
 }
 
 @Composable
@@ -121,18 +55,98 @@ fun HomeScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopAppBar(
-            navController,
-            scaffoldState,
-            scope,
-            onOrderMenuItemClick = { order = OrderType.DESCENDING }
-        ) },
+        topBar = {
+            val drawerState = scaffoldState.drawerState
+            val tint = Color.White
+
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(content = {
+                        Icon(
+                            Icons.Default.Menu,
+                            tint = tint,
+                            contentDescription = stringResource(R.string.menu)
+                        )
+                    },
+                        onClick = {
+                            scope.launch {
+                                if (drawerState.isClosed)
+                                    drawerState.open()
+                                else drawerState.close()
+
+                            }
+                        }
+                    )
+                },
+                title = { Text(stringResource(R.string.my_comics)) },
+                actions = {
+                    var showMenu by remember { mutableStateOf(false) }
+                    var showInnerMenu by remember { mutableStateOf(false) }
+                    IconButton(
+                        onClick = {
+                            showMenu = !showMenu
+                        },
+                        content = {
+                            Icon(
+                                Icons.Default.MoreVert,
+                                stringResource(R.string.settings),
+                                tint = tint
+                            )
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = !showMenu }
+                            ) {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        showInnerMenu = !showInnerMenu
+                                    },
+                                    content = { Text(stringResource(R.string.sort)) }
+                                )
+                                Divider()
+                                DropdownMenuItem(
+                                    onClick = { navController.navigate(Screen.SettingScreen.route) },
+                                    content = { Text(stringResource(R.string.settings)) }
+                                )
+                            }
+                            // for changing sort order
+                            DropdownMenu(
+                                expanded = showInnerMenu,
+                                onDismissRequest = {
+                                    if (showMenu) showMenu = !showMenu
+                                    showInnerMenu = !showInnerMenu
+                                }
+                            ) {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        order = OrderType.ASCENDING
+                                        if (showMenu) showMenu = !showMenu
+                                        showInnerMenu = !showInnerMenu
+                                    },
+                                    content = { Text(stringResource(R.string.ascending)) }
+                                )
+                                Divider()
+                                DropdownMenuItem(
+                                    onClick = {
+                                        order = OrderType.DESCENDING
+                                        if (showMenu) showMenu = !showMenu
+                                        showInnerMenu = !showInnerMenu
+                                    },
+                                    content = { Text(stringResource(R.string.descending)) }
+                                )
+                            }
+                        }
+                    )
+                },
+                elevation = 1.dp
+            )
+        },
         drawerContent = {
             DrawerHeader()
             Divider()
             val drawerItems = listOf(
                 stringResource(R.string.reading), stringResource(R.string.completed),
-                stringResource(R.string.on_hold), stringResource(R.string.dropped)
+                stringResource(R.string.on_hold), stringResource(R.string.dropped),
+                stringResource(R.string.plan_to_read)
             )
 
             FilterLabel()
@@ -143,13 +157,13 @@ fun HomeScreen(
                     onClick = {
                         when (index) {
                             0 -> {
-                                //TODO: automatically close drawer
                                 filter = Filters.READING
                                 scope.launch {
                                     drawerState.close()
                                 }
                             }
                             1 -> {
+                                filter = Filters.COMPLETED
                                 scope.launch {
                                     drawerState.close()
                                 }
@@ -161,6 +175,13 @@ fun HomeScreen(
                                 }
                             }
                             3 -> {
+                                filter = Filters.DROPPED
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                            4 -> {
+                                filter = Filters.PLAN_TO_READ
                                 scope.launch {
                                     drawerState.close()
                                 }
@@ -175,18 +196,17 @@ fun HomeScreen(
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.AddComicScreen.route) }
             ) {
-            Icon(
-                Icons.Default.Add,
-                "add",
-                tint = Color.White
-            )
+                Icon(
+                    Icons.Default.Add,
+                    "add",
+                    tint = Color.White
+                )
             }
         }
     ) {
         val viewModel: ComicTrackerViewModel = viewModel(
             factory = ComicTrackerViewModelFactory(context.applicationContext)
         )
-        //val comics = viewModel.comics.collectAsState(initial = emptyList()).value
         val comics = viewModel.getComics(filter, order).collectAsState(initial = emptyList()).value
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
@@ -195,7 +215,7 @@ fun HomeScreen(
                 itemContent = { index ->
                     val comic = comics[index]
                     Card(
-                        elevation = 2.dp,
+                        elevation = 4.dp,
                         modifier = Modifier.padding(bottom = 10.dp)
                     ) {
                         ComicInfoLayout(

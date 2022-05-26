@@ -10,17 +10,6 @@ class ComicRepositoryImpl(private val dao: ComicDao): ComicRepository {
     fun getAll(): Flow<List<Comic>> {
         return dao.getAll()
     }
-    fun getAllOrdered(order: Int): Flow<List<Comic>> {
-        return dao.getAllOrdered(order)
-    }
-
-    fun getAllReadingOrdered(order: Int): Flow<List<Comic>> {
-        return dao.getAllReadingOrdered(order)
-    }
-
-    fun getAllOnHoldOrdered(order: Int): Flow<List<Comic>> {
-        return dao.getAllOnHoldOrdered(order)
-    }
 
     override fun getComic(comicId: Int): Flow<Comic> {
         return dao.getComic(comicId)
@@ -36,5 +25,17 @@ class ComicRepositoryImpl(private val dao: ComicDao): ComicRepository {
 
     override suspend fun deleteAllComic() {
         dao.deleteAll()
+    }
+
+    fun getAllOrdered(order: Int): Flow<List<Comic>> {
+        return dao.getAllOrdered(order)
+    }
+
+    fun getAllReadingOrdered(order: Int): Flow<List<Comic>> {
+        return dao.getAllReadingOrdered(order)
+    }
+
+    fun getAllOnHoldOrdered(order: Int): Flow<List<Comic>> {
+        return dao.getAllOnHoldOrdered(order)
     }
 }

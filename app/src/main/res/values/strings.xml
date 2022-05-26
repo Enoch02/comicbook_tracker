@@ -34,4 +34,6 @@
     <string name="edit_comic">Edit Comic</string>
     <string name="sort">Sort by</string>
     <string name="plan_to_read">Plan to Read</string>
+    <string name="descending">Descending</string>
+    <string name="ascending">Ascending</string>
 </resources>
