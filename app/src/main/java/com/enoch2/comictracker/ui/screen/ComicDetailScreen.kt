@@ -2,7 +2,9 @@ package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -44,7 +46,7 @@ fun ComicDetailScreen(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
 
-    val comic by  viewModel.getComic(id!!.toInt()).collectAsState(initial = Comic())
+    val comic by viewModel.getComic(id!!.toInt()).collectAsState(initial = Comic())
 
     Scaffold(
         topBar = {
@@ -57,14 +59,16 @@ fun ComicDetailScreen(
                     IconButton(
                         content = { Icon(Icons.Default.Edit, "edit", tint = Color.White) },
                         onClick = {
-                        navController.navigate(
-                            Screen.EditComicScreen.withArgs(
-                            comic.title,
-                            comic.status,
-                            comic.rating.toString(),
-                            comic.issuesRead.toString(),
-                            comic.totalIssues.toString(),
-                            comic.id.toString()))
+                            navController.navigate(
+                                Screen.EditComicScreen.withArgs(
+                                    comic.title,
+                                    comic.status,
+                                    comic.rating.toString(),
+                                    comic.issuesRead.toString(),
+                                    comic.totalIssues.toString(),
+                                    comic.id.toString()
+                                )
+                            )
                         }
                     )
                     IconButton(
@@ -144,7 +148,7 @@ fun ComicDetailScreen(
                 }
             }
 
-            Surface(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.75f)) {
+            Surface(modifier = Modifier.fillMaxSize()) {
                 ConstraintLayout(constraints) {
                     Column(
                         modifier = Modifier.layoutId("title"),
@@ -167,7 +171,6 @@ fun ComicDetailScreen(
                         modifier = Modifier.layoutId("cover")
                     )
                     Button(
-
                         onClick = { /*TODO*/ },
                         modifier = Modifier.layoutId("status"),
                         content = { Text(comic.status) }
