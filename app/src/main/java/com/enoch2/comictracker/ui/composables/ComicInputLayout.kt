@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
@@ -28,9 +29,9 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.Screen
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
+import com.enoch2.comictracker.util.ComicInputMode
 
 @Composable
 fun ComicInputLayout(
@@ -41,7 +42,8 @@ fun ComicInputLayout(
     rating: Float,
     issuesRead: String,
     totalIssues: String,
-    id: Int? = null
+    id: Int? = null,
+    mode: ComicInputMode
 ) {
     val constraints = ConstraintSet {
         val text = createRefFor("text")
@@ -62,12 +64,12 @@ fun ComicInputLayout(
     val viewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
-    var mComicTitle by remember { mutableStateOf(comicTitle) }
-    var isExpanded by remember { mutableStateOf(false) }
-    var mSelectedStatus by remember { mutableStateOf(selectedStatus) }
-    var mRating by remember { mutableStateOf(rating) }
-    var mIssuesRead by remember { mutableStateOf(issuesRead) }
-    var mTotalIssues by remember { mutableStateOf(totalIssues) }
+    var mComicTitle by rememberSaveable { mutableStateOf(comicTitle) }
+    var mIsExpanded by rememberSaveable { mutableStateOf(false) }
+    var mSelectedStatus by rememberSaveable { mutableStateOf(selectedStatus) }
+    var mRating by rememberSaveable { mutableStateOf(rating) }
+    var mIssuesRead by rememberSaveable { mutableStateOf(issuesRead) }
+    var mTotalIssues by rememberSaveable { mutableStateOf(totalIssues) }
 
     Column {
         ConstraintLayout(
@@ -90,7 +92,7 @@ fun ComicInputLayout(
         }
         Divider()
 
-        val items = listOf("reading" , "completed", "on hold", "dropped" , "plan to read")
+        val items = listOf("reading", "completed", "on hold", "dropped", "plan to read")
 
         ConstraintLayout(
             constraints, modifier = Modifier
@@ -104,36 +106,39 @@ fun ComicInputLayout(
             )
 
             Box(modifier = Modifier.layoutId("input")) {
-                val disabledTextColor = if (isSystemInDarkTheme()) Color.White else Color.Black
+                val disabledTextColor =
+                    if (isSystemInDarkTheme()) Color.White else Color.Black
                 OutlinedTextField(
-                    value = mSelectedStatus,
+                    value = selectedStatus,
                     onValueChange = { mSelectedStatus = it },
                     enabled = false,
                     trailingIcon = {
-                        IconButton(onClick = { isExpanded = !isExpanded }) {
-                            val icon = if (isExpanded)
+                        IconButton(onClick = { mIsExpanded = !mIsExpanded }) {
+                            val icon = if (mIsExpanded)
                                 Icons.Filled.KeyboardArrowUp
                             else
                                 Icons.Filled.KeyboardArrowDown
                             Icon(icon, null)
+
+                            DropdownMenu(
+                                expanded = mIsExpanded,
+                                onDismissRequest = { mIsExpanded = !mIsExpanded }
+                            ) {
+                                items.forEach { item ->
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            mSelectedStatus = item
+                                            mIsExpanded = false
+                                        },
+                                        content = { Text(item) }
+                                    )
+                                }
+                            }
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(disabledTextColor = disabledTextColor)
+                    colors = TextFieldDefaults.textFieldColors(disabledTextColor = disabledTextColor),
+                    modifier = Modifier.fillMaxWidth()
                 )
-                DropdownMenu(
-                    expanded = isExpanded,
-                    onDismissRequest = { isExpanded = !isExpanded }
-                ) {
-                    items.forEach { item ->
-                        DropdownMenuItem(
-                            onClick = {
-                                mSelectedStatus = item
-                                isExpanded = !isExpanded
-                            },
-                            content = { Text(item) }
-                        )
-                    }
-                }
             }
         }
         Divider()
@@ -232,17 +237,33 @@ fun ComicInputLayout(
 
         Button(
             onClick = {
-                if (viewModel.addComic(
-                    mComicTitle,
-                    mSelectedStatus,
-                    mRating.toInt(),
-                    mIssuesRead,
-                    mTotalIssues,
-                    id!!)
-                ) {
-                    navController.popBackStack()
+                if (mode == ComicInputMode.EDIT) {
+                    if (viewModel.addComic(
+                            mComicTitle,
+                            mSelectedStatus,
+                            mRating.toInt(),
+                            mIssuesRead,
+                            mTotalIssues,
+                            id!!
+                        )
+                    ) {
+                        navController.popBackStack()
+                    } else {
+                        Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
-                    Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
+                    if (viewModel.addComic(
+                            mComicTitle,
+                            mSelectedStatus,
+                            mRating.toInt(),
+                            mIssuesRead,
+                            mTotalIssues
+                        )
+                    ) {
+                        navController.popBackStack()
+                    } else {
+                        Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
+                    }
                 }
             },
             content = { Text(text = stringResource(R.string.save_comic_data)) },

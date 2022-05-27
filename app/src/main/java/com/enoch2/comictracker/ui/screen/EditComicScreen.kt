@@ -14,7 +14,6 @@ import com.enoch2.comictracker.R
 import com.enoch2.comictracker.ui.composables.ComicInputLayout
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.util.ComicInputMode
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun EditComicScreen(
@@ -46,7 +45,8 @@ fun EditComicScreen(
                     rating = rating!!,
                     issuesRead = issuesRead.toString(),
                     totalIssues = totalIssues.toString(),
-                    id = id!!.toInt()
+                    id = id!!.toInt(),
+                    ComicInputMode.EDIT
                 )
             }
         }

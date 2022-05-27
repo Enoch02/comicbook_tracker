@@ -26,12 +26,18 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
                     READING -> {
                         return repository.getAllReadingOrdered(0)
                     }
-                    COMPLETED -> TODO()
-                    ON_HOLD -> {
-                        repository.getAllOnHoldOrdered(0)
+                    COMPLETED -> {
+                        return repository.getAllCompletedOrdered(0)
                     }
-                    DROPPED -> TODO()
-                    PLAN_TO_READ -> TODO()
+                    ON_HOLD -> {
+                        return repository.getAllOnHoldOrdered(0)
+                    }
+                    DROPPED -> {
+                        return repository.getAllDroppedOrdered(0)
+                    }
+                    PLAN_TO_READ -> {
+                        return repository.getAllPTROrdered(0)
+                    }
                 }
             }
             OrderType.DESCENDING -> {
@@ -42,12 +48,18 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
                     READING -> {
                         return repository.getAllReadingOrdered(1)
                     }
-                    COMPLETED -> TODO()
-                    ON_HOLD -> {
-                        repository.getAllOnHoldOrdered(1)
+                    COMPLETED -> {
+                        return repository.getAllCompletedOrdered(1)
                     }
-                    DROPPED -> TODO()
-                    PLAN_TO_READ -> TODO()
+                    ON_HOLD -> {
+                        return repository.getAllOnHoldOrdered(1)
+                    }
+                    DROPPED -> {
+                        return repository.getAllDroppedOrdered(1)
+                    }
+                    PLAN_TO_READ -> {
+                        return repository.getAllPTROrdered(1)
+                    }
                 }
             }
             else -> repository.getAll()
@@ -118,9 +130,5 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteAllComic()
         }
-    }
-
-    fun changeArrangement(newArrangement:  Pair<Filters, OrderType>) {
-
     }
 }

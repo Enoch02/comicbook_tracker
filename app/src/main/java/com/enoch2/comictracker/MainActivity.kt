@@ -36,7 +36,10 @@ class MainActivity : ComponentActivity() {
                     val scope = rememberCoroutineScope()
                     val listState = rememberLazyListState()
 
-                    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.HomeScreen.route
+                    ) {
                         composable(Screen.AboutScreen.route) {
                             AboutScreen(navController)
                         }
@@ -44,8 +47,7 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.AddComicScreen.route) {
                             AddComicScreen(
                                 navController,
-                                context,
-                                scope
+                                context
                             )
                         }
 
@@ -106,11 +108,6 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable(Screen.FilterScreen.route) {
-                            // TODO: Use Home screen for filter results instead
-                            FilterScreen()
-                        }
-
                         composable(Screen.HomeScreen.route) {
                             HomeScreen(
                                 navController,
@@ -138,10 +135,9 @@ sealed class Screen(val route: String) {
     object HomeScreen : Screen("home_screen")
     object AboutScreen : Screen("about_screen")
     object AddComicScreen : Screen("add_comic_screen")
-    object FilterScreen : Screen("filter_screen")
     object SettingScreen : Screen("setting_screen")
-    object ComicDetailScreen: Screen("comic_detail_screen")
-    object EditComicScreen: Screen("edit_comic_screen")
+    object ComicDetailScreen : Screen("comic_detail_screen")
+    object EditComicScreen : Screen("edit_comic_screen")
 
     fun withArgs(vararg args: String): String {
         return buildString {
