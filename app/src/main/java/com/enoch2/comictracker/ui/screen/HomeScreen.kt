@@ -7,11 +7,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.ArrowRight
-import androidx.compose.material.icons.outlined.ArrowRightAlt
-import androidx.compose.material.icons.outlined.SubdirectoryArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -74,8 +73,6 @@ fun HomeScreen(
                 actions = {
                     var showMenu by remember { mutableStateOf(false) }
                     var showInnerMenu by remember { mutableStateOf(false) }
-                    var isAscSelected by remember { mutableStateOf(order == OrderType.ASCENDING) }
-                    var isDscSelected by remember { mutableStateOf(order == OrderType.DESCENDING) }
 
                     IconButton(
                         onClick = {
@@ -88,35 +85,51 @@ fun HomeScreen(
                                 tint = tint
                             )
 
+                            val items = listOf(
+                                stringResource(R.string.sort),
+                                stringResource(R.string.settings)
+                            )
                             DropdownMenu(
                                 expanded = showMenu,
                                 onDismissRequest = { showMenu = !showMenu },
                                 content = {
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            showInnerMenu = !showInnerMenu
-                                            showMenu = !showMenu
-                                        },
-                                        content = {
-                                            Box(
-                                                modifier = Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Row {
-                                                    Text(stringResource(R.string.sort))
-                                                    Icon(Icons.Outlined.ArrowRight, null)
+                                    items.forEachIndexed { index, item ->
+                                        DropdownMenuItem(
+                                            contentPadding = PaddingValues(horizontal = 15.dp),
+                                            onClick = {
+                                                if (index == 0) {
+                                                    showInnerMenu = !showInnerMenu
+                                                    showMenu = !showMenu
+                                                } else {
+                                                    navController.navigate(Screen.SettingScreen.route)
+                                                }
+                                            },
+                                            content = {
+                                                Box(
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Row {
+                                                        Text(item)
+                                                        if (index == 0)
+                                                            Icon(Icons.Outlined.ArrowRight, null)
+                                                    }
                                                 }
                                             }
-                                        }
-                                    )
-                                    DropdownMenuItem(
-                                        onClick = { navController.navigate(Screen.SettingScreen.route) },
-                                        content = { Text(stringResource(R.string.settings)) }
-                                    )
+                                        )
+                                    }
                                 }
                             )
                         }
                     )
+                    val innerMenuItems = listOf(
+                        stringResource(R.string.ascending),
+                        stringResource(R.string.descending)
+                    )
+                    var selected by rememberSaveable { mutableStateOf(innerMenuItems[0]) }
+                    val onSelectionChange = { text: String ->
+                        selected = text
+                    }
                     // for changing sort order
                     DropdownMenu(
                         expanded = showInnerMenu,
@@ -125,47 +138,40 @@ fun HomeScreen(
                             showInnerMenu = !showInnerMenu
                         },
                         content = {
-                            DropdownMenuItem(
-                                onClick = {
-                                    order = OrderType.ASCENDING
-                                    showInnerMenu = !showInnerMenu
-                                },
-                                content = {
+                            innerMenuItems.forEachIndexed { index, item ->
+                                DropdownMenuItem(
+                                    contentPadding = PaddingValues(horizontal = 15.dp),
+                                    onClick = {
+                                        if (index == 0) {
+                                            order = OrderType.ASCENDING
+                                            showInnerMenu = !showInnerMenu
+                                            onSelectionChange(item)
+                                        } else {
+                                            order = OrderType.DESCENDING
+                                            showInnerMenu = !showInnerMenu
+                                            onSelectionChange(item)
+                                        }
+                                    }
+                                ) {
                                     Row {
-                                        Text(stringResource(R.string.ascending))
+                                        Text(item)
                                         RadioButton(
-                                            modifier = Modifier.padding(horizontal = 5.dp),
-                                            selected = isAscSelected,
+                                            selected = item == selected,
                                             onClick = {
-                                                order = OrderType.ASCENDING
-                                                showInnerMenu = !showInnerMenu
+                                                if (index == 0) {
+                                                    order = OrderType.ASCENDING
+                                                    showInnerMenu = !showInnerMenu
+                                                    onSelectionChange(item)
+                                                } else {
+                                                    order = OrderType.DESCENDING
+                                                    showInnerMenu = !showInnerMenu
+                                                    onSelectionChange(item)
+                                                }
                                             }
                                         )
                                     }
                                 }
-                            )
-                            DropdownMenuItem(
-                                onClick = {
-                                    order = OrderType.DESCENDING
-                                    showInnerMenu = !showInnerMenu
-                                },
-                                content = {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(stringResource(R.string.descending))
-                                        RadioButton(
-                                            modifier = Modifier.padding(horizontal = 5.dp),
-                                            selected = isDscSelected,
-                                            onClick = {
-                                                order = OrderType.DESCENDING
-                                                showInnerMenu = !showInnerMenu
-                                            }
-                                        )
-                                    }
-                                }
-                            )
+                            }
                         }
                     )
                 },
