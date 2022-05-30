@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 
 class ComicRepositoryImpl(private val dao: ComicDao) : ComicRepository {
 
-    fun getAll(): Flow<List<Comic>> {
+    override fun getAll(): Flow<List<Comic>> {
         return dao.getAll()
     }
 
-    override fun getComic(comicId: Int): Flow<Comic> {
+    override fun getComic(comicId: Int?): Flow<Comic> {
         return dao.getComic(comicId)
     }
 
