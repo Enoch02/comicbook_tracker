@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +34,7 @@ import com.enoch2.comictracker.domain.model.Comic
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
+import kotlin.coroutines.CoroutineContext
 
 @Composable
 fun ComicDetailScreen(
@@ -45,8 +45,7 @@ fun ComicDetailScreen(
     val viewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
-
-    val comic by viewModel.getComic(id!!.toInt()).collectAsState(initial = Comic())
+    var comic = viewModel.getComic(id?.toInt()).collectAsState(initial = Comic()).value
 
     Scaffold(
         topBar = {
@@ -74,9 +73,13 @@ fun ComicDetailScreen(
                     IconButton(
                         content = { Icon(Icons.Default.Delete, "delete", tint = Color.White) },
                         onClick = {
+                            val copy = comic.copy()
+                            comic = Comic()
                             //TODO: Causes a crash but works..
-                            navController.popBackStack()
-                            viewModel.deleteComic(comic)
+                            navController.navigate(Screen.HomeScreen.route) {
+                                popUpTo(Screen.HomeScreen.route)
+                                viewModel.deleteComic(copy)
+                            }
                         }
                     )
                 }

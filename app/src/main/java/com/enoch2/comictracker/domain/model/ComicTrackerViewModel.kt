@@ -9,6 +9,7 @@ import com.enoch2.comictracker.util.Filters
 import com.enoch2.comictracker.util.Filters.*
 import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -66,7 +67,7 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun getComic(comicId: Int): Flow<Comic> {
+    fun getComic(comicId: Int?): Flow<Comic> {
         return repository.getComic(comicId)
     }
 
@@ -128,6 +129,7 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
 
     fun deleteAllComic() {
         viewModelScope.launch(Dispatchers.IO) {
+            delay(5000L)
             repository.deleteAllComic()
         }
     }

@@ -6,8 +6,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
 interface ComicRepository {
+    fun getAll(): Flow<List<Comic>>
 
-    fun getComic(comicId: Int): Flow<Comic>
+    fun getComic(comicId: Int?): Flow<Comic>
 
     suspend fun insertComic(comic: Comic)
 
