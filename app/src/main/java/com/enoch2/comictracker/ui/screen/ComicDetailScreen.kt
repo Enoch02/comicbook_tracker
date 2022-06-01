@@ -10,8 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,18 +33,20 @@ import com.enoch2.comictracker.domain.model.Comic
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
-import kotlin.coroutines.CoroutineContext
 
 @Composable
 fun ComicDetailScreen(
     navController: NavController,
-    id: String?,
+    id: Int,  //TODO: change to int
     context: Context,
 ) {
     val viewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
-    var comic = viewModel.getComic(id?.toInt()).collectAsState(initial = Comic()).value
+    var comic by remember { mutableStateOf(Comic()) }
+    LaunchedEffect(true) {
+        comic = viewModel.getComic(id)
+    }
 
     Scaffold(
         topBar = {
@@ -60,8 +61,8 @@ fun ComicDetailScreen(
                         onClick = {
                             navController.navigate(
                                 Screen.EditComicScreen.withArgs(
-                                    comic.title,
-                                    comic.status,
+                                    comic.title.toString(),
+                                    comic.status.toString(),
                                     comic.rating.toString(),
                                     comic.issuesRead.toString(),
                                     comic.totalIssues.toString(),
@@ -73,130 +74,130 @@ fun ComicDetailScreen(
                     IconButton(
                         content = { Icon(Icons.Default.Delete, "delete", tint = Color.White) },
                         onClick = {
-                            val copy = comic.copy()
-                            comic = Comic()
                             //TODO: Causes a crash but works..
                             navController.navigate(Screen.HomeScreen.route) {
                                 popUpTo(Screen.HomeScreen.route)
-                                viewModel.deleteComic(copy)
+                                viewModel.deleteComic(id)
                             }
                         }
                     )
                 }
             )
-        },
-        content = {
-            val constraints = ConstraintSet {
-                val title = createRefFor("title")
-                val cover = createRefFor("cover")
-                val status = createRefFor("status")
-                val rating = createRefFor("rating")
-                val issuesInfo = createRefFor("issues_info")
-                val divider = createRefFor("divider")
-                val descriptionBox = createRefFor("description")
+        }
+    ) {
+        val constraints = ConstraintSet {
+            val title = createRefFor("title")
+            val cover = createRefFor("cover")
+            val status = createRefFor("status")
+            val rating = createRefFor("rating")
+            val issuesInfo = createRefFor("issues_info")
+            val divider = createRefFor("divider")
+            val descriptionBox = createRefFor("description")
 
-                constrain(title) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(cover.top, 10.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }
-                constrain(cover) {
-                    top.linkTo(title.bottom)
-                    bottom.linkTo(divider.top)
-                    start.linkTo(parent.start, 10.dp)
-                    end.linkTo(status.start)
-                    height = Dimension.fillToConstraints
-                    width = Dimension.fillToConstraints
-                }
-                constrain(status) {
-                    top.linkTo(title.bottom, 10.dp)
-                    bottom.linkTo(rating.top, 5.dp)
-                    start.linkTo(cover.end, 10.dp)
-                    end.linkTo(parent.end, 10.dp)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.fillToConstraints
-                }
-                constrain(rating) {
-                    top.linkTo(status.bottom, 5.dp)
-                    bottom.linkTo(issuesInfo.top)
-                    start.linkTo(cover.end, 10.dp)
-                    end.linkTo(parent.end, 10.dp)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.fillToConstraints
-                }
-                constrain(issuesInfo) {
-                    top.linkTo(rating.bottom, 30.dp)
-                    bottom.linkTo(divider.top)
-                    start.linkTo(cover.end, 10.dp)
-                    end.linkTo(parent.end, 10.dp)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.fillToConstraints
-                }
-                constrain(divider) {
-                    top.linkTo(cover.bottom, 10.dp)
-                    bottom.linkTo(descriptionBox.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-                constrain(descriptionBox) {
-                    top.linkTo(divider.bottom, 10.dp)
-                    bottom.linkTo(parent.bottom, 10.dp)
-                    start.linkTo(parent.start, 10.dp)
-                    end.linkTo(parent.end, 10.dp)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.fillToConstraints
-                }
+            constrain(title) {
+                top.linkTo(parent.top)
+                bottom.linkTo(cover.top, 10.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
+                height = Dimension.wrapContent
             }
-
-            Surface(modifier = Modifier.fillMaxSize()) {
-                ConstraintLayout(constraints) {
-                    Column(
-                        modifier = Modifier.layoutId("title"),
-                        content = {
-                            Text(
-                                comic.title,
-                                fontSize = 20.sp,
-                                softWrap = true,
-                                overflow = TextOverflow.Clip,
-                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
-                            )
-                            Divider()
-                        }
-                    )
-                    Image(
-                        painterResource(R.drawable.placeholder_image),
-                        "cover",
-                        alignment = Alignment.TopStart,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier.layoutId("cover")
-                    )
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.layoutId("status"),
-                        content = { Text(comic.status) }
-                    )
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.layoutId("rating"),
-                        content = { Text("${comic.rating} / 10") }
-                    )
-                    Text(
-                        "${comic.issuesRead} / ${comic.totalIssues}",
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
-                        modifier = Modifier.layoutId("issues_info")
-                    )
-                    Divider(modifier = Modifier.layoutId("divider"))
-                    Text(
-                        "Add description here",
-                        modifier = Modifier.layoutId("description"),
-                        textAlign = TextAlign.Left
-                    )
-                }
+            constrain(cover) {
+                top.linkTo(title.bottom)
+                bottom.linkTo(divider.top)
+                start.linkTo(parent.start, 10.dp)
+                end.linkTo(status.start)
+                height = Dimension.fillToConstraints
+                width = Dimension.fillToConstraints
+            }
+            constrain(status) {
+                top.linkTo(title.bottom, 10.dp)
+                bottom.linkTo(rating.top, 5.dp)
+                start.linkTo(cover.end, 10.dp)
+                end.linkTo(parent.end, 10.dp)
+                width = Dimension.fillToConstraints
+                height = Dimension.fillToConstraints
+            }
+            constrain(rating) {
+                top.linkTo(status.bottom, 5.dp)
+                bottom.linkTo(issuesInfo.top)
+                start.linkTo(cover.end, 10.dp)
+                end.linkTo(parent.end, 10.dp)
+                width = Dimension.fillToConstraints
+                height = Dimension.fillToConstraints
+            }
+            constrain(issuesInfo) {
+                top.linkTo(rating.bottom, 30.dp)
+                bottom.linkTo(divider.top)
+                start.linkTo(cover.end, 10.dp)
+                end.linkTo(parent.end, 10.dp)
+                width = Dimension.fillToConstraints
+                height = Dimension.fillToConstraints
+            }
+            constrain(divider) {
+                top.linkTo(cover.bottom, 10.dp)
+                bottom.linkTo(descriptionBox.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+            constrain(descriptionBox) {
+                top.linkTo(divider.bottom, 10.dp)
+                bottom.linkTo(parent.bottom, 10.dp)
+                start.linkTo(parent.start, 10.dp)
+                end.linkTo(parent.end, 10.dp)
+                width = Dimension.fillToConstraints
+                height = Dimension.fillToConstraints
             }
         }
-    )
+
+        Surface(modifier = Modifier.fillMaxSize()) {
+            ConstraintLayout(constraints) {
+                Column(
+                    modifier = Modifier.layoutId("title"),
+                    content = {
+                        Text(
+                            comic.title.toString(),
+                            fontSize = 20.sp,
+                            softWrap = true,
+                            overflow = TextOverflow.Clip,
+                            modifier = Modifier.padding(
+                                horizontal = 20.dp,
+                                vertical = 10.dp
+                            )
+                        )
+                        Divider()
+                    }
+                )
+                Image(
+                    painterResource(R.drawable.placeholder_image),
+                    "cover",
+                    alignment = Alignment.TopStart,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.layoutId("cover")
+                )
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.layoutId("status"),
+                    content = { Text(comic.status.toString()) }
+                )
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.layoutId("rating"),
+                    content = { Text("${comic.rating} / 10") }
+                )
+                Text(
+                    "${comic.issuesRead} / ${comic.totalIssues}",
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    modifier = Modifier.layoutId("issues_info")
+                )
+                Divider(modifier = Modifier.layoutId("divider"))
+                Text(
+                    "Add description here",
+                    modifier = Modifier.layoutId("description"),
+                    textAlign = TextAlign.Left
+                )
+            }
+        }
+    }
 }

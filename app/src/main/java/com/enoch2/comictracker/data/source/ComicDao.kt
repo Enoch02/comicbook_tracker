@@ -43,13 +43,13 @@ interface ComicDao {
     fun getAllPTROrdered(order: Int): Flow<List<Comic>>
 
     @Query("SELECT * FROM comic WHERE id LIKE :comicId")
-    fun getComic(comicId: Int?): Flow<Comic>
+    suspend fun getComic(comicId: Int): Comic
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(comic: Comic)
 
-    @Delete
-    suspend fun delete(comic: Comic)
+    @Query("DELETE from comic WHERE id = :id")
+    suspend fun delete(id: Int)
 
     @Query("DELETE from comic")
     suspend fun deleteAll()

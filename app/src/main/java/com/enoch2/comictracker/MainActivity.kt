@@ -55,16 +55,17 @@ class MainActivity : ComponentActivity() {
                             route = Screen.ComicDetailScreen.route + "/{id}",
                             arguments = listOf(
                                 navArgument("id") {
-                                    type = NavType.StringType
-                                    nullable = true
+                                    type = NavType.IntType
                                 }
                             )
                         ) { entry ->
-                            ComicDetailScreen(
-                                navController,
-                                entry.arguments?.getString("id"),
-                                context
-                            )
+                            entry.arguments?.getInt("id")?.let {
+                                ComicDetailScreen(
+                                    navController,
+                                    it,
+                                    context
+                                )
+                            }
                         }
 
                         composable(
