@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.collect
 interface ComicRepository {
     fun getAll(): Flow<List<Comic>>
 
-    fun getComic(comicId: Int?): Flow<Comic>
+    suspend fun getComic(comicId: Int): Comic
 
     suspend fun insertComic(comic: Comic)
 
-    suspend fun deleteComic(comic: Comic)
+    suspend fun deleteComic(id: Int)
 
     suspend fun deleteAllComic()
 

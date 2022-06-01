@@ -9,9 +9,9 @@ import com.enoch2.comictracker.util.Filters
 import com.enoch2.comictracker.util.Filters.*
 import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ComicTrackerViewModel(context: Context) : ViewModel() {
     private val comicDao = ComicDatabase.getDataBase(context.applicationContext).getComicDao()
@@ -20,55 +20,34 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
     fun getComics(filter: Filters, orderType: OrderType): Flow<List<Comic>> {
         return when (orderType) {
             OrderType.ASCENDING -> {
+                // 0 -> ascending
                 when (filter) {
-                    ALL -> {
-                        return repository.getAllOrdered(0)  // 0 -> ascending
-                    }
-                    READING -> {
-                        return repository.getAllReadingOrdered(0)
-                    }
-                    COMPLETED -> {
-                        return repository.getAllCompletedOrdered(0)
-                    }
-                    ON_HOLD -> {
-                        return repository.getAllOnHoldOrdered(0)
-                    }
-                    DROPPED -> {
-                        return repository.getAllDroppedOrdered(0)
-                    }
-                    PLAN_TO_READ -> {
-                        return repository.getAllPTROrdered(0)
-                    }
+                    ALL -> return repository.getAllOrdered(0)
+                    READING -> return repository.getAllReadingOrdered(0)
+                    COMPLETED -> return repository.getAllCompletedOrdered(0)
+                    ON_HOLD -> return repository.getAllOnHoldOrdered(0)
+                    DROPPED -> return repository.getAllDroppedOrdered(0)
+                    PLAN_TO_READ -> return repository.getAllPTROrdered(0)
                 }
             }
             OrderType.DESCENDING -> {
                 when (filter) {
-                    ALL -> {
-                        return repository.getAllOrdered(1)
-                    }
-                    READING -> {
-                        return repository.getAllReadingOrdered(1)
-                    }
-                    COMPLETED -> {
-                        return repository.getAllCompletedOrdered(1)
-                    }
-                    ON_HOLD -> {
-                        return repository.getAllOnHoldOrdered(1)
-                    }
-                    DROPPED -> {
-                        return repository.getAllDroppedOrdered(1)
-                    }
-                    PLAN_TO_READ -> {
-                        return repository.getAllPTROrdered(1)
-                    }
+                    ALL -> return repository.getAllOrdered(1)
+                    READING -> return repository.getAllReadingOrdered(1)
+                    COMPLETED -> return repository.getAllCompletedOrdered(1)
+                    ON_HOLD -> return repository.getAllOnHoldOrdered(1)
+                    DROPPED -> return repository.getAllDroppedOrdered(1)
+                    PLAN_TO_READ -> return repository.getAllPTROrdered(1)
                 }
             }
             else -> repository.getAll()
         }
     }
 
-    fun getComic(comicId: Int?): Flow<Comic> {
-        return repository.getComic(comicId)
+    suspend fun getComic(comicId: Int): Comic {
+        return withContext(viewModelScope.coroutineContext) {
+            repository.getComic(comicId)
+        }
     }
 
     fun addComic(
@@ -121,15 +100,14 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
         return true
     }
 
-    fun deleteComic(comic: Comic) {
+    fun deleteComic(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteComic(comic)
+            repository.deleteComic(id)
         }
     }
 
     fun deleteAllComic() {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(5000L)
             repository.deleteAllComic()
         }
     }

@@ -11,7 +11,7 @@ class ComicRepositoryImpl(private val dao: ComicDao) : ComicRepository {
         return dao.getAll()
     }
 
-    override fun getComic(comicId: Int?): Flow<Comic> {
+    override suspend fun getComic(comicId: Int): Comic {
         return dao.getComic(comicId)
     }
 
@@ -19,8 +19,8 @@ class ComicRepositoryImpl(private val dao: ComicDao) : ComicRepository {
         dao.insert(comic)
     }
 
-    override suspend fun deleteComic(comic: Comic) {
-        dao.delete(comic)
+    override suspend fun deleteComic(id: Int) {
+        dao.delete(id)
     }
 
     override suspend fun deleteAllComic() {

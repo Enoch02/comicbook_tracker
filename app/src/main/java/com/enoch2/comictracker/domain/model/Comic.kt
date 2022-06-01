@@ -6,10 +6,10 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Comic(
-    val title: String = "",
-    val status: String = "",
-    val rating: Int = 0,
-    @ColumnInfo(name = "issues_read")val issuesRead: Int = 0,
-    @ColumnInfo(name = "total_issues")val totalIssues: Int = 0,
+    val title: String? = "",
+    val status: String? = "",
+    val rating: Int? = 0,
+    @ColumnInfo(name = "issues_read")val issuesRead: Int? = 0,
+    @ColumnInfo(name = "total_issues")val totalIssues: Int? = 0,
     @PrimaryKey(autoGenerate = true) val id: Int? = null
 )
