@@ -14,7 +14,7 @@ fun ComicTrackerTopBar(
     navIcon: ImageVector,
     contentDescription: String,
     onClick: () -> Unit = { },
-    actions: @Composable RowScope.()-> Unit= {}
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     TopAppBar(
         title = { Text(title) },

@@ -26,7 +26,7 @@ fun EditComicScreen(
     totalIssues: String?,
     id: String?
 ) {
-    Scaffold (
+    Scaffold(
         topBar = {
             ComicTrackerTopBar(
                 title = stringResource(R.string.edit_comic),

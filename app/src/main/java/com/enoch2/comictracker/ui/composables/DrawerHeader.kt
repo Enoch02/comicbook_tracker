@@ -23,7 +23,7 @@ fun DrawerHeader() {
     Card(
         elevation = 4.dp,
         shape = RectangleShape
-    ){
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier

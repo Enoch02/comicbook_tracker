@@ -8,7 +8,7 @@ import com.enoch2.comictracker.domain.model.Comic
 
 @Database(entities = [Comic::class], version = 1)
 abstract class ComicDatabase : RoomDatabase() {
-    abstract fun getComicDao() : ComicDao
+    abstract fun getComicDao(): ComicDao
 
     companion object {
         private var instance: ComicDatabase? = null
