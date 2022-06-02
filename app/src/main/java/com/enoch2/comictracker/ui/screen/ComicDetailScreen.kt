@@ -37,7 +37,7 @@ import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 @Composable
 fun ComicDetailScreen(
     navController: NavController,
-    id: Int,  //TODO: change to int
+    id: Int,
     context: Context,
 ) {
     val viewModel: ComicTrackerViewModel = viewModel(
@@ -74,7 +74,6 @@ fun ComicDetailScreen(
                     IconButton(
                         content = { Icon(Icons.Default.Delete, "delete", tint = Color.White) },
                         onClick = {
-                            //TODO: Causes a crash but works..
                             navController.navigate(Screen.HomeScreen.route) {
                                 popUpTo(Screen.HomeScreen.route)
                                 viewModel.deleteComic(id)

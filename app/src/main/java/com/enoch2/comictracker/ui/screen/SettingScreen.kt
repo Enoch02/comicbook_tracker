@@ -75,7 +75,7 @@ fun SettingScreen(
                     elevation = 4.dp,
                     shape = RoundedCornerShape(5.dp),
                     modifier = Modifier.padding(10.dp)
-                ){
+                ) {
                     ConstraintLayout(
                         constraints,
                         modifier = Modifier
@@ -107,7 +107,7 @@ fun SettingScreen(
                     elevation = 4.dp,
                     shape = RoundedCornerShape(5.dp),
                     modifier = Modifier.padding(10.dp)
-                ){
+                ) {
                     Column {
                         TextButton(
                             onClick = { /*TODO*/ },
@@ -133,7 +133,7 @@ fun SettingScreen(
                     elevation = 4.dp,
                     shape = RoundedCornerShape(5.dp),
                     modifier = Modifier.padding(10.dp)
-                ){
+                ) {
                     TextButton(
                         onClick = { navController.navigate(Screen.AboutScreen.route) },
                         content = { Text(stringResource(R.string.about)) },
@@ -149,10 +149,12 @@ fun SettingScreen(
                     AlertDialog(
                         onDismissRequest = { showDialog = !showDialog },
                         title = { Text(stringResource(R.string.clear_data)) },
-                        text = { Text(
-                            stringResource(R.string.clear_data_dialog_body),
-                            fontSize = 15.sp
-                        ) },
+                        text = {
+                            Text(
+                                stringResource(R.string.clear_data_dialog_body),
+                                fontSize = 15.sp
+                            )
+                        },
                         confirmButton = {
                             TextButton(
                                 onClick = {
@@ -173,10 +175,4 @@ fun SettingScreen(
             }
         }
     )
-}
-
-@Preview()
-@Composable
-fun SettingScreenPreview() {
-    SettingScreen(navController = rememberNavController(), context = LocalContext.current)
 }

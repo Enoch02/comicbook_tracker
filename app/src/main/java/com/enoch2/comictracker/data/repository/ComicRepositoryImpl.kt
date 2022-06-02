@@ -36,7 +36,7 @@ class ComicRepositoryImpl(private val dao: ComicDao) : ComicRepository {
     }
 
     fun getAllCompletedOrdered(order: Int): Flow<List<Comic>> {
-        return  dao.getAllCompletedOrdered(order)
+        return dao.getAllCompletedOrdered(order)
     }
 
     fun getAllOnHoldOrdered(order: Int): Flow<List<Comic>> {

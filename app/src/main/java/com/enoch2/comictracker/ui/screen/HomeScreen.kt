@@ -124,7 +124,8 @@ fun HomeScreen(
                     )
                     val innerMenuItems = listOf(
                         stringResource(R.string.ascending),
-                        stringResource(R.string.descending)
+                        stringResource(R.string.descending),
+                        stringResource(R.string.none)
                     )
                     var selected by rememberSaveable { mutableStateOf(innerMenuItems[0]) }
                     val onSelectionChange = { text: String ->
@@ -142,14 +143,22 @@ fun HomeScreen(
                                 DropdownMenuItem(
                                     contentPadding = PaddingValues(horizontal = 15.dp),
                                     onClick = {
-                                        if (index == 0) {
-                                            order = OrderType.ASCENDING
-                                            showInnerMenu = !showInnerMenu
-                                            onSelectionChange(item)
-                                        } else {
-                                            order = OrderType.DESCENDING
-                                            showInnerMenu = !showInnerMenu
-                                            onSelectionChange(item)
+                                        when (index) {
+                                            0 -> {
+                                                order = OrderType.ASCENDING
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
+                                            }
+                                            1 -> {
+                                                order = OrderType.DESCENDING
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
+                                            }
+                                            else -> {
+                                                order = OrderType.NONE
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
+                                            }
                                         }
                                     }
                                 ) {
