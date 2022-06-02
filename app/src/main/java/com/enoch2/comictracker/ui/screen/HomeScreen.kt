@@ -1,7 +1,6 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,69 +9,30 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.ArrowRight
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.data.Comic
-import com.enoch2.comictracker.model.ComicTrackerViewModel
-import com.enoch2.comictracker.model.ComicTrackerViewModelFactory
-import com.enoch2.comictracker.navigation.Screen
-import com.enoch2.comictracker.ui.layouts.ComicInfoLayout
-import com.enoch2.comictracker.ui.layouts.DrawerLayout
-import com.enoch2.comictracker.ui.theme.BlueGrayDark
+import com.enoch2.comictracker.Screen
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
+import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
+import com.enoch2.comictracker.ui.composables.ComicInfoLayout
+import com.enoch2.comictracker.ui.composables.DrawerHeader
+import com.enoch2.comictracker.ui.composables.FilterLabel
+import com.enoch2.comictracker.util.Filters
+import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-//TODO: update dependencies
-@Composable
-private fun TopAppBar(navController: NavController, scaffoldState: ScaffoldState, scope: CoroutineScope) {
-    val drawerState = scaffoldState.drawerState
-    val tint = Color.White
-
-    TopAppBar(
-        navigationIcon = {
-            IconButton(content = {
-                Icon(Icons.Default.Menu,
-                    tint = tint,
-                    contentDescription = stringResource(R.string.menu))
-            },
-                onClick = {
-                    scope.launch {
-                        if (drawerState.isClosed)
-                            drawerState.open()
-                        else drawerState.close()
-
-                    }
-                }
-            )
-        },
-        title = { Text(stringResource(R.string.my_comics)) },
-        actions = {
-            IconButton(
-                onClick = {
-                    navController.navigate(Screen.SettingScreen.route)
-                },
-                content = { Icon(
-                    Icons.Default.Settings,
-                    stringResource(R.string.settings),
-                    tint = tint
-                ) }
-            )
-        },
-        elevation = 1.dp
-    )
-}
-
+// TODO: search functionality
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -81,51 +41,220 @@ fun HomeScreen(
     scope: CoroutineScope,
     listState: LazyListState
 ) {
+    val drawerState = scaffoldState.drawerState
+    var filter by remember { mutableStateOf(Filters.ALL) }
+    var order by remember { mutableStateOf(OrderType.ASCENDING) }
+
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopAppBar(navController, scaffoldState, scope) },
-        drawerContent = {
-            Box(
-                contentAlignment = Alignment.TopStart,
-                content = {
-                    Text(
-                        stringResource(R.string.app_name),
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 20.sp,
-                        modifier = Modifier.padding(start = 10.dp)
+        topBar = {
+            val tint = Color.White
+
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(content = {
+                        Icon(
+                            Icons.Default.Menu,
+                            tint = tint,
+                            contentDescription = stringResource(R.string.menu)
+                        )
+                    },
+                        onClick = {
+                            scope.launch {
+                                if (drawerState.isClosed)
+                                    drawerState.open()
+                                else drawerState.close()
+
+                            }
+                        }
                     )
                 },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .background(BlueGrayDark)
+                title = { Text(stringResource(R.string.my_comics)) },
+                actions = {
+                    var showMenu by remember { mutableStateOf(false) }
+                    var showInnerMenu by remember { mutableStateOf(false) }
+
+                    IconButton(
+                        onClick = {
+                            showMenu = !showMenu
+                        },
+                        content = {
+                            Icon(
+                                Icons.Default.MoreVert,
+                                stringResource(R.string.settings),
+                                tint = tint
+                            )
+
+                            val items = listOf(
+                                stringResource(R.string.sort),
+                                stringResource(R.string.settings)
+                            )
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = !showMenu },
+                                content = {
+                                    items.forEachIndexed { index, item ->
+                                        DropdownMenuItem(
+                                            contentPadding = PaddingValues(horizontal = 15.dp),
+                                            onClick = {
+                                                if (index == 0) {
+                                                    showInnerMenu = !showInnerMenu
+                                                    showMenu = !showMenu
+                                                } else {
+                                                    navController.navigate(Screen.SettingScreen.route)
+                                                }
+                                            },
+                                            content = {
+                                                Box(
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Row {
+                                                        Text(item)
+                                                        if (index == 0)
+                                                            Icon(Icons.Outlined.ArrowRight, null)
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    )
+                    val innerMenuItems = listOf(
+                        stringResource(R.string.ascending),
+                        stringResource(R.string.descending),
+                        stringResource(R.string.none)
+                    )
+                    var selected by rememberSaveable { mutableStateOf(innerMenuItems[0]) }
+                    val onSelectionChange = { text: String ->
+                        selected = text
+                    }
+                    // for changing sort order
+                    DropdownMenu(
+                        expanded = showInnerMenu,
+                        onDismissRequest = {
+                            if (showMenu) showMenu = !showMenu
+                            showInnerMenu = !showInnerMenu
+                        },
+                        content = {
+                            innerMenuItems.forEachIndexed { index, item ->
+                                DropdownMenuItem(
+                                    contentPadding = PaddingValues(horizontal = 15.dp),
+                                    onClick = {
+                                        when (index) {
+                                            0 -> {
+                                                order = OrderType.ASCENDING
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
+                                            }
+                                            1 -> {
+                                                order = OrderType.DESCENDING
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
+                                            }
+                                            else -> {
+                                                order = OrderType.NONE
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
+                                            }
+                                        }
+                                    }
+                                ) {
+                                    Row {
+                                        Text(item)
+                                        RadioButton(
+                                            selected = item == selected,
+                                            onClick = {
+                                                if (index == 0) {
+                                                    order = OrderType.ASCENDING
+                                                    showInnerMenu = !showInnerMenu
+                                                    onSelectionChange(item)
+                                                } else {
+                                                    order = OrderType.DESCENDING
+                                                    showInnerMenu = !showInnerMenu
+                                                    onSelectionChange(item)
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    )
+                },
+                elevation = 4.dp
             )
-            Column(
-                modifier = Modifier.weight(3f),
-                content = { DrawerLayout(navController, context) }
+        },
+        drawerContent = {
+            DrawerHeader()
+            Divider()
+            val drawerItems = listOf(
+                stringResource(R.string.reading), stringResource(R.string.completed),
+                stringResource(R.string.on_hold), stringResource(R.string.dropped),
+                stringResource(R.string.plan_to_read)
             )
+
+            FilterLabel()
+            drawerItems.forEachIndexed { index, item ->
+                TextButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = { Text(item) },
+                    onClick = {
+                        when (index) {
+                            0 -> {
+                                filter = Filters.READING
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                            1 -> {
+                                filter = Filters.COMPLETED
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                            2 -> {
+                                filter = Filters.ON_HOLD
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                            3 -> {
+                                filter = Filters.DROPPED
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                            4 -> {
+                                filter = Filters.PLAN_TO_READ
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
+                        }
+                    }
+                )
+            }
         },
         drawerGesturesEnabled = true,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.AddComicScreen.route) }
             ) {
-            Icon(
-                Icons.Default.Add,
-                "add",
-                tint = Color.White
-            )
+                Icon(
+                    Icons.Default.Add,
+                    "add",
+                    tint = Color.White
+                )
             }
         }
     ) {
         val viewModel: ComicTrackerViewModel = viewModel(
             factory = ComicTrackerViewModelFactory(context.applicationContext)
         )
-        var comics by remember { mutableStateOf(listOf<Comic>()) }
-
-        LaunchedEffect(true) {
-            comics = viewModel.getAllComic().toMutableStateList()
-        }
+        val comics by viewModel.getComics(filter, order).collectAsState(initial = emptyList())
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
             items(
@@ -133,19 +262,19 @@ fun HomeScreen(
                 itemContent = { index ->
                     val comic = comics[index]
                     Card(
-                        elevation = 2.dp,
+                        elevation = 4.dp,
                         modifier = Modifier.padding(bottom = 10.dp)
                     ) {
                         ComicInfoLayout(
-                            comicTitle = comic.title,
-                            issuesRead = comic.issuesRead,
-                            totalIssues = comic.totalIssues,
-                            status = comic.status,
+                            comicTitle = comic.title.toString(),
+                            issuesRead = comic.issuesRead!!,
+                            totalIssues = comic.totalIssues!!,
+                            status = comic.status.toString(),
                             Modifier
                                 .fillMaxWidth()
                                 .height(IntrinsicSize.Max)
                                 .clickable {
-                                    navController.navigate(Screen.ComicDetailScreen.withArgs(comic.title))
+                                    navController.navigate(Screen.ComicDetailScreen.withArgs(comic.id.toString()))
                                 }
                         )
                     }

@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.enoch2.comictracker.BuildConfig
 import com.enoch2.comictracker.R
-import com.enoch2.comictracker.ui.common_composables.ComicTrackerTopBar
+import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 
 const val VERSION_NAME = BuildConfig.VERSION_NAME
 
