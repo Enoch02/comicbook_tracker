@@ -1,6 +1,5 @@
 package com.enoch2.comictracker.ui.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import coil.compose.AsyncImage
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.ui.theme.Typography
 
@@ -63,10 +63,12 @@ fun ComicInfoLayout(
         constraints,
         modifier
     ) {
-        //TODO: replace with the coil version
-        Image(
-            painter = painterResource(R.drawable.placeholder_image),
+        //TODO: create function that scrape the image url
+        AsyncImage(
+            model = "https://files1.comics.org//img/gcd/covers_by_id/1419/w200/1419450.jpg?1901497387943321942",
+            placeholder = painterResource(R.drawable.placeholder_image),
             contentDescription = null,
+            error = painterResource(R.drawable.placeholder_image),
             contentScale = ContentScale.Fit,
             modifier = Modifier.layoutId("cover")
         )

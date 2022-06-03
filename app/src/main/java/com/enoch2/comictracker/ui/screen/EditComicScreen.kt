@@ -15,6 +15,9 @@ import com.enoch2.comictracker.ui.composables.ComicInputLayout
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.util.ComicInputMode
 
+//TODO: create a button that initiates image search in the topbar
+//TODO: Save image link to db
+//TODO: add link manually if it is not founds
 @Composable
 fun EditComicScreen(
     navController: NavController,

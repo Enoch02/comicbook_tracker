@@ -3,10 +3,7 @@ package com.enoch2.comictracker.ui.composables
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -110,6 +107,7 @@ fun ComicInputLayout(
             Box(modifier = Modifier.layoutId("input")) {
                 val disabledTextColor =
                     if (isSystemInDarkTheme()) Color.White else Color.Black
+
                 OutlinedTextField(
                     value = mSelectedStatus,
                     onValueChange = { mSelectedStatus = it },
@@ -124,18 +122,26 @@ fun ComicInputLayout(
 
                             DropdownMenu(
                                 expanded = mIsExpanded,
-                                onDismissRequest = { mIsExpanded = !mIsExpanded }
-                            ) {
-                                items.forEach { item ->
-                                    DropdownMenuItem(
-                                        onClick = {
-                                            mSelectedStatus = item
-                                            mIsExpanded = false
-                                        },
-                                        content = { Text(item) }
-                                    )
+                                onDismissRequest = { mIsExpanded = !mIsExpanded },
+                                modifier = Modifier.fillMaxWidth(0.5f),
+                                content = {
+                                    items.forEach { item ->
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                mSelectedStatus = item
+                                                mIsExpanded = false
+                                            },
+                                            content = {
+                                                Text(
+                                                    item,
+                                                    textAlign = TextAlign.Center,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
-                            }
+                            )
                         }
                     },
                     colors = TextFieldDefaults.textFieldColors(disabledTextColor = disabledTextColor),
