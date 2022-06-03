@@ -105,16 +105,13 @@ fun HomeScreen(
                                                 }
                                             },
                                             content = {
-                                                Box(
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    Row {
-                                                        Text(item)
-                                                        if (index == 0)
-                                                            Icon(Icons.Outlined.ArrowRight, null)
-                                                    }
-                                                }
+                                                Text(item, Modifier.weight(2f))
+                                                if (index == 0)
+                                                    Icon(
+                                                        Icons.Outlined.ArrowRight,
+                                                        null,
+                                                        Modifier.weight(1f)
+                                                    )
                                             }
                                         )
                                     }
@@ -162,23 +159,22 @@ fun HomeScreen(
                                         }
                                     }
                                 ) {
-                                    Row {
-                                        Text(item)
-                                        RadioButton(
-                                            selected = item == selected,
-                                            onClick = {
-                                                if (index == 0) {
-                                                    order = OrderType.ASCENDING
-                                                    showInnerMenu = !showInnerMenu
-                                                    onSelectionChange(item)
-                                                } else {
-                                                    order = OrderType.DESCENDING
-                                                    showInnerMenu = !showInnerMenu
-                                                    onSelectionChange(item)
-                                                }
+                                    Text(item, modifier = Modifier.weight(2f))
+                                    RadioButton(
+                                        modifier = Modifier.weight(1f),
+                                        selected = item == selected,
+                                        onClick = {
+                                            if (index == 0) {
+                                                order = OrderType.ASCENDING
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
+                                            } else {
+                                                order = OrderType.DESCENDING
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
                                             }
-                                        )
-                                    }
+                                        }
+                                    )
                                 }
                             }
                         }

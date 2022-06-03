@@ -3,6 +3,7 @@ package com.enoch2.comictracker.ui.screen
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -34,6 +35,7 @@ import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 
+// TODO: Add a button to refresh cover
 @Composable
 fun ComicDetailScreen(
     navController: NavController,
@@ -90,6 +92,7 @@ fun ComicDetailScreen(
             val status = createRefFor("status")
             val rating = createRefFor("rating")
             val issuesInfo = createRefFor("issues_info")
+            val space = createRefFor("space")
             val divider = createRefFor("divider")
             val descriptionBox = createRefFor("description")
 
@@ -103,7 +106,7 @@ fun ComicDetailScreen(
             }
             constrain(cover) {
                 top.linkTo(title.bottom)
-                bottom.linkTo(divider.top)
+                bottom.linkTo(divider.top, 10.dp)
                 start.linkTo(parent.start, 10.dp)
                 end.linkTo(status.start)
                 height = Dimension.fillToConstraints
@@ -115,7 +118,7 @@ fun ComicDetailScreen(
                 start.linkTo(cover.end, 10.dp)
                 end.linkTo(parent.end, 10.dp)
                 width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
+                height = Dimension.preferredWrapContent
             }
             constrain(rating) {
                 top.linkTo(status.bottom, 5.dp)
@@ -123,18 +126,26 @@ fun ComicDetailScreen(
                 start.linkTo(cover.end, 10.dp)
                 end.linkTo(parent.end, 10.dp)
                 width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
+                height = Dimension.preferredWrapContent
             }
             constrain(issuesInfo) {
-                top.linkTo(rating.bottom, 30.dp)
-                bottom.linkTo(divider.top)
+                top.linkTo(rating.bottom, 10.dp)
+                bottom.linkTo(space.top, 10.dp)
                 start.linkTo(cover.end, 10.dp)
                 end.linkTo(parent.end, 10.dp)
                 width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
+                height = Dimension.preferredWrapContent
+            }
+            constrain(space) {
+                top.linkTo(issuesInfo.bottom, 10.dp)
+                bottom.linkTo(divider.top, 10.dp)
+                start.linkTo(cover.start)
+                end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
+                height = Dimension.preferredWrapContent
             }
             constrain(divider) {
-                top.linkTo(cover.bottom, 10.dp)
+                top.linkTo(space.bottom)
                 bottom.linkTo(descriptionBox.top)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
@@ -174,22 +185,22 @@ fun ComicDetailScreen(
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.layoutId("cover")
                 )
-                Button(
+                TextButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier.layoutId("status"),
                     content = { Text(comic.status.toString()) }
                 )
-                Button(
+                TextButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier.layoutId("rating"),
                     content = { Text("${comic.rating} / 10") }
                 )
-                Text(
-                    "${comic.issuesRead} / ${comic.totalIssues}",
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
-                    modifier = Modifier.layoutId("issues_info")
+                TextButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.layoutId("issues_info"),
+                    content = { Text("Issues Read: ${comic.issuesRead} / ${comic.totalIssues}") }
                 )
+                Spacer(modifier = Modifier.layoutId("space"))
                 Divider(modifier = Modifier.layoutId("divider"))
                 Text(
                     "Add description here",
