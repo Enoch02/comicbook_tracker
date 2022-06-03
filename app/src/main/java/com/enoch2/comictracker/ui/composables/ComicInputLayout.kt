@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -71,7 +73,7 @@ fun ComicInputLayout(
     var mIssuesRead by rememberSaveable { mutableStateOf(issuesRead) }
     var mTotalIssues by rememberSaveable { mutableStateOf(totalIssues) }
 
-    Column {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         ConstraintLayout(
             constraints, modifier = Modifier
                 .fillMaxWidth()
@@ -109,7 +111,7 @@ fun ComicInputLayout(
                 val disabledTextColor =
                     if (isSystemInDarkTheme()) Color.White else Color.Black
                 OutlinedTextField(
-                    value = selectedStatus,
+                    value = mSelectedStatus,
                     onValueChange = { mSelectedStatus = it },
                     enabled = false,
                     trailingIcon = {
@@ -246,11 +248,9 @@ fun ComicInputLayout(
                             mTotalIssues,
                             id!!
                         )
-                    ) {
-                        navController.popBackStack()
-                    } else {
-                        Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
-                    }
+                    ) navController.popBackStack()
+                    else Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
+
                 } else {
                     if (viewModel.addComic(
                             mComicTitle,
@@ -259,11 +259,8 @@ fun ComicInputLayout(
                             mIssuesRead,
                             mTotalIssues
                         )
-                    ) {
-                        navController.popBackStack()
-                    } else {
-                        Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
-                    }
+                    ) navController.popBackStack()
+                    else Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
                 }
             },
             content = { Text(text = stringResource(R.string.save_comic_data)) },
