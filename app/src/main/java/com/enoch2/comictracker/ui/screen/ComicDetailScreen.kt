@@ -28,6 +28,8 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.ImageLoader
+import coil.compose.AsyncImage
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.Screen
 import com.enoch2.comictracker.domain.model.Comic
@@ -40,7 +42,7 @@ import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 fun ComicDetailScreen(
     navController: NavController,
     id: Int,
-    context: Context,
+    context: Context
 ) {
     val viewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
@@ -178,13 +180,22 @@ fun ComicDetailScreen(
                         Divider()
                     }
                 )
-                Image(
+                AsyncImage(
+                    model = "https://files1.comics.org//img/gcd/covers_by_id/1419/w200/1419450.jpg?1901497387943321942",
+                    placeholder = painterResource(R.drawable.placeholder_image),
+                    contentDescription = null,
+                    error = painterResource(R.drawable.placeholder_image),
+                    alignment = Alignment.TopStart,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.layoutId("cover")
+                )
+/*                Image(
                     painterResource(R.drawable.placeholder_image),
                     "cover",
                     alignment = Alignment.TopStart,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.layoutId("cover")
-                )
+                )*/
                 TextButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier.layoutId("status"),

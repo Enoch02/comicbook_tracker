@@ -1,6 +1,9 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +35,10 @@ fun SettingScreen(
     navController: NavController,
     context: Context
 ) {
+    val viewModel: ComicTrackerViewModel = viewModel(
+        factory = ComicTrackerViewModelFactory(context.applicationContext)
+    )
+
     Scaffold(
         topBar = {
             ComicTrackerTopBar(
@@ -105,9 +112,20 @@ fun SettingScreen(
                     shape = RoundedCornerShape(5.dp),
                     modifier = Modifier.padding(10.dp)
                 ) {
+                    val result = remember { mutableStateOf<Uri?>(null) }
+                    val launcher =
+                        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+                                result.value = it
+                        }
+
                     Column {
                         TextButton(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                launcher.launch("*/*")
+                                if (result.value != null) {
+                                    /* TODO */
+                                }
+                            },
                             content = { Text(stringResource(R.string.import_data)) },
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -137,10 +155,6 @@ fun SettingScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-
-                val viewModel: ComicTrackerViewModel = viewModel(
-                    factory = ComicTrackerViewModelFactory(context.applicationContext)
-                )
 
                 if (showDialog) {
                     AlertDialog(

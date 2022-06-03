@@ -19,7 +19,7 @@ abstract class ComicDatabase : RoomDatabase() {
                 instance = Room.databaseBuilder(
                     context.applicationContext,
                     ComicDatabase::class.java,
-                    "comics"
+                    "comics.db"
                 ).build()
             }
             return instance!!
