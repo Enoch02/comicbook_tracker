@@ -1,10 +1,10 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -13,14 +13,12 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -89,36 +87,24 @@ fun ComicDetailScreen(
         }
     ) {
         val constraints = ConstraintSet {
-            val title = createRefFor("title")
             val cover = createRefFor("cover")
             val status = createRefFor("status")
             val rating = createRefFor("rating")
             val issuesInfo = createRefFor("issues_info")
-            val space = createRefFor("space")
-            val divider = createRefFor("divider")
-            val descriptionBox = createRefFor("description")
 
-            constrain(title) {
-                top.linkTo(parent.top)
-                bottom.linkTo(cover.top, 10.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-                height = Dimension.wrapContent
-            }
             constrain(cover) {
-                top.linkTo(title.bottom)
-                bottom.linkTo(divider.top, 10.dp)
-                start.linkTo(parent.start, 10.dp)
+                top.linkTo(parent.top, 5.dp)
+                bottom.linkTo(parent.bottom, 5.dp)
+                start.linkTo(parent.start, 5.dp)
                 end.linkTo(status.start)
                 height = Dimension.fillToConstraints
                 width = Dimension.fillToConstraints
             }
             constrain(status) {
-                top.linkTo(title.bottom, 10.dp)
-                bottom.linkTo(rating.top, 5.dp)
+                top.linkTo(parent.top, 5.dp)
+                bottom.linkTo(parent.bottom, 5.dp)
                 start.linkTo(cover.end, 10.dp)
-                end.linkTo(parent.end, 10.dp)
+                end.linkTo(parent.end, 5.dp)
                 width = Dimension.fillToConstraints
                 height = Dimension.preferredWrapContent
             }
@@ -126,90 +112,82 @@ fun ComicDetailScreen(
                 top.linkTo(status.bottom, 5.dp)
                 bottom.linkTo(issuesInfo.top)
                 start.linkTo(cover.end, 10.dp)
-                end.linkTo(parent.end, 10.dp)
+                end.linkTo(parent.end, 5.dp)
                 width = Dimension.fillToConstraints
                 height = Dimension.preferredWrapContent
             }
             constrain(issuesInfo) {
                 top.linkTo(rating.bottom, 10.dp)
-                bottom.linkTo(space.top, 10.dp)
+                bottom.linkTo(parent.bottom, 5.dp)
                 start.linkTo(cover.end, 10.dp)
-                end.linkTo(parent.end, 10.dp)
+                end.linkTo(parent.end, 5.dp)
                 width = Dimension.fillToConstraints
                 height = Dimension.preferredWrapContent
-            }
-            constrain(space) {
-                top.linkTo(issuesInfo.bottom, 10.dp)
-                bottom.linkTo(divider.top, 10.dp)
-                start.linkTo(cover.start)
-                end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
-                height = Dimension.preferredWrapContent
-            }
-            constrain(divider) {
-                top.linkTo(space.bottom)
-                bottom.linkTo(descriptionBox.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-            constrain(descriptionBox) {
-                top.linkTo(divider.bottom, 10.dp)
-                bottom.linkTo(parent.bottom, 10.dp)
-                start.linkTo(parent.start, 10.dp)
-                end.linkTo(parent.end, 10.dp)
-                width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
             }
         }
 
-        Surface(modifier = Modifier.fillMaxSize()) {
-            ConstraintLayout(constraints) {
-                Column(
-                    modifier = Modifier.layoutId("title"),
-                    content = {
-                        Text(
-                            comic.title.toString(),
-                            fontSize = 20.sp,
-                            softWrap = true,
-                            overflow = TextOverflow.Clip,
-                            modifier = Modifier.padding(
-                                horizontal = 20.dp,
-                                vertical = 10.dp
-                            )
-                        )
-                        Divider()
-                    }
-                )
-                AsyncImage(
-                    model = "https://files1.comics.org//img/gcd/covers_by_id/1419/w200/1419450.jpg?1901497387943321942",
-                    placeholder = painterResource(R.drawable.placeholder_image),
-                    contentDescription = null,
-                    error = painterResource(R.drawable.placeholder_image),
-                    alignment = Alignment.TopStart,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.layoutId("cover")
-                )
-                TextButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.layoutId("status"),
-                    content = { Text(comic.status.toString()) }
-                )
-                TextButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.layoutId("rating"),
-                    content = { Text("${comic.rating} / 10") }
-                )
-                TextButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.layoutId("issues_info"),
-                    content = { Text("Issues Read: ${comic.issuesRead} / ${comic.totalIssues}") }
-                )
-                Spacer(modifier = Modifier.layoutId("space"))
-                Divider(modifier = Modifier.layoutId("divider"))
+        Surface {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
                 Text(
-                    "Add description here",
-                    modifier = Modifier.layoutId("description"),
-                    textAlign = TextAlign.Left
+                    comic.title.toString(),
+                    fontSize = 20.sp,
+                    softWrap = true,
+                    overflow = TextOverflow.Clip,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 20.dp,
+                            vertical = 10.dp
+                        )
+                )
+
+                Spacer(Modifier.padding(vertical = 5.dp))
+
+                Card(
+                    elevation = 4.dp,
+                    shape = RoundedCornerShape(4.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                ) {
+                    ConstraintLayout(constraints) {
+                        AsyncImage(
+                            model = "https://files1.comics.org//img/gcd/covers_by_id/1419/w200/1419450.jpg?1901497387943321942",
+                            placeholder = painterResource(R.drawable.placeholder_image),
+                            contentDescription = null,
+                            error = painterResource(R.drawable.placeholder_image),
+                            alignment = Alignment.TopStart,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.layoutId("cover")
+                        )
+                        TextButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.layoutId("status"),
+                            content = { Text(comic.status.toString()) }
+                        )
+                        TextButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.layoutId("rating"),
+                            content = { Text("${comic.rating} / 10") }
+                        )
+                        TextButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.layoutId("issues_info"),
+                            content = { Text("Issues Read: ${comic.issuesRead} / ${comic.totalIssues}") }
+                        )
+                    }
+                }
+
+                Spacer(Modifier.padding(vertical = 5.dp))
+
+                Text(
+                    stringResource(R.string.lorem),
+                    modifier = Modifier.padding(10.dp),
+                    textAlign = TextAlign.Start
                 )
             }
         }
