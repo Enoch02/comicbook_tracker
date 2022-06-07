@@ -7,13 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.enoch2.comictracker.R
@@ -31,8 +30,8 @@ fun DrawerHeader() {
                 .fillMaxWidth()
         ) {
             Image(
-                imageVector = Icons.Filled.Menu,
-                contentDescription = "Drawer Header Icon",
+                painter = painterResource(R.drawable.ic_launcher_foreground),
+                contentDescription = null,
                 colorFilter = ColorFilter.tint(MaterialTheme.colors.onSurface),
             )
             Text(
