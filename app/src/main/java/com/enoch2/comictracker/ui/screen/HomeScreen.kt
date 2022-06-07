@@ -26,6 +26,7 @@ import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicInfoLayout
 import com.enoch2.comictracker.ui.composables.DrawerHeader
 import com.enoch2.comictracker.ui.composables.FilterLabel
+import com.enoch2.comictracker.ui.theme.White
 import com.enoch2.comictracker.util.Filters
 import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.CoroutineScope
@@ -47,14 +48,12 @@ fun HomeScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            val tint = Color.White
-
             TopAppBar(
                 navigationIcon = {
                     IconButton(content = {
                         Icon(
                             Icons.Default.Menu,
-                            tint = tint,
+                            tint = White,
                             contentDescription = stringResource(R.string.menu)
                         )
                     },
@@ -81,7 +80,7 @@ fun HomeScreen(
                             Icon(
                                 Icons.Default.MoreVert,
                                 stringResource(R.string.settings),
-                                tint = tint
+                                tint = White
                             )
 
                             val items = listOf(
@@ -241,7 +240,7 @@ fun HomeScreen(
                 Icon(
                     Icons.Default.Add,
                     "add",
-                    tint = Color.White
+                    tint = White
                 )
             }
         }

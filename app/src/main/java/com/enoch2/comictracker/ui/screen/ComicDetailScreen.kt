@@ -1,7 +1,6 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -28,7 +28,6 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.ImageLoader
 import coil.compose.AsyncImage
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.Screen
@@ -36,6 +35,7 @@ import com.enoch2.comictracker.domain.model.Comic
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
+import com.enoch2.comictracker.ui.theme.White
 
 // TODO: Add a button to refresh cover
 @Composable
@@ -61,7 +61,7 @@ fun ComicDetailScreen(
                 onClick = { navController.popBackStack() },
                 actions = {
                     IconButton(
-                        content = { Icon(Icons.Default.Edit, "edit", tint = Color.White) },
+                        content = { Icon(Icons.Default.Edit, "edit", tint = White) },
                         onClick = {
                             navController.navigate(
                                 Screen.EditComicScreen.withArgs(
@@ -76,7 +76,7 @@ fun ComicDetailScreen(
                         }
                     )
                     IconButton(
-                        content = { Icon(Icons.Default.Delete, "delete", tint = Color.White) },
+                        content = { Icon(Icons.Default.Delete, "delete", tint = White) },
                         onClick = {
                             navController.navigate(Screen.HomeScreen.route) {
                                 popUpTo(Screen.HomeScreen.route)
@@ -189,13 +189,6 @@ fun ComicDetailScreen(
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.layoutId("cover")
                 )
-/*                Image(
-                    painterResource(R.drawable.placeholder_image),
-                    "cover",
-                    alignment = Alignment.TopStart,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.layoutId("cover")
-                )*/
                 TextButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier.layoutId("status"),
