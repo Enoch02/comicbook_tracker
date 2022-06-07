@@ -245,28 +245,30 @@ fun ComicInputLayout(
 
         Button(
             onClick = {
-                if (mode == ComicInputMode.EDIT) {
-                    if (viewModel.addComic(
-                            mComicTitle,
-                            mSelectedStatus,
-                            mRating.toInt(),
-                            mIssuesRead,
-                            mTotalIssues,
-                            id!!
-                        )
-                    ) navController.popBackStack()
-                    else Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
-
-                } else {
-                    if (viewModel.addComic(
-                            mComicTitle,
-                            mSelectedStatus,
-                            mRating.toInt(),
-                            mIssuesRead,
-                            mTotalIssues
-                        )
-                    ) navController.popBackStack()
-                    else Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
+                when (mode) {
+                    ComicInputMode.EDIT -> {
+                        if (viewModel.addComic(
+                                mComicTitle,
+                                mSelectedStatus,
+                                mRating.toInt(),
+                                mIssuesRead,
+                                mTotalIssues,
+                                id!!
+                            )
+                        ) navController.popBackStack()
+                        else Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
+                    }
+                    ComicInputMode.ADD -> {
+                        if (viewModel.addComic(
+                                mComicTitle,
+                                mSelectedStatus,
+                                mRating.toInt(),
+                                mIssuesRead,
+                                mTotalIssues
+                            )
+                        ) navController.popBackStack()
+                        else Toast.makeText(context, "Enter a title", Toast.LENGTH_SHORT).show()
+                    }
                 }
             },
             content = { Text(text = stringResource(R.string.save_comic_data)) },
