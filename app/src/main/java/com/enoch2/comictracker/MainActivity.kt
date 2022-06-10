@@ -24,17 +24,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ComicBookTrackerTheme {
+            val navController = rememberNavController()
+            val context = LocalContext.current
+            val scaffoldState = rememberScaffoldState()
+            val scope = rememberCoroutineScope()
+            val listState = rememberLazyListState()
+
+            ComicBookTrackerTheme(context) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    val navController = rememberNavController()
-                    val context = LocalContext.current
-                    val scaffoldState = rememberScaffoldState()
-                    val scope = rememberCoroutineScope()
-                    val listState = rememberLazyListState()
-
                     NavHost(
                         navController = navController,
                         startDestination = Screen.HomeScreen.route

@@ -27,17 +27,20 @@ import com.enoch2.comictracker.R
 import com.enoch2.comictracker.Screen
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
+import com.enoch2.comictracker.domain.model.SettingsViewModel
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.BlueGray400
 
 @Composable
 fun SettingScreen(
     navController: NavController,
-    context: Context
+    context: Context,
+    settingsViewModel: SettingsViewModel = viewModel()
 ) {
-    val viewModel: ComicTrackerViewModel = viewModel(
+    val comicViewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
+    val alwaysDark by settingsViewModel.getDarkModeValue(context).collectAsState(initial = false)
 
     Scaffold(
         topBar = {
@@ -71,9 +74,7 @@ fun SettingScreen(
                     start.linkTo(parent.start, 15.dp)
                 }
             }
-            var alwaysDark by remember { mutableStateOf(false) }
             var showDialog by remember { mutableStateOf(false) }
-            // TODO: Save settings to shared prefs
             Column {
                 Card(
                     elevation = 4.dp,
@@ -85,7 +86,7 @@ fun SettingScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                alwaysDark = !alwaysDark
+                                settingsViewModel.switchDarkModeValue(context)
                             }
                     ) {
                         Text(
@@ -95,7 +96,7 @@ fun SettingScreen(
                         )
                         Checkbox(
                             checked = alwaysDark,
-                            onCheckedChange = { alwaysDark = it },
+                            onCheckedChange = { settingsViewModel.switchDarkModeValue(context) },
                             modifier = Modifier.layoutId("checkBox")
                         )
                         Text(
@@ -112,6 +113,7 @@ fun SettingScreen(
                     shape = RoundedCornerShape(5.dp),
                     modifier = Modifier.padding(10.dp)
                 ) {
+                    // TODO: Finish up/ find better solution
                     val result = remember { mutableStateOf<Uri?>(null) }
                     val launcher =
                         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
@@ -169,7 +171,7 @@ fun SettingScreen(
                         confirmButton = {
                             TextButton(
                                 onClick = {
-                                    viewModel.deleteAllComic()
+                                    comicViewModel.deleteAllComic()
                                     showDialog = !showDialog
                                 },
                                 content = { Text(stringResource(R.string.yes)) }
