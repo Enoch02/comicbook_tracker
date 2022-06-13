@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.enoch2.comictracker.domain.model.Comic
 
-@Database(entities = [Comic::class], version = 1)
+@Database(entities = [Comic::class], version = 1, exportSchema = false)
 abstract class ComicDatabase : RoomDatabase() {
     abstract fun getComicDao(): ComicDao
 
