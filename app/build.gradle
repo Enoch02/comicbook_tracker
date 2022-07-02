@@ -43,6 +43,8 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            // Might remove
+            excludes += '/META-INF/DEPENDENCIES'
         }
     }
 }
@@ -67,6 +69,8 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     implementation "io.coil-kt:coil-compose:2.1.0"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+    // Might remove
+    implementation "it.skrape:skrapeit:1.1.5"
 
 
     testImplementation 'junit:junit:4.13.2'

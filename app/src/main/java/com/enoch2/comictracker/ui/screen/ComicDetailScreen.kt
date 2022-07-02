@@ -7,9 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -156,7 +154,7 @@ fun ComicDetailScreen(
                 ) {
                     ConstraintLayout(constraints) {
                         AsyncImage(
-                            model = "https://files1.comics.org//img/gcd/covers_by_id/1419/w200/1419450.jpg?1901497387943321942",
+                            model = "",
                             placeholder = painterResource(R.drawable.placeholder_image),
                             contentDescription = null,
                             error = painterResource(R.drawable.placeholder_image),
