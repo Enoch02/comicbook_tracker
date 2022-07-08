@@ -33,7 +33,6 @@ import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.White
 
-// TODO: Add a button to refresh cover
 @Composable
 fun ComicDetailScreen(
     navController: NavController,
@@ -182,6 +181,7 @@ fun ComicDetailScreen(
 
                 Spacer(Modifier.padding(vertical = 5.dp))
 
+                // TODO: Tap to edit
                 Text(
                     stringResource(R.string.lorem),
                     modifier = Modifier.padding(10.dp),

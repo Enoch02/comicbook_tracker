@@ -63,9 +63,9 @@ fun ComicInfoLayout(
         constraints,
         modifier
     ) {
-        //TODO: create function that scrape the image url
+        //TODO
         AsyncImage(
-            model = "https://files1.comics.org//img/gcd/covers_by_id/1419/w200/1419450.jpg?1901497387943321942",
+            model = "",
             placeholder = painterResource(R.drawable.placeholder_image),
             contentDescription = null,
             error = painterResource(R.drawable.placeholder_image),
