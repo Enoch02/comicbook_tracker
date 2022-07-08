@@ -28,7 +28,8 @@ fun EditComicScreen(
     rating: Float?,
     issuesRead: String?,
     totalIssues: String?,
-    id: String?
+    id: String?,
+    coverPath: String?
 ) {
     ComicInputLayout(
         navController,
@@ -40,6 +41,7 @@ fun EditComicScreen(
         issuesRead = issuesRead.toString(),
         totalIssues = totalIssues.toString(),
         id = id!!.toInt(),
-        ComicInputMode.EDIT
+        mode = ComicInputMode.EDIT,
+        coverPath = coverPath.toString()
     )
 }

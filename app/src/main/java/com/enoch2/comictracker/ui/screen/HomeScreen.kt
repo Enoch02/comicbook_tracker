@@ -260,10 +260,12 @@ fun HomeScreen(
                         modifier = Modifier.padding(bottom = 10.dp)
                     ) {
                         ComicInfoLayout(
+                            context,
                             comicTitle = comic.title.toString(),
                             issuesRead = comic.issuesRead!!,
                             totalIssues = comic.totalIssues!!,
                             status = comic.status.toString(),
+                            coverPath = comic.coverFilePath.toString(),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(IntrinsicSize.Max)

@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             route = Screen.EditComicScreen.route +
-                                    "/{comicTitle}/{status}/{rating}/{issuesRead}/{totalIssues}/{id}",
+                                    "/{comicTitle}/{status}/{rating}/{issuesRead}/{totalIssues}/{id}/{coverPath}",
                             arguments = listOf(
                                 navArgument("comicTitle") {
                                     type = NavType.StringType
@@ -93,6 +93,10 @@ class MainActivity : ComponentActivity() {
                                 navArgument("id") {
                                     type = NavType.StringType
                                     nullable = true
+                                },
+                                navArgument("coverPath") {
+                                    type = NavType.StringType
+                                    nullable = true
                                 }
                             )
                         ) { entry ->
@@ -104,7 +108,8 @@ class MainActivity : ComponentActivity() {
                                 entry.arguments?.getFloat("rating"),
                                 entry.arguments?.getString("issuesRead"),
                                 entry.arguments?.getString("totalIssues"),
-                                entry.arguments?.getString("id")
+                                entry.arguments?.getString("id"),
+                                entry.arguments?.getString("coverPath")
                             )
                         }
 

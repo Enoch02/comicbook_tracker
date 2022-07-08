@@ -53,7 +53,8 @@ fun ComicInputLayout(
     issuesRead: String,
     totalIssues: String,
     id: Int? = null,
-    mode: ComicInputMode
+    mode: ComicInputMode,
+    coverPath: String = ""
 ) {
     val constraints = ConstraintSet {
         val text = createRefFor("text")
@@ -80,6 +81,7 @@ fun ComicInputLayout(
     var mRating by rememberSaveable { mutableStateOf(rating) }
     var mIssuesRead by rememberSaveable { mutableStateOf(issuesRead) }
     var mTotalIssues by rememberSaveable { mutableStateOf(totalIssues) }
+    var mCoverPath by rememberSaveable { mutableStateOf(coverPath) }
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val launcher =
@@ -298,7 +300,8 @@ fun ComicInputLayout(
                                         mRating.toInt(),
                                         mIssuesRead,
                                         mTotalIssues,
-                                        id!!
+                                        id!!,
+                                        mCoverPath
                                     )
                                 ) {
                                     navController.popBackStack()
@@ -311,7 +314,8 @@ fun ComicInputLayout(
                                         mSelectedStatus,
                                         mRating.toInt(),
                                         mIssuesRead,
-                                        mTotalIssues
+                                        mTotalIssues,
+                                        coverPath = mCoverPath
                                     )
                                 ) {
                                     navController.popBackStack()
@@ -352,7 +356,7 @@ fun ComicInputLayout(
                             TextButton(
                                 onClick = {
                                     // TODO: do other things here
-                                    imageUri?.let { copyCover(context, it) }
+                                    imageUri?.let { mCoverPath = copyCover(context, it) }
                                     imageUri = null
                                 },
                                 content = { Text(stringResource(R.string.continue_txt)) }

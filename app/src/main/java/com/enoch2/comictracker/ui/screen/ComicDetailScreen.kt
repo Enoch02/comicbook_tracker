@@ -32,6 +32,7 @@ import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.White
+import java.io.File
 
 @Composable
 fun ComicDetailScreen(
@@ -65,7 +66,10 @@ fun ComicDetailScreen(
                                     comic.rating.toString(),
                                     comic.issuesRead.toString(),
                                     comic.totalIssues.toString(),
-                                    comic.id.toString()
+                                    comic.id.toString(),
+                                    comic.coverFilePath.toString().ifEmpty {
+                                        " "
+                                    }
                                 )
                             )
                         }
@@ -73,6 +77,7 @@ fun ComicDetailScreen(
                     IconButton(
                         content = { Icon(Icons.Default.Delete, "delete", tint = White) },
                         onClick = {
+                            // TODO: Delete the comic's cover if it has been set
                             navController.navigate(Screen.HomeScreen.route) {
                                 popUpTo(Screen.HomeScreen.route)
                                 viewModel.deleteComic(id)
@@ -152,8 +157,10 @@ fun ComicDetailScreen(
                         .padding(horizontal = 10.dp)
                 ) {
                     ConstraintLayout(constraints) {
+                        val cover = File(comic.coverFilePath.toString()).absolutePath
+
                         AsyncImage(
-                            model = "",
+                            model = cover,
                             placeholder = painterResource(R.drawable.placeholder_image),
                             contentDescription = null,
                             error = painterResource(R.drawable.placeholder_image),

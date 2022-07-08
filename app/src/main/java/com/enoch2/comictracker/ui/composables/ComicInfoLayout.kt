@@ -1,9 +1,11 @@
 package com.enoch2.comictracker.ui.composables
 
+import android.content.Context
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
@@ -17,13 +19,16 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.ui.theme.Typography
+import java.io.File
 
 @Composable
 fun ComicInfoLayout(
+    context: Context,
     comicTitle: String,
     issuesRead: Int,
     totalIssues: Int,
     status: String,
+    coverPath: String,
     modifier: Modifier = Modifier
 ) {
     val constraints = ConstraintSet {
@@ -63,14 +68,16 @@ fun ComicInfoLayout(
         constraints,
         modifier
     ) {
-        //TODO
+        val cover = File(coverPath).absolutePath
+
         AsyncImage(
-            model = "",
+            model = cover,
             placeholder = painterResource(R.drawable.placeholder_image),
             contentDescription = null,
             error = painterResource(R.drawable.placeholder_image),
             contentScale = ContentScale.Fit,
-            modifier = Modifier.layoutId("cover")
+            modifier = Modifier.layoutId("cover"),
+            filterQuality = FilterQuality.Low
         )
 
         Text(
