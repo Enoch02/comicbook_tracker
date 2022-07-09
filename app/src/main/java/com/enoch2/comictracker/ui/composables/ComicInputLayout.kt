@@ -54,7 +54,7 @@ fun ComicInputLayout(
     totalIssues: String,
     id: Int? = null,
     mode: ComicInputMode,
-    coverPath: String = ""
+    coverName: String = ""
 ) {
     val constraints = ConstraintSet {
         val text = createRefFor("text")
@@ -81,7 +81,7 @@ fun ComicInputLayout(
     var mRating by rememberSaveable { mutableStateOf(rating) }
     var mIssuesRead by rememberSaveable { mutableStateOf(issuesRead) }
     var mTotalIssues by rememberSaveable { mutableStateOf(totalIssues) }
-    var mCoverPath by rememberSaveable { mutableStateOf(coverPath) }
+    var mCoverPath by rememberSaveable { mutableStateOf(coverName) }
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val launcher =
@@ -340,9 +340,6 @@ fun ComicInputLayout(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                // TODO: Remove
-                                Text(imageUri.toString())
-
                                 AsyncImage(
                                     model = imageUri.toString(),
                                     contentDescription = null,
@@ -355,7 +352,6 @@ fun ComicInputLayout(
                         confirmButton = {
                             TextButton(
                                 onClick = {
-                                    // TODO: do other things here
                                     imageUri?.let { mCoverPath = copyCover(context, it) }
                                     imageUri = null
                                 },

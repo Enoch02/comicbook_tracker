@@ -30,6 +30,7 @@ import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.domain.model.SettingsViewModel
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.BlueGray400
+import com.enoch2.comictracker.util.deleteAllCovers
 
 @Composable
 fun SettingScreen(
@@ -117,7 +118,7 @@ fun SettingScreen(
                     val result = remember { mutableStateOf<Uri?>(null) }
                     val launcher =
                         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
-                                result.value = it
+                            result.value = it
                         }
 
                     Column {
@@ -172,6 +173,7 @@ fun SettingScreen(
                             TextButton(
                                 onClick = {
                                     comicViewModel.deleteAllComic()
+                                    deleteAllCovers(context)
                                     showDialog = !showDialog
                                 },
                                 content = { Text(stringResource(R.string.yes)) }

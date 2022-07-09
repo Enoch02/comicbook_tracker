@@ -4,7 +4,10 @@ import android.content.Context
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
@@ -28,7 +31,7 @@ fun ComicInfoLayout(
     issuesRead: Int,
     totalIssues: Int,
     status: String,
-    coverPath: String,
+    coverName: String,
     modifier: Modifier = Modifier
 ) {
     val constraints = ConstraintSet {
@@ -68,7 +71,8 @@ fun ComicInfoLayout(
         constraints,
         modifier
     ) {
-        val cover = File(coverPath).absolutePath
+        val coverAlpha = if (coverName.isNotEmpty()) 1f else 0f
+        val cover = File(context.filesDir, coverName).absolutePath
 
         AsyncImage(
             model = cover,
@@ -76,7 +80,9 @@ fun ComicInfoLayout(
             contentDescription = null,
             error = painterResource(R.drawable.placeholder_image),
             contentScale = ContentScale.Fit,
-            modifier = Modifier.layoutId("cover"),
+            modifier = Modifier
+                .layoutId("cover")
+                .alpha(coverAlpha),
             filterQuality = FilterQuality.Low
         )
 

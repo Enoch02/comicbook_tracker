@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
@@ -32,6 +33,7 @@ import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.White
+import com.enoch2.comictracker.util.deleteOneCover
 import java.io.File
 
 @Composable
@@ -67,7 +69,7 @@ fun ComicDetailScreen(
                                     comic.issuesRead.toString(),
                                     comic.totalIssues.toString(),
                                     comic.id.toString(),
-                                    comic.coverFilePath.toString().ifEmpty {
+                                    comic.coverName.toString().ifEmpty {
                                         " "
                                     }
                                 )
@@ -77,10 +79,10 @@ fun ComicDetailScreen(
                     IconButton(
                         content = { Icon(Icons.Default.Delete, "delete", tint = White) },
                         onClick = {
-                            // TODO: Delete the comic's cover if it has been set
                             navController.navigate(Screen.HomeScreen.route) {
                                 popUpTo(Screen.HomeScreen.route)
                                 viewModel.deleteComic(id)
+                                deleteOneCover(context, comic.coverName.toString())
                             }
                         }
                     )
@@ -157,7 +159,9 @@ fun ComicDetailScreen(
                         .padding(horizontal = 10.dp)
                 ) {
                     ConstraintLayout(constraints) {
-                        val cover = File(comic.coverFilePath.toString()).absolutePath
+                        val coverAlpha = if (comic.coverName?.isNotEmpty() == true) 1f else 0f
+                        val cover =
+                            File(context.filesDir, comic.coverName.toString()).absolutePath
 
                         AsyncImage(
                             model = cover,
@@ -166,7 +170,9 @@ fun ComicDetailScreen(
                             error = painterResource(R.drawable.placeholder_image),
                             alignment = Alignment.TopStart,
                             contentScale = ContentScale.Fit,
-                            modifier = Modifier.layoutId("cover")
+                            modifier = Modifier
+                                .layoutId("cover")
+                                .alpha(coverAlpha)
                         )
                         TextButton(
                             onClick = { /*TODO*/ },

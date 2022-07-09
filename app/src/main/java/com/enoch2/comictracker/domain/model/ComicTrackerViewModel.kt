@@ -70,7 +70,7 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
                 rating,
                 if (issuesRead.isEmpty()) 0 else issuesRead.toInt(),
                 if (totalIssues.isEmpty()) 0 else totalIssues.toInt(),
-                coverFilePath = coverPath
+                coverName = coverPath
             )
         } else {
             temp = Comic(

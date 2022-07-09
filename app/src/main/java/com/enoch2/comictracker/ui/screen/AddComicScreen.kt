@@ -25,6 +25,7 @@ fun AddComicScreen(
     navController: NavController,
     context: Context
 ) {
+    //TODO: capitalize the first letter before saving
     ComicInputLayout(
         navController = navController,
         context = context,

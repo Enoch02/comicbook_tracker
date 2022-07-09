@@ -14,7 +14,6 @@ import androidx.compose.material.icons.outlined.ArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -265,7 +264,7 @@ fun HomeScreen(
                             issuesRead = comic.issuesRead!!,
                             totalIssues = comic.totalIssues!!,
                             status = comic.status.toString(),
-                            coverPath = comic.coverFilePath.toString(),
+                            coverName = comic.coverName.toString(),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(IntrinsicSize.Max)
