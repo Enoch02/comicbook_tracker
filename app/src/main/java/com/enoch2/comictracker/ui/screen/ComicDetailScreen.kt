@@ -33,7 +33,6 @@ import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.White
-import com.enoch2.comictracker.util.deleteOneCover
 import java.io.File
 
 @Composable
@@ -82,7 +81,7 @@ fun ComicDetailScreen(
                             navController.navigate(Screen.HomeScreen.route) {
                                 popUpTo(Screen.HomeScreen.route)
                                 viewModel.deleteComic(id)
-                                deleteOneCover(context, comic.coverName.toString())
+                                viewModel.deleteOneCover(context, comic.coverName.toString())
                             }
                         }
                     )

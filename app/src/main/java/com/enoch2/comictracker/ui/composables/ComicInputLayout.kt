@@ -40,7 +40,6 @@ import com.enoch2.comictracker.R
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.util.ComicInputMode
-import com.enoch2.comictracker.util.copyCover
 
 @Composable
 fun ComicInputLayout(
@@ -352,7 +351,7 @@ fun ComicInputLayout(
                         confirmButton = {
                             TextButton(
                                 onClick = {
-                                    imageUri?.let { mCoverPath = copyCover(context, it) }
+                                    imageUri?.let { mCoverPath = viewModel.copyCover(context, it) }
                                     imageUri = null
                                 },
                                 content = { Text(stringResource(R.string.continue_txt)) }
