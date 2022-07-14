@@ -20,16 +20,14 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.ui.theme.Typography
-import java.io.File
 
 @Composable
 fun ComicInfoLayout(
-    context: Context,
     comicTitle: String,
     issuesRead: Int,
     totalIssues: Int,
     status: String,
-    coverName: String,
+    coverAbsPath: String,
     modifier: Modifier = Modifier
 ) {
     val constraints = ConstraintSet {
@@ -69,11 +67,10 @@ fun ComicInfoLayout(
         constraints,
         modifier
     ) {
-        val coverAlpha = if (coverName.isNotEmpty()) 1f else 0f
-        val cover = File(context.filesDir, coverName).absolutePath
+        val coverAlpha = if (coverAbsPath.isNotEmpty()) 1f else 0f
 
         AsyncImage(
-            model = cover,
+            model = coverAbsPath,
             placeholder = painterResource(R.drawable.placeholder_image),
             contentDescription = null,
             error = painterResource(R.drawable.placeholder_image),

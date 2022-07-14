@@ -351,7 +351,7 @@ fun ComicInputLayout(
                         confirmButton = {
                             TextButton(
                                 onClick = {
-                                    imageUri?.let { mCoverPath = viewModel.copyCover(context, it) }
+                                    imageUri?.let { mCoverPath = viewModel.copyCover(it) }
                                     imageUri = null
                                 },
                                 content = { Text(stringResource(R.string.continue_txt)) }

@@ -2,12 +2,10 @@ package com.enoch2.comictracker.domain.model
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
-import android.provider.OpenableColumns
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.enoch2.comictracker.data.repository.ComicRepositoryImpl
+import com.enoch2.comictracker.data.repository.CoverRepository
 import com.enoch2.comictracker.data.source.ComicDatabase
 import com.enoch2.comictracker.util.Filters
 import com.enoch2.comictracker.util.Filters.*
@@ -16,14 +14,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
 
 const val TAG = "FILE_UTILS"
 
 class ComicTrackerViewModel(context: Context) : ViewModel() {
     private val comicDao = ComicDatabase.getDataBase(context.applicationContext).getComicDao()
     private val repository = ComicRepositoryImpl(comicDao)
+    private val coverRepo = CoverRepository(context)
+    val coverPaths = coverRepo.latestPathList
 
     fun getComics(filter: Filters, orderType: OrderType): Flow<List<Comic>> {
         return when (orderType) {
@@ -94,6 +92,7 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertComic(temp)
         }
+        coverRepo.isNewCoverAdded = !coverRepo.isNewCoverAdded
         return true
     }
 
@@ -109,68 +108,11 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
         }
     }
 
-    // TODO: Turn all functions below into suspend function
-    fun copyCover(context: Context, coverUri: Uri): String {
-        try {
-            var fileName = ""
-            coverUri.let {
-                context.contentResolver.query(coverUri, null, null, null, null)
-            }?.use { cursor ->
-                val name = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                cursor.moveToFirst()
-                fileName = cursor.getString(name)
-            }
+    fun copyCover(coverUri: Uri): String = coverRepo.copyCover(coverUri)
 
-            // TODO: Compress before or after copying..
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val files = context.filesDir.listFiles()?.asList()
-                val coverFile = File(context.filesDir, fileName)
-                val inputStream = context.contentResolver.openInputStream(coverUri)
+    fun deleteAllCovers() = coverRepo.deleteAllCovers(viewModelScope)
 
-                if (files?.contains(coverFile) == false) {
-                    inputStream.use { fis ->
-                        FileOutputStream(coverFile).use { fos ->
-                            val buffer = ByteArray(1024)
-                            var len: Int
-                            while (fis?.read(buffer).also { len = it!! } != -1) {
-                                fos.write(buffer, 0, len)
-                            }
-                        }
-                    }
-                }
-                Log.w(TAG, "PATH TO COPIED FILE: ${coverFile.absolutePath}")
-                return coverFile.name
-            } else {
-                TODO("I SUCK!")
-            }
-        } catch (e: Exception) {
-            Log.e("TEST", "copyCover() -> $e")
-        }
-        return ""
-    }
+    fun deleteOneCover(coverName: String) = coverRepo.deleteOneCover(viewModelScope, coverName)
 
-    fun deleteAllCovers(context: Context) {
-        try {
-            val files = context.filesDir.listFiles()?.toList()
-
-            files?.forEach { file ->
-                file.delete()
-                Log.e(TAG, "${file.name} deleted!")
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "deleteAllCovers() -> $e")
-        }
-    }
-
-    fun deleteOneCover(context: Context, coverName: String) {
-        try {
-            if (coverName.isNotEmpty()) {
-                val file = File(context.filesDir, coverName)
-                file.delete()
-                Log.e(TAG, "$coverName deleted!")
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "deleteOneCover() -> $e")
-        }
-    }
+    /*suspend fun getCoverPath(scope: CoroutineScope) = coverRepo.getCoverPathsAsync(scope)*/
 }

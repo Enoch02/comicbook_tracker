@@ -57,7 +57,7 @@ fun AboutScreen(navController: NavController) {
                 ) {
                     Column(modifier = Modifier.padding(vertical = 5.dp)) {
                         Image(
-                            painterResource(R.drawable.ic_launcher_foreground),
+                            painterResource(R.drawable.icon),
                             contentDescription = "app icon",
                             alignment = Alignment.Center,
                             modifier = Modifier.fillMaxWidth()

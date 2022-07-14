@@ -1,6 +1,7 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,6 +31,7 @@ import com.enoch2.comictracker.util.Filters
 import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 // TODO: search functionality
 @Composable
@@ -186,7 +188,7 @@ fun HomeScreen(
             val drawerItems = listOf(
                 stringResource(R.string.reading), stringResource(R.string.completed),
                 stringResource(R.string.on_hold), stringResource(R.string.dropped),
-                stringResource(R.string.plan_to_read)
+                stringResource(R.string.plan_to_read), stringResource(R.string.all)
             )
 
             FilterLabel()
@@ -226,6 +228,12 @@ fun HomeScreen(
                                     drawerState.close()
                                 }
                             }
+                            5 -> {
+                                filter = Filters.ALL
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
                         }
                     }
                 )
@@ -248,6 +256,12 @@ fun HomeScreen(
             factory = ComicTrackerViewModelFactory(context.applicationContext)
         )
         val comics by viewModel.getComics(filter, order).collectAsState(initial = emptyList())
+        //var coverPaths by rememberSaveable { mutableStateOf(mapOf<String, String>()) }
+        val coverPaths by viewModel.coverPaths.collectAsState(initial = emptyMap())
+
+        /*LaunchedEffect(true) {
+            coverPaths = viewModel.getCoverPath(scope)
+        }*/
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
             items(
@@ -259,12 +273,11 @@ fun HomeScreen(
                         modifier = Modifier.padding(bottom = 10.dp)
                     ) {
                         ComicInfoLayout(
-                            context,
                             comicTitle = comic.title.toString(),
                             issuesRead = comic.issuesRead!!,
                             totalIssues = comic.totalIssues!!,
                             status = comic.status.toString(),
-                            coverName = comic.coverName.toString(),
+                            coverAbsPath = coverPaths[comic.coverName.toString()].toString(),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(IntrinsicSize.Max)
@@ -275,6 +288,11 @@ fun HomeScreen(
                     }
                 }
             )
+        }
+
+        BackHandler {
+            // TODO: HMMMMMM
+            exitProcess(0)
         }
     }
 }

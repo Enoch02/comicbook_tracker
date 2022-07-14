@@ -172,7 +172,7 @@ fun SettingScreen(
                             TextButton(
                                 onClick = {
                                     comicViewModel.deleteAllComic()
-                                    comicViewModel.deleteAllCovers(context)
+                                    comicViewModel.deleteAllCovers()
                                     showDialog = !showDialog
                                 },
                                 content = { Text(stringResource(R.string.yes)) }

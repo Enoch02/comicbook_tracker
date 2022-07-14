@@ -81,7 +81,7 @@ fun ComicDetailScreen(
                             navController.navigate(Screen.HomeScreen.route) {
                                 popUpTo(Screen.HomeScreen.route)
                                 viewModel.deleteComic(id)
-                                viewModel.deleteOneCover(context, comic.coverName.toString())
+                                viewModel.deleteOneCover(comic.coverName.toString())
                             }
                         }
                     )
