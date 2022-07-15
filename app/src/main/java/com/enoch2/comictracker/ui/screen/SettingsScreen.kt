@@ -41,6 +41,7 @@ fun SettingScreen(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
     val alwaysDark by settingsViewModel.getDarkModeValue(context).collectAsState(initial = false)
+    val askBeforeExit by settingsViewModel.getExitDialogValue(context).collectAsState(initial = false)
 
     Scaffold(
         topBar = {
@@ -101,6 +102,38 @@ fun SettingScreen(
                         )
                         Text(
                             stringResource(R.string.always_dark_desc),
+                            fontSize = 12.sp,
+                            color = BlueGray400,
+                            modifier = Modifier.layoutId("desc")
+                        )
+                    }
+                }
+
+                Card(
+                    elevation = 4.dp,
+                    shape = RoundedCornerShape(5.dp),
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    ConstraintLayout(
+                        constraints,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                settingsViewModel.switchExitDialogValue(context)
+                            }
+                    ) {
+                        Text(
+                            stringResource(R.string.show_exit_dialog),
+                            fontSize = 20.sp,
+                            modifier = Modifier.layoutId("text")
+                        )
+                        Checkbox(
+                            checked = askBeforeExit,
+                            onCheckedChange = { settingsViewModel.switchExitDialogValue(context)  },
+                            modifier = Modifier.layoutId("checkBox")
+                        )
+                        Text(
+                            stringResource(R.string.show_exit_dialog_desc),
                             fontSize = 12.sp,
                             color = BlueGray400,
                             modifier = Modifier.layoutId("desc")

@@ -23,6 +23,7 @@ import com.enoch2.comictracker.R
 import com.enoch2.comictracker.Screen
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
+import com.enoch2.comictracker.domain.model.SettingsViewModel
 import com.enoch2.comictracker.ui.composables.ComicInfoLayout
 import com.enoch2.comictracker.ui.composables.DrawerHeader
 import com.enoch2.comictracker.ui.composables.FilterLabel
@@ -40,7 +41,8 @@ fun HomeScreen(
     context: Context,
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
-    listState: LazyListState
+    listState: LazyListState,
+    settingsViewModel: SettingsViewModel = viewModel()
 ) {
     val drawerState = scaffoldState.drawerState
     var filter by remember { mutableStateOf(Filters.ALL) }
@@ -290,9 +292,34 @@ fun HomeScreen(
             )
         }
 
+        val showExitDialog by settingsViewModel.getExitDialogValue(context).collectAsState(initial = false)
+        var showAlertDialog by rememberSaveable { mutableStateOf(false) }
+
         BackHandler {
-            // TODO: HMMMMMM
-            exitProcess(0)
+            if (showExitDialog) {
+                showAlertDialog = !showAlertDialog
+            } else {
+                exitProcess(0)
+            }
+        }
+
+        if (showAlertDialog) {
+            AlertDialog(
+                onDismissRequest = { showAlertDialog = !showAlertDialog },
+                title = { Text(stringResource(R.string.confirm_exit)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = { exitProcess(0) },
+                        content = { Text(stringResource(R.string.yes)) }
+                    )
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showAlertDialog = !showAlertDialog },
+                        content = { Text(stringResource(R.string.no)) }
+                    )
+                }
+            )
         }
     }
 }

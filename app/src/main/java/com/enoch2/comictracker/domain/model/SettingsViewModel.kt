@@ -17,6 +17,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 //TODO: add setting options that prevent the app from loading data online
 class SettingsViewModel : ViewModel() {
     private val darkModeKey = booleanPreferencesKey("dark_mode")
+    private val exitDialogKey = booleanPreferencesKey("exit_dialog")
 
     fun switchDarkModeValue(context: Context) {
         viewModelScope.launch {
@@ -32,5 +33,21 @@ class SettingsViewModel : ViewModel() {
             preferences[darkModeKey] ?: false
         }
         return darkModeFlow
+    }
+
+    fun switchExitDialogValue(context: Context) {
+        viewModelScope.launch {
+            context.dataStore.edit { settings ->
+                val currentExitDialogValue = settings[exitDialogKey] ?: false
+                settings[exitDialogKey] = !currentExitDialogValue
+            }
+        }
+    }
+
+    fun getExitDialogValue(context: Context): Flow<Boolean> {
+        val exitDialogFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+            preferences[exitDialogKey] ?: false
+        }
+        return exitDialogFlow
     }
 }

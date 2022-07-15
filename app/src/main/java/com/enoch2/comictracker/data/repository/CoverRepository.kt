@@ -17,9 +17,6 @@ import java.io.File
 import java.io.FileOutputStream
 
 class CoverRepository(val context: Context) {
-    var isNewCoverAdded = true
-
-    // TODO: Freeezes the app
     val latestPathList: Flow<Map<String, String?>> = flow {
         while (true) {
             val latestPathMap = mutableMapOf<String, String?>()
@@ -98,18 +95,4 @@ class CoverRepository(val context: Context) {
             }
         }
     }
-
-    /*suspend fun getCoverPathsAsync(scope: CoroutineScope) = scope.async(Dispatchers.IO) {
-        val result = mutableMapOf<String, String>()
-
-        files?.forEach { file ->
-            val fileName = file.name
-            val fileAbsPath = file.absolutePath
-
-            result[fileName] = fileAbsPath
-            Log.w(TAG, "$fileName's path added!")
-        }
-
-        return@async result
-    }.await()*/
 }

@@ -1,6 +1,5 @@
 package com.enoch2.comictracker.ui.composables
 
-import android.content.Context
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +39,7 @@ fun ComicInfoLayout(
             top.linkTo(parent.top)
             bottom.linkTo(parent.bottom)
             start.linkTo(parent.start)
+            end.linkTo(title.start)
         }
         constrain(title) {
             top.linkTo(parent.top, 5.dp)
@@ -74,7 +74,7 @@ fun ComicInfoLayout(
             placeholder = painterResource(R.drawable.placeholder_image),
             contentDescription = null,
             error = painterResource(R.drawable.placeholder_image),
-            contentScale = ContentScale.Fit,
+            contentScale = ContentScale.Inside,
             modifier = Modifier
                 .layoutId("cover")
                 .alpha(coverAlpha),

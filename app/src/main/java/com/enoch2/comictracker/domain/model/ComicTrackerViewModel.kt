@@ -92,7 +92,6 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertComic(temp)
         }
-        coverRepo.isNewCoverAdded = !coverRepo.isNewCoverAdded
         return true
     }
 
@@ -114,5 +113,4 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
 
     fun deleteOneCover(coverName: String) = coverRepo.deleteOneCover(viewModelScope, coverName)
 
-    /*suspend fun getCoverPath(scope: CoroutineScope) = coverRepo.getCoverPathsAsync(scope)*/
 }
