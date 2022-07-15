@@ -1,6 +1,7 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,9 +14,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.ArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,13 +23,16 @@ import com.enoch2.comictracker.R
 import com.enoch2.comictracker.Screen
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
+import com.enoch2.comictracker.domain.model.SettingsViewModel
 import com.enoch2.comictracker.ui.composables.ComicInfoLayout
 import com.enoch2.comictracker.ui.composables.DrawerHeader
 import com.enoch2.comictracker.ui.composables.FilterLabel
+import com.enoch2.comictracker.ui.theme.White
 import com.enoch2.comictracker.util.Filters
 import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 // TODO: search functionality
 @Composable
@@ -39,7 +41,8 @@ fun HomeScreen(
     context: Context,
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
-    listState: LazyListState
+    listState: LazyListState,
+    settingsViewModel: SettingsViewModel = viewModel()
 ) {
     val drawerState = scaffoldState.drawerState
     var filter by remember { mutableStateOf(Filters.ALL) }
@@ -48,14 +51,12 @@ fun HomeScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            val tint = Color.White
-
             TopAppBar(
                 navigationIcon = {
                     IconButton(content = {
                         Icon(
                             Icons.Default.Menu,
-                            tint = tint,
+                            tint = White,
                             contentDescription = stringResource(R.string.menu)
                         )
                     },
@@ -82,7 +83,7 @@ fun HomeScreen(
                             Icon(
                                 Icons.Default.MoreVert,
                                 stringResource(R.string.settings),
-                                tint = tint
+                                tint = White
                             )
 
                             val items = listOf(
@@ -105,16 +106,13 @@ fun HomeScreen(
                                                 }
                                             },
                                             content = {
-                                                Box(
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    Row {
-                                                        Text(item)
-                                                        if (index == 0)
-                                                            Icon(Icons.Outlined.ArrowRight, null)
-                                                    }
-                                                }
+                                                Text(item, Modifier.weight(2f))
+                                                if (index == 0)
+                                                    Icon(
+                                                        Icons.Outlined.ArrowRight,
+                                                        null,
+                                                        Modifier.weight(1f)
+                                                    )
                                             }
                                         )
                                     }
@@ -162,23 +160,22 @@ fun HomeScreen(
                                         }
                                     }
                                 ) {
-                                    Row {
-                                        Text(item)
-                                        RadioButton(
-                                            selected = item == selected,
-                                            onClick = {
-                                                if (index == 0) {
-                                                    order = OrderType.ASCENDING
-                                                    showInnerMenu = !showInnerMenu
-                                                    onSelectionChange(item)
-                                                } else {
-                                                    order = OrderType.DESCENDING
-                                                    showInnerMenu = !showInnerMenu
-                                                    onSelectionChange(item)
-                                                }
+                                    Text(item, modifier = Modifier.weight(2f))
+                                    RadioButton(
+                                        modifier = Modifier.weight(1f),
+                                        selected = item == selected,
+                                        onClick = {
+                                            if (index == 0) {
+                                                order = OrderType.ASCENDING
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
+                                            } else {
+                                                order = OrderType.DESCENDING
+                                                showInnerMenu = !showInnerMenu
+                                                onSelectionChange(item)
                                             }
-                                        )
-                                    }
+                                        }
+                                    )
                                 }
                             }
                         }
@@ -193,7 +190,7 @@ fun HomeScreen(
             val drawerItems = listOf(
                 stringResource(R.string.reading), stringResource(R.string.completed),
                 stringResource(R.string.on_hold), stringResource(R.string.dropped),
-                stringResource(R.string.plan_to_read)
+                stringResource(R.string.plan_to_read), stringResource(R.string.all)
             )
 
             FilterLabel()
@@ -233,6 +230,12 @@ fun HomeScreen(
                                     drawerState.close()
                                 }
                             }
+                            5 -> {
+                                filter = Filters.ALL
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                            }
                         }
                     }
                 )
@@ -246,7 +249,7 @@ fun HomeScreen(
                 Icon(
                     Icons.Default.Add,
                     "add",
-                    tint = Color.White
+                    tint = White
                 )
             }
         }
@@ -255,6 +258,12 @@ fun HomeScreen(
             factory = ComicTrackerViewModelFactory(context.applicationContext)
         )
         val comics by viewModel.getComics(filter, order).collectAsState(initial = emptyList())
+        //var coverPaths by rememberSaveable { mutableStateOf(mapOf<String, String>()) }
+        val coverPaths by viewModel.coverPaths.collectAsState(initial = emptyMap())
+
+        /*LaunchedEffect(true) {
+            coverPaths = viewModel.getCoverPath(scope)
+        }*/
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
             items(
@@ -270,7 +279,8 @@ fun HomeScreen(
                             issuesRead = comic.issuesRead!!,
                             totalIssues = comic.totalIssues!!,
                             status = comic.status.toString(),
-                            Modifier
+                            coverAbsPath = coverPaths[comic.coverName.toString()].toString(),
+                            modifier = Modifier
                                 .fillMaxWidth()
                                 .height(IntrinsicSize.Max)
                                 .clickable {
@@ -278,6 +288,36 @@ fun HomeScreen(
                                 }
                         )
                     }
+                }
+            )
+        }
+
+        val showExitDialog by settingsViewModel.getExitDialogValue(context).collectAsState(initial = false)
+        var showAlertDialog by rememberSaveable { mutableStateOf(false) }
+
+        BackHandler {
+            if (showExitDialog) {
+                showAlertDialog = !showAlertDialog
+            } else {
+                exitProcess(0)
+            }
+        }
+
+        if (showAlertDialog) {
+            AlertDialog(
+                onDismissRequest = { showAlertDialog = !showAlertDialog },
+                title = { Text(stringResource(R.string.confirm_exit)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = { exitProcess(0) },
+                        content = { Text(stringResource(R.string.yes)) }
+                    )
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showAlertDialog = !showAlertDialog },
+                        content = { Text(stringResource(R.string.no)) }
+                    )
                 }
             )
         }

@@ -1,11 +1,16 @@
 package com.enoch2.comictracker.ui.theme
 
+import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.enoch2.comictracker.domain.model.SettingsViewModel
 
 private val DarkColorPalette = darkColors(
     primary = BlueGray400,
@@ -15,7 +20,7 @@ private val DarkColorPalette = darkColors(
 
 private val LightColorPalette = lightColors(
     primary = BlueGray400,
-    primaryVariant = BlueGrayLight,
+    primaryVariant = BlueGrayDark,
     secondary = IndigoLight,
     background = BlueGray100,
     surface = Color.White,
@@ -33,10 +38,13 @@ private val LightColorPalette = lightColors(
 
 @Composable
 fun ComicBookTrackerTheme(
+    context: Context,
     darkTheme: Boolean = isSystemInDarkTheme(),
+    settingsViewModel: SettingsViewModel = viewModel(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
+    val alwaysDark by settingsViewModel.getDarkModeValue(context).collectAsState(initial = false)
+    val colors = if (darkTheme || alwaysDark) {
         DarkColorPalette
     } else {
         LightColorPalette

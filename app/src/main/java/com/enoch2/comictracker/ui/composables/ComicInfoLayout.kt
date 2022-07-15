@@ -1,10 +1,11 @@
 package com.enoch2.comictracker.ui.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import coil.compose.AsyncImage
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.ui.theme.Typography
 
@@ -24,6 +26,7 @@ fun ComicInfoLayout(
     issuesRead: Int,
     totalIssues: Int,
     status: String,
+    coverAbsPath: String,
     modifier: Modifier = Modifier
 ) {
     val constraints = ConstraintSet {
@@ -36,6 +39,7 @@ fun ComicInfoLayout(
             top.linkTo(parent.top)
             bottom.linkTo(parent.bottom)
             start.linkTo(parent.start)
+            end.linkTo(title.start)
         }
         constrain(title) {
             top.linkTo(parent.top, 5.dp)
@@ -63,12 +67,18 @@ fun ComicInfoLayout(
         constraints,
         modifier
     ) {
-        //TODO: replace with the coil version
-        Image(
-            painter = painterResource(R.drawable.placeholder_image),
+        val coverAlpha = if (coverAbsPath.isNotEmpty()) 1f else 0f
+
+        AsyncImage(
+            model = coverAbsPath,
+            placeholder = painterResource(R.drawable.placeholder_image),
             contentDescription = null,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.layoutId("cover")
+            error = painterResource(R.drawable.placeholder_image),
+            contentScale = ContentScale.Inside,
+            modifier = Modifier
+                .layoutId("cover")
+                .alpha(coverAlpha),
+            filterQuality = FilterQuality.Low
         )
 
         Text(

@@ -1,9 +1,11 @@
 package com.enoch2.comictracker.domain.model
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.enoch2.comictracker.data.repository.ComicRepositoryImpl
+import com.enoch2.comictracker.data.repository.CoverRepository
 import com.enoch2.comictracker.data.source.ComicDatabase
 import com.enoch2.comictracker.util.Filters
 import com.enoch2.comictracker.util.Filters.*
@@ -13,9 +15,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+const val TAG = "FILE_UTILS"
+
 class ComicTrackerViewModel(context: Context) : ViewModel() {
     private val comicDao = ComicDatabase.getDataBase(context.applicationContext).getComicDao()
     private val repository = ComicRepositoryImpl(comicDao)
+    private val coverRepo = CoverRepository(context)
+    val coverPaths = coverRepo.latestPathList
 
     fun getComics(filter: Filters, orderType: OrderType): Flow<List<Comic>> {
         return when (orderType) {
@@ -55,45 +61,34 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
         selectedStatus: String,
         rating: Int,
         issuesRead: String,
-        totalIssues: String
-    ): Boolean {
-        if (comicTitle.isEmpty())
-            return false
-
-        val temp = Comic(
-            comicTitle,
-            selectedStatus,
-            rating,
-            if (issuesRead.isEmpty()) 0 else issuesRead.toInt(),
-            if (totalIssues.isEmpty()) 0 else totalIssues.toInt()
-        )
-
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.insertComic(temp)
-        }
-        return true
-    }
-
-    fun addComic(
-        comicTitle: String,
-        selectedStatus: String,
-        rating: Int,
-        issuesRead: String,
         totalIssues: String,
-        id: Int
+        id: Int = 0,
+        coverPath: String
     ): Boolean {
+        val temp: Comic
+
         if (comicTitle.isEmpty())
             return false
-
-        val temp = Comic(
-            comicTitle,
-            selectedStatus,
-            rating,
-            if (issuesRead.isEmpty()) 0 else issuesRead.toInt(),
-            if (totalIssues.isEmpty()) 0 else totalIssues.toInt(),
-            id
-        )
-
+        if (id == 0) {
+            temp = Comic(
+                comicTitle,
+                selectedStatus,
+                rating,
+                if (issuesRead.isEmpty()) 0 else issuesRead.toInt(),
+                if (totalIssues.isEmpty()) 0 else totalIssues.toInt(),
+                coverName = coverPath
+            )
+        } else {
+            temp = Comic(
+                comicTitle,
+                selectedStatus,
+                rating,
+                if (issuesRead.isEmpty()) 0 else issuesRead.toInt(),
+                if (totalIssues.isEmpty()) 0 else totalIssues.toInt(),
+                id,
+                coverPath
+            )
+        }
         viewModelScope.launch(Dispatchers.IO) {
             repository.insertComic(temp)
         }
@@ -111,4 +106,11 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
             repository.deleteAllComic()
         }
     }
+
+    fun copyCover(coverUri: Uri): String = coverRepo.copyCover(coverUri)
+
+    fun deleteAllCovers() = coverRepo.deleteAllCovers(viewModelScope)
+
+    fun deleteOneCover(coverName: String) = coverRepo.deleteOneCover(viewModelScope, coverName)
+
 }

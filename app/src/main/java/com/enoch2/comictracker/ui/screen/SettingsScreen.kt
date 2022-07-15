@@ -1,6 +1,9 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,9 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -22,19 +23,26 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.enoch2.comictracker.R
 import com.enoch2.comictracker.Screen
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
+import com.enoch2.comictracker.domain.model.SettingsViewModel
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.BlueGray400
 
 @Composable
 fun SettingScreen(
     navController: NavController,
-    context: Context
+    context: Context,
+    settingsViewModel: SettingsViewModel = viewModel()
 ) {
+    val comicViewModel: ComicTrackerViewModel = viewModel(
+        factory = ComicTrackerViewModelFactory(context.applicationContext)
+    )
+    val alwaysDark by settingsViewModel.getDarkModeValue(context).collectAsState(initial = false)
+    val askBeforeExit by settingsViewModel.getExitDialogValue(context).collectAsState(initial = false)
+
     Scaffold(
         topBar = {
             ComicTrackerTopBar(
@@ -67,9 +75,7 @@ fun SettingScreen(
                     start.linkTo(parent.start, 15.dp)
                 }
             }
-            var alwaysDark by remember { mutableStateOf(false) }
             var showDialog by remember { mutableStateOf(false) }
-            // TODO: Save settings to shared prefs
             Column {
                 Card(
                     elevation = 4.dp,
@@ -81,7 +87,7 @@ fun SettingScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                alwaysDark = !alwaysDark
+                                settingsViewModel.switchDarkModeValue(context)
                             }
                     ) {
                         Text(
@@ -91,7 +97,7 @@ fun SettingScreen(
                         )
                         Checkbox(
                             checked = alwaysDark,
-                            onCheckedChange = { alwaysDark = it },
+                            onCheckedChange = { settingsViewModel.switchDarkModeValue(context) },
                             modifier = Modifier.layoutId("checkBox")
                         )
                         Text(
@@ -108,9 +114,53 @@ fun SettingScreen(
                     shape = RoundedCornerShape(5.dp),
                     modifier = Modifier.padding(10.dp)
                 ) {
+                    ConstraintLayout(
+                        constraints,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                settingsViewModel.switchExitDialogValue(context)
+                            }
+                    ) {
+                        Text(
+                            stringResource(R.string.show_exit_dialog),
+                            fontSize = 20.sp,
+                            modifier = Modifier.layoutId("text")
+                        )
+                        Checkbox(
+                            checked = askBeforeExit,
+                            onCheckedChange = { settingsViewModel.switchExitDialogValue(context)  },
+                            modifier = Modifier.layoutId("checkBox")
+                        )
+                        Text(
+                            stringResource(R.string.show_exit_dialog_desc),
+                            fontSize = 12.sp,
+                            color = BlueGray400,
+                            modifier = Modifier.layoutId("desc")
+                        )
+                    }
+                }
+
+                Card(
+                    elevation = 4.dp,
+                    shape = RoundedCornerShape(5.dp),
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    // TODO: Finish up/ find better solution
+                    val result = remember { mutableStateOf<Uri?>(null) }
+                    val launcher =
+                        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+                            result.value = it
+                        }
+
                     Column {
                         TextButton(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                launcher.launch("*/*")
+                                if (result.value != null) {
+                                    /* TODO */
+                                }
+                            },
                             content = { Text(stringResource(R.string.import_data)) },
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -141,10 +191,6 @@ fun SettingScreen(
                     )
                 }
 
-                val viewModel: ComicTrackerViewModel = viewModel(
-                    factory = ComicTrackerViewModelFactory(context.applicationContext)
-                )
-
                 if (showDialog) {
                     AlertDialog(
                         onDismissRequest = { showDialog = !showDialog },
@@ -158,7 +204,8 @@ fun SettingScreen(
                         confirmButton = {
                             TextButton(
                                 onClick = {
-                                    viewModel.deleteAllComic()
+                                    comicViewModel.deleteAllComic()
+                                    comicViewModel.deleteAllCovers()
                                     showDialog = !showDialog
                                 },
                                 content = { Text(stringResource(R.string.yes)) }
