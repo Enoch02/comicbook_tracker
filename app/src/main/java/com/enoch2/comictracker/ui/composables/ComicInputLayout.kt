@@ -289,6 +289,7 @@ fun ComicInputLayout(
                 }
                 Divider()
 
+                // TODO: capitalize the first letter of the comic title
                 Button(
                     onClick = {
                         when (mode) {
@@ -330,7 +331,31 @@ fun ComicInputLayout(
                 )
 
                 if (imageUri != null) {
-                    AlertDialog(
+                    ComicTrackerAlertDialog(
+                        title = R.string.image_preview_txt,
+                        text = {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                AsyncImage(
+                                    model = imageUri.toString(),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .height(150.dp)
+                                        .width(100.dp)
+                                )
+                            }
+                        },
+                        onConfirm = {
+                            imageUri?.let { mCoverPath = viewModel.copyCover(it) }
+                            imageUri = null
+                        },
+                        confirmText = R.string.continue_txt
+                    )
+                    // TODO: REMOVE
+                    /*AlertDialog(
                         onDismissRequest = { imageUri = null },
                         title = { Text(stringResource(R.string.image_preview_txt)) },
                         text = {
@@ -357,7 +382,7 @@ fun ComicInputLayout(
                                 content = { Text(stringResource(R.string.continue_txt)) }
                             )
                         },
-                    )
+                    )*/
                 }
             }
         }

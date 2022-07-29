@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-const val TAG = "FILE_UTILS"
 
 class ComicTrackerViewModel(context: Context) : ViewModel() {
     private val comicDao = ComicDatabase.getDataBase(context.applicationContext).getComicDao()

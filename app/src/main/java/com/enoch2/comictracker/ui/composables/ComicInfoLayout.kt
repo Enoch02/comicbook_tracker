@@ -26,7 +26,7 @@ fun ComicInfoLayout(
     issuesRead: Int,
     totalIssues: Int,
     status: String,
-    coverAbsPath: String,
+    coverAbsPath: String?,
     modifier: Modifier = Modifier
 ) {
     val constraints = ConstraintSet {
@@ -67,10 +67,11 @@ fun ComicInfoLayout(
         constraints,
         modifier
     ) {
-        val coverAlpha = if (coverAbsPath.isNotEmpty()) 1f else 0f
+        val coverAlpha = if (coverAbsPath != null) 1f else 0f
+        val model = coverAbsPath ?: " "
 
         AsyncImage(
-            model = coverAbsPath,
+            model = model,
             placeholder = painterResource(R.drawable.placeholder_image),
             contentDescription = null,
             error = painterResource(R.drawable.placeholder_image),

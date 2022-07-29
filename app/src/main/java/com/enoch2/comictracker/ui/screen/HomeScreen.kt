@@ -1,7 +1,6 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,7 +31,6 @@ import com.enoch2.comictracker.util.Filters
 import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.system.exitProcess
 
 // TODO: search functionality
 @Composable
@@ -41,8 +39,7 @@ fun HomeScreen(
     context: Context,
     scaffoldState: ScaffoldState,
     scope: CoroutineScope,
-    listState: LazyListState,
-    settingsViewModel: SettingsViewModel = viewModel()
+    listState: LazyListState
 ) {
     val drawerState = scaffoldState.drawerState
     var filter by remember { mutableStateOf(Filters.ALL) }
@@ -258,12 +255,7 @@ fun HomeScreen(
             factory = ComicTrackerViewModelFactory(context.applicationContext)
         )
         val comics by viewModel.getComics(filter, order).collectAsState(initial = emptyList())
-        //var coverPaths by rememberSaveable { mutableStateOf(mapOf<String, String>()) }
         val coverPaths by viewModel.coverPaths.collectAsState(initial = emptyMap())
-
-        /*LaunchedEffect(true) {
-            coverPaths = viewModel.getCoverPath(scope)
-        }*/
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
             items(
@@ -279,45 +271,19 @@ fun HomeScreen(
                             issuesRead = comic.issuesRead!!,
                             totalIssues = comic.totalIssues!!,
                             status = comic.status.toString(),
-                            coverAbsPath = coverPaths[comic.coverName.toString()].toString(),
+                            coverAbsPath = coverPaths[comic.coverName.toString()],
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(IntrinsicSize.Max)
                                 .clickable {
-                                    navController.navigate(Screen.ComicDetailScreen.withArgs(comic.id.toString()))
+                                    navController.navigate(
+                                        Screen.ComicDetailScreen.withArgs(
+                                            comic.id.toString()
+                                        )
+                                    )
                                 }
                         )
                     }
-                }
-            )
-        }
-
-        val showExitDialog by settingsViewModel.getExitDialogValue(context).collectAsState(initial = false)
-        var showAlertDialog by rememberSaveable { mutableStateOf(false) }
-
-        BackHandler {
-            if (showExitDialog) {
-                showAlertDialog = !showAlertDialog
-            } else {
-                exitProcess(0)
-            }
-        }
-
-        if (showAlertDialog) {
-            AlertDialog(
-                onDismissRequest = { showAlertDialog = !showAlertDialog },
-                title = { Text(stringResource(R.string.confirm_exit)) },
-                confirmButton = {
-                    TextButton(
-                        onClick = { exitProcess(0) },
-                        content = { Text(stringResource(R.string.yes)) }
-                    )
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = { showAlertDialog = !showAlertDialog },
-                        content = { Text(stringResource(R.string.no)) }
-                    )
                 }
             )
         }

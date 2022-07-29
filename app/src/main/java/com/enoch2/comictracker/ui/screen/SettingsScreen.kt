@@ -28,6 +28,7 @@ import com.enoch2.comictracker.Screen
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModel
 import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.domain.model.SettingsViewModel
+import com.enoch2.comictracker.ui.composables.ComicTrackerAlertDialog
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.BlueGray400
 
@@ -41,7 +42,6 @@ fun SettingScreen(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
     val alwaysDark by settingsViewModel.getDarkModeValue(context).collectAsState(initial = false)
-    val askBeforeExit by settingsViewModel.getExitDialogValue(context).collectAsState(initial = false)
 
     Scaffold(
         topBar = {
@@ -114,38 +114,6 @@ fun SettingScreen(
                     shape = RoundedCornerShape(5.dp),
                     modifier = Modifier.padding(10.dp)
                 ) {
-                    ConstraintLayout(
-                        constraints,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                settingsViewModel.switchExitDialogValue(context)
-                            }
-                    ) {
-                        Text(
-                            stringResource(R.string.show_exit_dialog),
-                            fontSize = 20.sp,
-                            modifier = Modifier.layoutId("text")
-                        )
-                        Checkbox(
-                            checked = askBeforeExit,
-                            onCheckedChange = { settingsViewModel.switchExitDialogValue(context)  },
-                            modifier = Modifier.layoutId("checkBox")
-                        )
-                        Text(
-                            stringResource(R.string.show_exit_dialog_desc),
-                            fontSize = 12.sp,
-                            color = BlueGray400,
-                            modifier = Modifier.layoutId("desc")
-                        )
-                    }
-                }
-
-                Card(
-                    elevation = 4.dp,
-                    shape = RoundedCornerShape(5.dp),
-                    modifier = Modifier.padding(10.dp)
-                ) {
                     // TODO: Finish up/ find better solution
                     val result = remember { mutableStateOf<Uri?>(null) }
                     val launcher =
@@ -192,30 +160,14 @@ fun SettingScreen(
                 }
 
                 if (showDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showDialog = !showDialog },
-                        title = { Text(stringResource(R.string.clear_data)) },
-                        text = {
-                            Text(
-                                stringResource(R.string.clear_data_dialog_body),
-                                fontSize = 15.sp
-                            )
-                        },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    comicViewModel.deleteAllComic()
-                                    comicViewModel.deleteAllCovers()
-                                    showDialog = !showDialog
-                                },
-                                content = { Text(stringResource(R.string.yes)) }
-                            )
-                        },
-                        dismissButton = {
-                            TextButton(
-                                onClick = { showDialog = !showDialog },
-                                content = { Text(stringResource(R.string.no)) }
-                            )
+                    ComicTrackerAlertDialog(
+                        title = R.string.clear_data,
+                        text = { Text(stringResource(R.string.clear_data_dialog_body)) },
+                        onDismiss = { showDialog = !showDialog },
+                        onConfirm = {
+                            comicViewModel.deleteAllComic()
+                            comicViewModel.deleteAllCovers()
+                            showDialog = !showDialog
                         }
                     )
                 }
