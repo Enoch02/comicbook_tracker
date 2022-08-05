@@ -28,62 +28,6 @@ class CoverRepository(val context: Context) {
         }
     }.flowOn(Dispatchers.IO)
 
-    /*fun copyCover(coverUri: Uri): String {
-        try {
-            var fileName = ""
-            coverUri.let {
-                context.contentResolver.query(coverUri, null, null, null, null)
-            }?.use { cursor ->
-                val name = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                cursor.moveToFirst()
-                fileName = cursor.getString(name)
-            }
-
-            // TODO: Compress before or after copying..
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val files = context.filesDir.listFiles()?.asList()
-                val coverFile = File(context.filesDir, fileName)
-                val inputStream = context.contentResolver.openInputStream(coverUri)
-
-                if (files?.contains(coverFile) == false) {
-                    inputStream.use { fis ->
-                        FileOutputStream(coverFile).use { fos ->
-                            val buffer = ByteArray(1024)
-                            var len: Int
-                            while (fis?.read(buffer).also { len = it!! } != -1) {
-                                fos.write(buffer, 0, len)
-                            }
-                        }
-                    }
-                }
-                Log.d(TAG, "PATH TO COPIED FILE: ${coverFile.absolutePath}")
-                return coverFile.name
-            } else {
-                val files = context.filesDir.listFiles()?.asList()
-                val coverFile = File(context.filesDir, fileName)
-                val coverInputStream = context.contentResolver.openInputStream(coverUri)
-                val coverOutputStream = FileOutputStream(coverFile)
-
-                if (files?.contains(coverFile) == false) {
-                    coverInputStream.use { fis ->
-                        coverOutputStream.use { fos ->
-                            val buffer = ByteArray(1024)
-                            var len: Int
-                            while (fis?.read(buffer).also { len = it!! } != -1) {
-                                fos.write(buffer, 0, len)
-                            }
-                        }
-                    }
-                }
-
-                Log.d(TAG, "PATH TO COPIED FILE: ${coverFile.absolutePath}")
-                return coverFile.name
-            }
-        } catch (e: Exception) {
-            Log.e("TEST", "copyCover() -> $e")
-        }
-        return ""
-    }*/
     fun copyCover(coverUri: Uri): String {
         try {
             var fileName = ""

@@ -2,6 +2,7 @@ package com.enoch2.comictracker.domain.model
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.enoch2.comictracker.data.repository.ComicRepositoryImpl
@@ -12,6 +13,7 @@ import com.enoch2.comictracker.util.Filters.*
 import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -21,8 +23,9 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
     private val repository = ComicRepositoryImpl(comicDao)
     private val coverRepo = CoverRepository(context)
     val coverPaths = coverRepo.latestPathList
+    val selectedIds = mutableStateListOf<Int>()
 
-    fun getComics(filter: Filters, orderType: OrderType): Flow<List<Comic>> {
+    fun getComics(filter: Filters = ALL, orderType: OrderType = OrderType.ASCENDING): Flow<List<Comic>> {
         return when (orderType) {
             OrderType.ASCENDING -> {
                 // 0 -> ascending
@@ -112,4 +115,30 @@ class ComicTrackerViewModel(context: Context) : ViewModel() {
 
     fun deleteOneCover(coverName: String) = coverRepo.deleteOneCover(viewModelScope, coverName)
 
+    fun isSelectedIdEmpty() = selectedIds.isEmpty()
+
+    fun selectId(id: Int) {
+        selectedIds.add(id)
+    }
+
+    fun deSelectId(id: Int) {
+        selectedIds.remove(id)
+    }
+
+    fun deleteSelectedIds() {
+        val toDelete = mutableListOf<Int>()
+        toDelete.addAll(selectedIds)
+        selectedIds.removeAll(toDelete)
+        toDelete.forEach {
+            deleteComic(it)
+        }
+    }
+
+    suspend fun selectAllIds() {
+        val comics = getComics().onEach {
+            it.forEach {
+                selectedIds.add(it.id!!)
+            }
+        }
+    }
 }
