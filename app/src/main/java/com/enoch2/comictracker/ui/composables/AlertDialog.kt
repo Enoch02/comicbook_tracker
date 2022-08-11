@@ -13,7 +13,8 @@ fun ComicTrackerAlertDialog(
     text: @Composable()(() -> Unit),
     onDismiss: () -> Unit = {},
     onConfirm: () -> Unit = {},
-    confirmText: Int = R.string.yes
+    confirmText: Int = R.string.yes,
+    dismissText: Int = R.string.no
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -28,7 +29,7 @@ fun ComicTrackerAlertDialog(
         dismissButton = {
             TextButton(
                 onClick = onDismiss,
-                content = { Text(stringResource(R.string.no)) }
+                content = { Text(stringResource(dismissText)) }
             )
         }
     )

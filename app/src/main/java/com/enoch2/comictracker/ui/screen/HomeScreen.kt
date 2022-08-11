@@ -1,7 +1,6 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -12,10 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.ArrowRight
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -30,9 +28,9 @@ import com.enoch2.comictracker.domain.model.ComicTrackerViewModelFactory
 import com.enoch2.comictracker.ui.composables.ComicInfoLayout
 import com.enoch2.comictracker.ui.composables.DrawerHeader
 import com.enoch2.comictracker.ui.composables.FilterLabel
+import com.enoch2.comictracker.ui.composables.HomeScreenDropDownMenu
 import com.enoch2.comictracker.ui.theme.White
 import com.enoch2.comictracker.util.Filters
-import com.enoch2.comictracker.util.OrderType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -46,11 +44,11 @@ fun HomeScreen(
     listState: LazyListState
 ) {
     val drawerState = scaffoldState.drawerState
-    var filter by remember { mutableStateOf(Filters.ALL) }
-    var order by remember { mutableStateOf(OrderType.ASCENDING) }
     val viewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
+    val comics by viewModel.getComics(viewModel.filter, viewModel.order)
+        .collectAsState(initial = emptyList())
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -77,9 +75,6 @@ fun HomeScreen(
                 title = { Text(stringResource(R.string.my_comics)) },
                 elevation = 4.dp,
                 actions = {
-                    var showMenu by remember { mutableStateOf(false) }
-                    var showInnerMenu by remember { mutableStateOf(false) }
-
                     if (viewModel.selectedIds.isNotEmpty()) {
                         IconButton(
                             onClick = {
@@ -91,140 +86,7 @@ fun HomeScreen(
                         )
                     }
 
-                    // TODO: Move to its own composable function
-                    IconButton(
-                        onClick = {
-                            showMenu = !showMenu
-                        },
-                        content = {
-                            Icon(
-                                Icons.Default.MoreVert,
-                                stringResource(R.string.menu),
-                                tint = White
-                            )
-
-                            val mainMenuItems = listOf(
-                                stringResource(R.string.sort),
-                                stringResource(R.string.settings)
-                            )
-                            val selectionMenuItems = listOf(
-                                stringResource(R.string.select_all),
-                                stringResource(R.string.deselect_all)
-                            )
-                            if (viewModel.selectedIds.isEmpty()) {
-                                DropdownMenu(
-                                    expanded = showMenu,
-                                    onDismissRequest = { showMenu = !showMenu },
-                                    content = {
-                                        mainMenuItems.forEachIndexed { index, item ->
-                                            DropdownMenuItem(
-                                                contentPadding = PaddingValues(horizontal = 15.dp),
-                                                onClick = {
-                                                    if (index == 0) {
-                                                        showInnerMenu = !showInnerMenu
-                                                        showMenu = !showMenu
-                                                    } else {
-                                                        navController.navigate(Screen.SettingScreen.route)
-                                                    }
-                                                },
-                                                content = {
-                                                    Text(item, Modifier.weight(2f))
-                                                    if (index == 0)
-                                                        Icon(
-                                                            Icons.Outlined.ArrowRight,
-                                                            null,
-                                                            Modifier.weight(1f)
-                                                        )
-                                                }
-                                            )
-                                        }
-                                    }
-                                )
-                            } else {
-                                DropdownMenu(
-                                    expanded = showMenu,
-                                    onDismissRequest = { showMenu = !showMenu },
-                                    content = {
-                                        selectionMenuItems.forEachIndexed { index, item ->
-                                            DropdownMenuItem(
-                                                contentPadding = PaddingValues(horizontal = 15.dp),
-                                                onClick = {
-                                                    if (index == 0) {
-                                                        showMenu = !showMenu
-                                                    } else {
-                                                        showMenu = !showMenu
-                                                    }
-                                                },
-                                                content = {
-                                                    Text(item)
-                                                }
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    )
-                    val innerMenuItems = listOf(
-                        stringResource(R.string.ascending),
-                        stringResource(R.string.descending),
-                        stringResource(R.string.none)
-                    )
-                    var selected by rememberSaveable { mutableStateOf(innerMenuItems[0]) }
-                    val onSelectionChange = { text: String ->
-                        selected = text
-                    }
-                    // for changing sort order
-                    DropdownMenu(
-                        expanded = showInnerMenu,
-                        onDismissRequest = {
-                            if (showMenu) showMenu = !showMenu
-                            showInnerMenu = !showInnerMenu
-                        },
-                        content = {
-                            innerMenuItems.forEachIndexed { index, item ->
-                                DropdownMenuItem(
-                                    contentPadding = PaddingValues(horizontal = 15.dp),
-                                    onClick = {
-                                        when (index) {
-                                            0 -> {
-                                                order = OrderType.ASCENDING
-                                                showInnerMenu = !showInnerMenu
-                                                onSelectionChange(item)
-                                            }
-                                            1 -> {
-                                                order = OrderType.DESCENDING
-                                                showInnerMenu = !showInnerMenu
-                                                onSelectionChange(item)
-                                            }
-                                            else -> {
-                                                order = OrderType.NONE
-                                                showInnerMenu = !showInnerMenu
-                                                onSelectionChange(item)
-                                            }
-                                        }
-                                    }
-                                ) {
-                                    Text(item, modifier = Modifier.weight(2f))
-                                    RadioButton(
-                                        modifier = Modifier.weight(1f),
-                                        selected = item == selected,
-                                        onClick = {
-                                            if (index == 0) {
-                                                order = OrderType.ASCENDING
-                                                showInnerMenu = !showInnerMenu
-                                                onSelectionChange(item)
-                                            } else {
-                                                order = OrderType.DESCENDING
-                                                showInnerMenu = !showInnerMenu
-                                                onSelectionChange(item)
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    )
+                    HomeScreenDropDownMenu(context, navController, comics.map { it.id!! })
                 }
             )
         },
@@ -245,37 +107,37 @@ fun HomeScreen(
                     onClick = {
                         when (index) {
                             0 -> {
-                                filter = Filters.READING
+                                viewModel.filter = Filters.READING
                                 scope.launch {
                                     drawerState.close()
                                 }
                             }
                             1 -> {
-                                filter = Filters.COMPLETED
+                                viewModel.filter = Filters.COMPLETED
                                 scope.launch {
                                     drawerState.close()
                                 }
                             }
                             2 -> {
-                                filter = Filters.ON_HOLD
+                                viewModel.filter = Filters.ON_HOLD
                                 scope.launch {
                                     drawerState.close()
                                 }
                             }
                             3 -> {
-                                filter = Filters.DROPPED
+                                viewModel.filter = Filters.DROPPED
                                 scope.launch {
                                     drawerState.close()
                                 }
                             }
                             4 -> {
-                                filter = Filters.PLAN_TO_READ
+                                viewModel.filter = Filters.PLAN_TO_READ
                                 scope.launch {
                                     drawerState.close()
                                 }
                             }
                             5 -> {
-                                filter = Filters.ALL
+                                viewModel.filter = Filters.ALL
                                 scope.launch {
                                     drawerState.close()
                                 }
@@ -287,18 +149,20 @@ fun HomeScreen(
         },
         drawerGesturesEnabled = true,
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate(Screen.AddComicScreen.route) }
-            ) {
-                Icon(
-                    Icons.Default.Add,
-                    "add",
-                    tint = White
+            if (viewModel.selectedIds.isEmpty()) {
+                FloatingActionButton(
+                    onClick = { navController.navigate(Screen.AddComicScreen.route) },
+                    content = {
+                        Icon(
+                            Icons.Default.Add,
+                            "add",
+                            tint = White
+                        )
+                    }
                 )
             }
         }
     ) {
-        val comics by viewModel.getComics(filter, order).collectAsState(initial = emptyList())
         val coverPaths by viewModel.coverPaths.collectAsState(initial = emptyMap())
 
         LazyColumn(state = listState, contentPadding = PaddingValues(10.dp)) {
@@ -324,41 +188,27 @@ fun HomeScreen(
                                 .fillMaxWidth()
                                 .height(IntrinsicSize.Max)
                                 .background(bg)
-                                .pointerInput(Unit) {
+                                .pointerInput(comic) {
                                     detectTapGestures(
                                         onTap = {
                                             // is a comic entry selected?
-                                            if (viewModel.isSelectedIdEmpty()) {
+                                            if (viewModel.selectedIds.isEmpty() && comics.contains(
+                                                    comic
+                                                )
+                                            ) {
                                                 navController.navigate(
-                                                    Screen.ComicDetailScreen.withArgs(
-                                                        comic.id.toString()
-                                                    )
+                                                    Screen.ComicDetailScreen.withArgs(comic.id.toString())
                                                 )
                                             } else {
                                                 if (viewModel.selectedIds.contains(comic.id!!)) {
                                                     viewModel.deSelectId(comic.id)
-                                                    // TODO: remove
-                                                    Toast
-                                                        .makeText(
-                                                            context,
-                                                            "deselected ${comic.title}",
-                                                            Toast.LENGTH_SHORT
-                                                        )
-                                                        .show()
-                                                } else {
+                                                } else if (comics.contains(comic)) {
                                                     viewModel.selectId(comic.id)
-                                                    Toast
-                                                        .makeText(
-                                                            context,
-                                                            "selected ${comic.title}",
-                                                            Toast.LENGTH_SHORT
-                                                        )
-                                                        .show()
                                                 }
                                             }
                                         },
                                         onLongPress = {
-                                            if (viewModel.isSelectedIdEmpty()) {
+                                            if (viewModel.selectedIds.isEmpty()) {
                                                 viewModel.selectId(comic.id!!)
                                             }
                                         }

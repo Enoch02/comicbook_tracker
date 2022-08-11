@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -87,6 +88,13 @@ fun ComicInputLayout(
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             imageUri = it.data?.data
         }
+    val intent = Intent(
+        Intent.ACTION_OPEN_DOCUMENT,
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+    )
+        .apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
 
     Scaffold(
         topBar = {
@@ -99,18 +107,9 @@ fun ComicInputLayout(
                 },
                 actions = {
                     IconButton(
-                        onClick = {
-                            val intent = Intent(
-                                Intent.ACTION_OPEN_DOCUMENT,
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                            )
-                                .apply {
-                                    addCategory(Intent.CATEGORY_OPENABLE)
-                                }
-                            launcher.launch(intent)
-                        }) {
-                        Icon(Icons.Default.Image, null, tint = Color.White)
-                    }
+                        onClick = { launcher.launch(intent) },
+                        content = { Icon(Icons.Default.Image, null, tint = Color.White) }
+                    )
                 }
             )
         }
@@ -132,7 +131,11 @@ fun ComicInputLayout(
                         value = mComicTitle,
                         onValueChange = { mComicTitle = it },
                         modifier = Modifier.layoutId("input"),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            capitalization = KeyboardCapitalization.Sentences,
+                            autoCorrect = true
+                        )
                     )
                 }
                 Divider()
@@ -289,7 +292,6 @@ fun ComicInputLayout(
                 }
                 Divider()
 
-                // TODO: capitalize the first letter of the comic title
                 Button(
                     onClick = {
                         when (mode) {
@@ -352,37 +354,12 @@ fun ComicInputLayout(
                             imageUri?.let { mCoverPath = viewModel.copyCover(it) }
                             imageUri = null
                         },
-                        confirmText = R.string.continue_txt
+                        confirmText = R.string.continue_txt,
+                        onDismiss = {
+                            launcher.launch(intent)
+                        },
+                        dismissText = R.string.select_another
                     )
-                    // TODO: REMOVE
-                    /*AlertDialog(
-                        onDismissRequest = { imageUri = null },
-                        title = { Text(stringResource(R.string.image_preview_txt)) },
-                        text = {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                AsyncImage(
-                                    model = imageUri.toString(),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .height(150.dp)
-                                        .width(100.dp)
-                                )
-                            }
-                        },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    imageUri?.let { mCoverPath = viewModel.copyCover(it) }
-                                    imageUri = null
-                                },
-                                content = { Text(stringResource(R.string.continue_txt)) }
-                            )
-                        },
-                    )*/
                 }
             }
         }
