@@ -29,21 +29,23 @@ class CoverRepository(val context: Context) {
     }.flowOn(Dispatchers.IO)
 
     fun copyCover(coverUri: Uri): String {
-        try {
-            var fileName = ""
-            coverUri.let {
-                context.contentResolver.query(coverUri, null, null, null, null)
-            }?.use { cursor ->
-                val name = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                cursor.moveToFirst()
-                fileName = cursor.getString(name)
-            }
-            val files = context.filesDir.listFiles()?.asList()
-            val coverFile = File(context.filesDir, fileName)
-            val coverInputStream = context.contentResolver.openInputStream(coverUri)
-            val coverOutputStream = FileOutputStream(coverFile)
+        var coverFileName = ""
+        coverUri.let {
+            context.contentResolver.query(coverUri, null, null, null, null)
+        }?.use { cursor ->
+            val name = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            cursor.moveToFirst()
+            coverFileName = cursor.getString(name)
+        }
+        val files = context.filesDir.listFiles()?.asList()
+        val fileNames = files?.map { it.name }
 
-            if (files?.contains(coverFile) == false) {
+        if (fileNames != null) {
+            if (!fileNames.contains(coverFileName)) {
+                val coverFile = File(context.filesDir, coverFileName)
+                val coverInputStream = context.contentResolver.openInputStream(coverUri)
+                val coverOutputStream = FileOutputStream(coverFile)
+
                 coverInputStream.use { fis ->
                     coverOutputStream.use { fos ->
                         val buffer = ByteArray(1024)
@@ -53,27 +55,20 @@ class CoverRepository(val context: Context) {
                         }
                     }
                 }
+                Log.d(TAG, "PATH TO COPIED FILE: ${coverFile.absolutePath}")
+                return coverFile.name
             }
-            Log.d(TAG, "PATH TO COPIED FILE: ${coverFile.absolutePath}")
-            return coverFile.name
-
-        } catch (e: Exception) {
-            Log.e("TEST", "copyCover() -> $e")
         }
-        return ""
+        return coverFileName
     }
 
     fun deleteAllCovers(scope: CoroutineScope) {
         scope.launch {
-            try {
-                val files = context.filesDir.listFiles()?.toList()
+            val files = context.filesDir.listFiles()?.toList()
 
-                files?.forEach { file ->
-                    file.delete()
-                    Log.d(TAG, "${file.name} deleted!")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "deleteAllCovers() -> $e")
+            files?.forEach { file ->
+                file.delete()
+                Log.d(TAG, "${file.name} deleted!")
             }
         }
     }

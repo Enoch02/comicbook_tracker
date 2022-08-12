@@ -1,17 +1,21 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
@@ -159,6 +163,7 @@ fun ComicDetailScreen(
                 ) {
                     ConstraintLayout(constraints) {
                         val coverAlpha = if (comic.coverName?.isNotEmpty() == true) 1f else 0f
+                        val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
                         val cover =
                             File(context.filesDir, comic.coverName.toString()).absolutePath
 
@@ -174,19 +179,25 @@ fun ComicDetailScreen(
                                 .alpha(coverAlpha)
                         )
                         TextButton(
-                            onClick = { /*TODO*/ },
+                            enabled = false,
+                            onClick = {},
                             modifier = Modifier.layoutId("status"),
-                            content = { Text(comic.status.toString()) }
+                            content = { Text(comic.status.toString(), color = textColor) }
                         )
                         TextButton(
-                            onClick = { /*TODO*/ },
+                            enabled = false,
+                            onClick = {},
                             modifier = Modifier.layoutId("rating"),
-                            content = { Text("${comic.rating} / 10") }
+                            content = { Text("${comic.rating} / 10", color = textColor) }
                         )
                         TextButton(
-                            onClick = { /*TODO*/ },
+                            enabled = false,
+                            onClick = {},
                             modifier = Modifier.layoutId("issues_info"),
-                            content = { Text("Issues Read: ${comic.issuesRead} / ${comic.totalIssues}") }
+                            content = { Text(
+                                "Issues Read: ${comic.issuesRead} / ${comic.totalIssues}",
+                                color = textColor
+                            ) }
                         )
                     }
                 }

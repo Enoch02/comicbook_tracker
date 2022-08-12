@@ -129,7 +129,7 @@ fun ComicInputLayout(
 
                     OutlinedTextField(
                         value = mComicTitle,
-                        onValueChange = { mComicTitle = it },
+                        onValueChange = { mComicTitle = it.replace("/", "") },
                         modifier = Modifier.layoutId("input"),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
