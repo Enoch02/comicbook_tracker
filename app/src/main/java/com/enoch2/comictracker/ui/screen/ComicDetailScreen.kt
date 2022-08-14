@@ -206,7 +206,7 @@ fun ComicDetailScreen(
 
                 // TODO: Tap to edit
                 Text(
-                    stringResource(R.string.lorem),
+                    text = stringResource(R.string.lorem),
                     modifier = Modifier.padding(10.dp),
                     textAlign = TextAlign.Start
                 )

@@ -93,6 +93,7 @@ fun ComicInputLayout(
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     )
         .apply {
+            type = "image/jpeg"
             addCategory(Intent.CATEGORY_OPENABLE)
         }
 

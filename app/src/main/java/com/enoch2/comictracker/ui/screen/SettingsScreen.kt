@@ -1,7 +1,9 @@
 package com.enoch2.comictracker.ui.screen
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -31,6 +33,7 @@ import com.enoch2.comictracker.domain.model.SettingsViewModel
 import com.enoch2.comictracker.ui.composables.ComicTrackerAlertDialog
 import com.enoch2.comictracker.ui.composables.ComicTrackerTopBar
 import com.enoch2.comictracker.ui.theme.BlueGray400
+import com.enoch2.comictracker.util.exportDatabase
 
 @Composable
 fun SettingScreen(
@@ -41,6 +44,7 @@ fun SettingScreen(
     val comicViewModel: ComicTrackerViewModel = viewModel(
         factory = ComicTrackerViewModelFactory(context.applicationContext)
     )
+    val comics by comicViewModel.getComics().collectAsState(initial = emptyList())
     val alwaysDark by settingsViewModel.getDarkModeValue(context).collectAsState(initial = false)
 
     Scaffold(
@@ -133,9 +137,30 @@ fun SettingScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
+                        var exportFileUri by remember { mutableStateOf<Uri?>(null) }
+                        val exportLauncher =
+                            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                                exportFileUri = it.data?.data
+                            }
+                        val exportIntent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+                            .apply {
+                                addCategory(Intent.CATEGORY_OPENABLE)
+                                type = "text/csv"
+                                putExtra(Intent.EXTRA_TITLE, "comicDatabase.csv")
+                            }
+
+                        // TODO: Make exporting fancier. Something like a loading animation.
+                        if (exportFileUri != null) {
+                            Toast.makeText(context, "Exporting...", Toast.LENGTH_SHORT).show()
+                            exportDatabase(exportFileUri!!, context, comics)
+                            exportFileUri = null
+                        }
+
                         TextButton(
-                            onClick = { /*TODO*/ },
-                            content = { Text(stringResource(R.string.export_data)) },
+                            onClick = {
+                                exportLauncher.launch(exportIntent)
+                            },
+                            content = { Text(stringResource(R.string.export_data_csv)) },
                             modifier = Modifier.fillMaxWidth()
                         )
 

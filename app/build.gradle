@@ -11,8 +11,8 @@ android {
         applicationId "com.enoch2.comictracker"
         minSdk 23
         targetSdk 31
-        versionCode 25
-        versionName "0.9.1"
+        versionCode 26
+        versionName "0.9.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -69,6 +69,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     implementation "io.coil-kt:coil-compose:2.1.0"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation "com.github.doyaaaaaken:kotlin-csv-jvm:0.9.0"
     // Might remove
     implementation "it.skrape:skrapeit:1.1.5"
 

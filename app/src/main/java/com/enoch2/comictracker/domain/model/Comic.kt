@@ -12,5 +12,5 @@ data class Comic(
     @ColumnInfo(name = "issues_read") val issuesRead: Int? = 0,
     @ColumnInfo(name = "total_issues") val totalIssues: Int? = 0,
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
-    @ColumnInfo(name= "cover_path")val coverName: String? = ""
+    @ColumnInfo(name= "cover_name")val coverName: String? = ""
 )

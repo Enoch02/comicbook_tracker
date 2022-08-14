@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -18,6 +19,7 @@ import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.enoch2.comictracker.ui.screen.*
 import com.enoch2.comictracker.ui.theme.ComicBookTrackerTheme
+import com.enoch2.comictracker.util.createNotificationChannel
 
 
 class MainActivity : ComponentActivity() {
@@ -29,6 +31,10 @@ class MainActivity : ComponentActivity() {
             val scaffoldState = rememberScaffoldState()
             val scope = rememberCoroutineScope()
             val listState = rememberLazyListState()
+
+            LaunchedEffect(Unit) {
+                createNotificationChannel(context)
+            }
 
             ComicBookTrackerTheme(context) {
                 Surface(
